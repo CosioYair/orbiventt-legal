@@ -29,6 +29,36 @@
         .btn { display: block; width: 100%; padding: 0.9rem 1.25rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; text-decoration: none; font-weight: 600; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; margin-bottom: 0.75rem; }
         .btn.secondary { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
         .btn.secondary:hover { border-color: var(--primary); }
+        /* Premium primary CTA — visual match to the mobile reference
+           (assets/new_button.png). STYLING ONLY: gradient, glass border,
+           outer + inner glow, soft depth shadow, hover lift. Layout, size,
+           padding, border-radius and typography are inherited from .btn and
+           left unchanged. Scoped to #openApp so the secondary and the generic
+           "Ir al inicio" .btn are not affected. box-sizing:border-box keeps the
+           1px border from altering the button's size. */
+        #openApp.btn {
+            background: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow:
+                0 8px 28px rgba(84, 60, 232, 0.45),
+                0 2px 6px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25),
+                inset 0 0 20px rgba(140, 165, 255, 0.20);
+            transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease;
+        }
+        #openApp.btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 34px rgba(96, 70, 240, 0.55),
+                0 3px 9px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.30),
+                inset 0 0 24px rgba(150, 175, 255, 0.26);
+        }
+        #openApp.btn:active {
+            transform: translateY(0);
+            filter: brightness(1.02);
+        }
         .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid rgba(255,255,255,0.15); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
         footer { margin-top: 2rem; color: var(--muted); font-size: 0.8rem; }
