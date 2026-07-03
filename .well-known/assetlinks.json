@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.vyvent.mobile",
+      "sha256_cert_fingerprints": [
+        "1F:C0:60:59:61:78:D0:B1:BF:79:FA:1D:01:96:66:44:B3:A4:A4:D6:18:39:68:FA:FD:F4:E5:E7:2D:F7:FF:F1",
+        "0C:84:BA:0A:93:77:5E:F4:06:13:1A:3D:C0:4D:F3:C3:55:A9:AC:00:33:FF:31:81:C9:37:A8:38:2C:0A:30:12"
+      ]
+    }
+  }
+]

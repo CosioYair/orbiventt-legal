@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbiventt</title>
+    <!-- SEO is intentionally deferred (external-invitations.md §10). This page
+         is client-rendered and served with a 404 status, so it stays noindex
+         until the future pre-rendering phase. -->
+    <meta name="robots" content="noindex">
+    <!-- Link-preview-friendly Open Graph tags so WhatsApp / iMessage show
+         a rich card instead of a bare URL. Generic for now; per-entity OG
+         tags require pre-rendering (future phase). -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Abrir en Orbiventt">
+    <meta property="og:description" content="Descubre y crea eventos cerca de ti.">
+    <meta property="og:site_name" content="Orbiventt">
+    <style>
+        :root { --bg: #05030A; --surface: #15101F; --surface-alt: #1E1630; --text: #E8E0F0; --muted: #9B8FB8; --primary: #A855F7; --accent: #EC4899; --border: #27272F; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+        .container { max-width: 460px; text-align: center; width: 100%; }
+        .logo { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .tagline { color: var(--muted); font-size: 1.05rem; margin-bottom: 2rem; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 1.5rem; margin-bottom: 1.25rem; }
+        .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .card-sub { color: var(--muted); font-size: 0.95rem; }
+        .btn { display: block; width: 100%; padding: 0.9rem 1.25rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; text-decoration: none; font-weight: 600; font-size: 1rem; border-radius: 12px; border: none; cursor: pointer; margin-bottom: 0.75rem; }
+        .btn.secondary { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+        .btn.secondary:hover { border-color: var(--primary); }
+        .spinner { display: inline-block; width: 28px; height: 28px; border: 3px solid rgba(255,255,255,0.15); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.9s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        footer { margin-top: 2rem; color: var(--muted); font-size: 0.8rem; }
+        footer a { color: var(--muted); text-decoration: underline; }
+        .hidden { display: none !important; }
+
+        /* ── Provider Preview ─────────────────────────────────────────────── */
+        .preview { text-align: left; }
+        .pv-cover { width: 100%; height: 150px; border-radius: 16px 16px 0 0; background: linear-gradient(135deg, rgba(168,85,247,0.35), var(--surface)); background-size: cover; background-position: center; }
+        .pv-body { background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 0 16px 16px; padding: 0 1.4rem 1.5rem; margin-bottom: 1.25rem; }
+        .pv-avatar { width: 84px; height: 84px; border-radius: 50%; border: 4px solid var(--bg); background: var(--surface-alt); margin-top: -42px; object-fit: cover; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; color: var(--text); }
+        .pv-name { font-size: 1.4rem; font-weight: 800; margin-top: 0.6rem; }
+        .pv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.6rem; }
+        .pv-chip { font-size: 0.78rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); }
+        .pv-city { color: var(--muted); font-size: 0.9rem; margin-top: 0.6rem; }
+        .pv-bio { color: var(--text); font-size: 0.95rem; margin-top: 0.8rem; white-space: pre-wrap; }
+        .pv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 1rem; }
+        .pv-grid img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; background: var(--surface-alt); }
+        .pv-empty { margin-top: 1rem; padding: 1.5rem 1.25rem; text-align: center; background: var(--surface-alt); border: 1px solid var(--border); border-radius: 12px; }
+        .pv-empty-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+        .pv-empty-body { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+        .pv-empty-body + .pv-empty-body { margin-top: 0.6rem; }
+
+        /* ── Event Preview ──────────────────────────────────────────────────── */
+        #evTitle { margin-top: 1.25rem; }
+        .ev-when { color: var(--muted); font-size: 0.92rem; margin-top: 0.5rem; }
+        .ev-organizer { display: flex; align-items: center; gap: 8px; margin-top: 0.9rem; }
+        .ev-organizer img, .ev-org-fallback { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; background: var(--surface-alt); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: var(--text); flex: none; }
+        .ev-org-name { font-size: 0.9rem; color: var(--text); font-weight: 600; }
+        .ev-status { display: inline-flex; align-items: center; gap: 6px; margin-top: 1rem; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+        .ev-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+        .ev-status.upcoming  { background: rgba(168,85,247,0.15); color: #C084FC; }
+        .ev-status.live      { background: rgba(34,197,94,0.15);  color: #4ADE80; }
+        .ev-status.finished  { background: rgba(155,143,184,0.15); color: var(--muted); }
+        .ev-status.cancelled { background: rgba(239,68,68,0.15);  color: #F87171; }
+        .ev-map { width: 100%; height: 160px; border: 1px solid var(--border); border-radius: 12px; margin-top: 1rem; overflow: hidden; }
+        /* Locked preview (Issue 1, Option A): pointer-events:none makes the map
+           a static coarse-location preview — no drag/zoom, so the view can never
+           drift off the intended area. Page scroll passes through, so a touch
+           user is never trapped on the map. */
+        .ev-map iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
+        .ev-map-cap { color: var(--muted); font-size: 0.78rem; margin-top: 0.4rem; text-align: center; }
+
+        /* Private-event conversion card (limited preview / state B). Left-aligned
+           with a primary accent edge so it reads as a "locked, open the app"
+           prompt rather than an error. */
+        .private-note { text-align: left; border-color: rgba(168,85,247,0.45); background: linear-gradient(180deg, rgba(168,85,247,0.10), var(--surface)); }
+        .private-note .card-title { margin-bottom: 0.4rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">Orbiventt</div>
+        <p class="tagline" id="tagline">Descubre y crea eventos cerca de ti</p>
+
+        <div id="opening" class="card hidden">
+            <div class="spinner"></div>
+            <div class="card-title" id="openingTitle">Abriendo…</div>
+            <div class="card-sub">Redirigiéndote a la app de Orbiventt.</div>
+        </div>
+
+        <!-- Provider preview (value-before-install). Populated by JS. -->
+        <div id="providerPreview" class="preview hidden">
+            <div class="pv-cover" id="pvCover"></div>
+            <div class="pv-body">
+                <div class="pv-avatar" id="pvAvatar"></div>
+                <div class="pv-name" id="pvName"></div>
+                <div class="pv-chips" id="pvChips"></div>
+                <div class="pv-city hidden" id="pvCity"></div>
+                <div class="pv-bio hidden" id="pvBio"></div>
+                <div class="pv-grid" id="pvGrid"></div>
+                <!-- Empty state — shown only when the provider has no published
+                     portfolio work yet. Positive/trust-building framing: the
+                     portfolio fills automatically through event participation. -->
+                <div class="pv-empty hidden" id="pvEmpty">
+                    <div class="pv-empty-title">Portafolio en construcción 🚀</div>
+                    <p class="pv-empty-body">Este proveedor es nuevo en Orbiventt y todavía no tiene trabajos publicados en su portafolio.</p>
+                    <p class="pv-empty-body">Los trabajos realizados en eventos dentro de Orbiventt se agregan automáticamente a medida que participa.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event preview (value-before-install). Renders ONLY for events whose
+             organizer chose feed_visibility='everyone'; every other case (private
+             or non-existent) returns the identical not-found stub from the RPC and
+             falls through to the protected card below. Populated by JS. -->
+        <div id="eventPreview" class="preview hidden">
+            <div class="pv-cover" id="evCover"></div>
+            <div class="pv-body">
+                <div class="ev-status hidden" id="evStatus"></div>
+                <div class="pv-name" id="evTitle"></div>
+                <div class="ev-when hidden" id="evWhen"></div>
+                <div class="pv-chips" id="evChips"></div>
+                <div class="ev-organizer hidden" id="evOrganizer"></div>
+                <div class="pv-bio hidden" id="evDesc"></div>
+                <div class="ev-map hidden" id="evMap"></div>
+                <div class="ev-map-cap hidden" id="evMapCap">📍 Ubicación aproximada</div>
+                <div class="pv-grid" id="evGrid"></div>
+            </div>
+        </div>
+
+        <!-- Private-event conversion card. Shown ONLY in the limited preview
+             (state B): a valid signed invitation link revealed the basic event
+             card above, and this card drives the install to unlock the rest. -->
+        <div id="evPrivateNote" class="card private-note hidden">
+            <div class="card-title">🔒 Este es un evento privado</div>
+            <div class="card-sub">Para ver la ubicación, asistentes, proveedores y participar en el evento, abre este enlace en Orbiventt.</div>
+        </div>
+
+        <div id="fallback" class="card hidden">
+            <div class="card-title" id="fallbackTitle">¿No tienes Orbiventt instalado?</div>
+            <div class="card-sub">Descarga la app para continuar.</div>
+        </div>
+
+        <div id="actions" class="hidden">
+            <a id="openApp" class="btn" href="#">Abrir en Orbiventt</a>
+            <a id="playStore" class="btn secondary"
+               href="https://play.google.com/store/apps/details?id=com.vyvent.mobile"
+               target="_blank" rel="noopener">Descargar Orbiventt</a>
+        </div>
+
+        <div id="notFound" class="card hidden">
+            <div class="card-title">Página no encontrada</div>
+            <div class="card-sub">La dirección a la que intentabas entrar no existe.</div>
+        </div>
+
+        <div id="genericActions" class="hidden">
+            <a class="btn" href="/orbiventt-legal/">Ir al inicio</a>
+        </div>
+
+        <footer>
+            &copy; 2026 Orbiventt &middot;
+            <a href="/orbiventt-legal/">Información legal</a>
+        </footer>
+    </div>
+
+    <script>
+    (function () {
+        // ── Supabase config ──────────────────────────────────────────────────
+        // Anon key is a publishable JWT (RLS-protected, ships in the app bundle
+        // by design). MUST point at the SAME project the production app uses.
+        // TODO(confirm): verify this is the production project before launch.
+        var SUPA_URL = 'https://lehwxjbjlehsdkqxlzrb.supabase.co';
+        var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlaHd4amJqbGVoc2RrcXhsenJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDAxMjcsImV4cCI6MjA5MDcxNjEyN30.Twvct9R8Pj5Bph7KkuqB2ElegYhiVCEz_mW_rlWAFrk';
+
+        var BASE = '/orbiventt-legal/';
+        var path = window.location.pathname;
+
+        function show(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hide(id) { document.getElementById(id).classList.add('hidden'); }
+        function el(id) { return document.getElementById(id); }
+
+        // /orbiventt-legal/<kind>/<id>[/chat][/]
+        var re = new RegExp('^' + BASE.replace(/\//g, '\\/') + '(e|u|p)\\/([^\\/\\?#]+)(\\/chat)?\\/?$');
+        var match = re.exec(path);
+
+        if (!match) {
+            show('notFound');
+            show('genericActions');
+            return;
+        }
+
+        var kind = match[1];
+        var id = match[2];
+        var isChat = !!match[3];
+
+        // Signed preview token (`?k=`). Present only on organizer-shared PRIVATE
+        // event links; it is the sole key that unlocks the limited web preview
+        // (get_private_event_preview). Absent/invalid → protected stub.
+        var previewToken = null;
+        try { previewToken = new URLSearchParams(window.location.search).get('k'); } catch (_) {}
+
+        // Invitation-link code (`?code=`). Present on shared invitation links;
+        // forwarded into the `vyvent://` deep link so the app opens the redeem
+        // flow prefilled. The web NEVER redeems it (web stays read-only) — it
+        // only passes the param through.
+        var claimCode = null;
+        try {
+            var rawCode = new URLSearchParams(window.location.search).get('code');
+            if (rawCode && /^[A-Za-z0-9-]{1,20}$/.test(rawCode)) claimCode = rawCode;
+        } catch (_) {}
+
+        // `/chat` only makes sense for events.
+        if (isChat && kind !== 'e') {
+            show('notFound');
+            show('genericActions');
+            return;
+        }
+
+        // ── Provider preview branch (value-before-install) ───────────────────
+        // Unlike events/users, providers RENDER a preview instead of
+        // auto-redirecting, so a non-Orbiventt visitor sees value first.
+        if (kind === 'p') {
+            renderProviderPreview(id);
+            return;
+        }
+
+        // ── Event preview branch (value-before-install) ──────────────────────
+        // A plain /e/{id} link RENDERS a preview (public events only; private
+        // events resolve to a protected stub inside the renderer). The
+        // /e/{id}/chat sub-route is the gated event chat — not previewable — so
+        // it stays on the redirect path below.
+        if (kind === 'e' && !isChat) {
+            renderEventPreview(id, previewToken, claimCode);
+            return;
+        }
+
+        // ── Event-chat / user branch: redirect into the app (existing behavior) ───
+        var deepLink = 'vyvent://' + kind + '/' + encodeURIComponent(id) + (isChat ? '/chat' : '');
+
+        if (kind === 'e' && isChat) {
+            el('openingTitle').textContent = 'Abriendo chat del evento…';
+            el('tagline').textContent = 'Únete al chat de este evento en la app.';
+        } else if (kind === 'e') {
+            el('openingTitle').textContent = 'Abriendo evento…';
+            el('tagline').textContent = 'Abre este evento en la app.';
+        } else {
+            el('openingTitle').textContent = 'Abriendo perfil…';
+            el('fallbackTitle').textContent = 'Descarga Orbiventt para ver este perfil';
+            el('tagline').textContent = 'Abre este perfil en la app.';
+        }
+
+        el('openApp').setAttribute('href', deepLink);
+        show('opening');
+        redirectToApp(deepLink);
+
+        // ── Helpers ──────────────────────────────────────────────────────────
+
+        function publicUrl(bucket, p) {
+            if (!p) return null;
+            if (/^https?:\/\//i.test(p)) return p;
+            return SUPA_URL + '/storage/v1/object/public/' + bucket + '/' + String(p).replace(/^\/+/, '');
+        }
+
+        function setupAppActions(deepLink) {
+            el('openApp').setAttribute('href', deepLink);
+            el('fallbackTitle').textContent = '¿Quieres interactuar?';
+            el('fallback').querySelector('.card-sub').textContent =
+                'Descarga Orbiventt para seguir, contactar y más.';
+            show('fallback');
+            show('actions');
+        }
+
+        function renderProviderPreview(slug) {
+            el('tagline').textContent = 'Perfil de proveedor en Orbiventt';
+            show('opening');
+            el('openingTitle').textContent = 'Cargando perfil…';
+
+            var deepLink = 'vyvent://p/' + encodeURIComponent(slug);
+
+            fetch(SUPA_URL + '/rest/v1/rpc/get_public_provider_preview', {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPA_ANON,
+                    'Authorization': 'Bearer ' + SUPA_ANON,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ p_username: slug })
+            })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+                hide('opening');
+
+                if (!data || data.not_found || !data.provider) {
+                    // Protected / not-found stub — no details leaked.
+                    el('tagline').textContent = '';
+                    el('notFound').querySelector('.card-title').textContent = 'Perfil no disponible';
+                    el('notFound').querySelector('.card-sub').textContent =
+                        'Este perfil no está disponible públicamente. Ábrelo en Orbiventt.';
+                    show('notFound');
+                    setupAppActions(deepLink);
+                    return;
+                }
+
+                var pr = data.provider;
+
+                // Cover
+                var coverUrl = publicUrl('avatars', pr.cover_path);
+                if (coverUrl) el('pvCover').style.backgroundImage = 'url("' + coverUrl + '")';
+
+                // Avatar
+                var avatarUrl = publicUrl('avatars', pr.avatar_path);
+                if (avatarUrl) {
+                    el('pvAvatar').innerHTML = '<img src="' + avatarUrl + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                } else {
+                    el('pvAvatar').textContent = (pr.display_name || '?').trim().charAt(0).toUpperCase();
+                }
+
+                // Name
+                el('pvName').textContent = pr.display_name || '';
+
+                // Category chips (primary + secondaries)
+                var chips = el('pvChips');
+                function addChip(cat) {
+                    if (!cat || !cat.label) return;
+                    var c = document.createElement('span');
+                    c.className = 'pv-chip';
+                    if (cat.color) { c.style.color = cat.color; c.style.borderColor = cat.color + '66'; }
+                    c.textContent = cat.label;
+                    chips.appendChild(c);
+                }
+                addChip(pr.primary_category);
+                (pr.secondary_categories || []).forEach(addChip);
+
+                // City (coarse)
+                if (pr.city) { el('pvCity').textContent = '📍 ' + pr.city; show('pvCity'); }
+
+                // Bio
+                if (pr.bio) { el('pvBio').textContent = pr.bio; show('pvBio'); }
+
+                // Portfolio grid — or a trust-building empty state when the
+                // provider has no published work yet. Hiding the grid avoids a
+                // leftover margin gap (no layout shift).
+                var grid = el('pvGrid');
+                var portfolio = data.portfolio || [];
+                if (portfolio.length === 0) {
+                    hide('pvGrid');
+                    show('pvEmpty');
+                } else {
+                    portfolio.forEach(function (item) {
+                        var u = publicUrl(item.bucket, item.storage_path);
+                        if (!u) return;
+                        var img = document.createElement('img');
+                        img.src = u;
+                        img.alt = item.caption || '';
+                        img.loading = 'lazy';
+                        grid.appendChild(img);
+                    });
+                }
+
+                document.title = (pr.display_name || 'Proveedor') + ' · Orbiventt';
+                show('providerPreview');
+                setupAppActions(deepLink);
+            })
+            .catch(function () {
+                hide('opening');
+                el('notFound').querySelector('.card-title').textContent = 'No se pudo cargar';
+                el('notFound').querySelector('.card-sub').textContent = 'Inténtalo de nuevo o ábrelo en Orbiventt.';
+                show('notFound');
+                setupAppActions('vyvent://p/' + encodeURIComponent(slug));
+            });
+        }
+
+        // Small POST-RPC helper → resolves to parsed JSON (or null on HTTP error).
+        function callRpc(fn, body) {
+            return fetch(SUPA_URL + '/rest/v1/rpc/' + fn, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPA_ANON,
+                    'Authorization': 'Bearer ' + SUPA_ANON,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }).then(function (r) { return r.ok ? r.json() : null; });
+        }
+
+        // THREE preview states (external-invitations.md §6 + private-preview):
+        //   A. Public event                     → rich public preview.
+        //   B. Private + valid signed `?k` token → LIMITED preview + conversion.
+        //   C. Missing / invalid / unsigned      → identical protected stub.
+        //
+        // We always try the public RPC first (state A path, unchanged). Only when
+        // it returns the not-found stub AND we hold a token do we attempt the
+        // limited preview — so public events and tokenless private links behave
+        // exactly as before.
+        function renderEventPreview(eventId, token, code) {
+            el('tagline').textContent = 'Evento en Orbiventt';
+            show('opening');
+            el('openingTitle').textContent = 'Cargando evento…';
+
+            // The deep link forwards the invitation code, so "Abrir en Orbiventt"
+            // lands the recipient in the app's redeem flow already prefilled.
+            var deepLink = 'vyvent://e/' + encodeURIComponent(eventId) +
+                           (code ? '?code=' + encodeURIComponent(code) : '');
+
+            // Invitation-flavored CTA copy when the link carries a code — the
+            // visitor isn't a curious passerby, they hold a pase.
+            function applyInviteCopy() {
+                if (!code) return;
+                el('fallbackTitle').textContent = 'Tienes una invitación a este evento';
+                el('fallback').querySelector('.card-sub').textContent =
+                    '¿Ya tienes Orbiventt? Ábrela para canjear tu código al instante. ' +
+                    'Si no, descárgala y canjea el código que te compartieron.';
+            }
+
+            callRpc('get_public_event_preview', { p_event_id: eventId })
+                .then(function (data) {
+                    // A. Public event → rich preview.
+                    if (data && !data.not_found && data.event) {
+                        hide('opening');
+                        renderEventCard(data.event, deepLink, false);
+                        applyInviteCopy();
+                        return;
+                    }
+                    // B. Private + signed token → limited preview.
+                    if (token) {
+                        return callRpc('get_private_event_preview',
+                                       { p_event_id: eventId, p_token: token })
+                            .then(function (pdata) {
+                                hide('opening');
+                                if (pdata && !pdata.not_found && pdata.event) {
+                                    renderEventCard(pdata.event, deepLink, true);
+                                } else {
+                                    renderEventProtected(deepLink); // invalid token → C
+                                }
+                                applyInviteCopy();
+                            });
+                    }
+                    // C. No token (or unsigned) → protected stub.
+                    hide('opening');
+                    renderEventProtected(deepLink);
+                    applyInviteCopy();
+                })
+                .catch(function () {
+                    hide('opening');
+                    el('notFound').querySelector('.card-title').textContent = 'No se pudo cargar';
+                    el('notFound').querySelector('.card-sub').textContent = 'Inténtalo de nuevo o ábrelo en Orbiventt.';
+                    show('notFound');
+                    setupAppActions(deepLink);
+                });
+        }
+
+        // State C — protected stub. Identical for "private" and "not found": the
+        // RPCs never reveal which (P3, no enumeration).
+        function renderEventProtected(deepLink) {
+            el('tagline').textContent = '';
+            el('notFound').querySelector('.card-title').textContent = 'Evento privado';
+            el('notFound').querySelector('.card-sub').textContent =
+                'Este evento es privado o no está disponible. Ábrelo en Orbiventt para verlo.';
+            show('notFound');
+            setupAppActions(deepLink);
+        }
+
+        // Renders the event card. `limited=true` (state B) draws the basic
+        // fields the limited payload carries — cover, status, title, date/time,
+        // category, organizer, description, and an APPROXIMATE-location map
+        // (coarse, ~1 km) — plus the private-event conversion card. It still
+        // skips the GALLERY (the limited payload contains no gallery) and never
+        // shows an exact venue: both previews only ever receive rounded coords.
+        function renderEventCard(ev, deepLink, limited) {
+            // Cover
+            var coverUrl = publicUrl('event-photos', ev.cover_path);
+            if (coverUrl) el('evCover').style.backgroundImage = 'url("' + coverUrl + '")';
+
+            // Derived status badge (deterministic, frontend-only — cancelled
+            // overrides everything, then time-based state vs. now).
+            var STATUS_LABELS = { upcoming: 'Próximo', live: 'En vivo', finished: 'Finalizado', cancelled: 'Cancelado' };
+            var status = getEventStatus(new Date(), ev.starts_at, ev.ends_at, ev.is_cancelled);
+            var badge = el('evStatus');
+            badge.className = 'ev-status ' + status;            // drops 'hidden'
+            badge.textContent = STATUS_LABELS[status] || STATUS_LABELS.upcoming;
+
+            el('evTitle').textContent = ev.title || 'Evento';
+
+            var when = formatWhen(ev.starts_at, ev.ends_at);
+            if (when) { el('evWhen').textContent = when; show('evWhen'); }
+
+            // Category chip
+            if (ev.category) {
+                var c = document.createElement('span');
+                c.className = 'pv-chip';
+                c.textContent = ev.category;
+                el('evChips').appendChild(c);
+            }
+
+            // Organizer (public profile identity only — no PII)
+            if (ev.organizer) {
+                var org = el('evOrganizer');
+                var orgAvatar = publicUrl('avatars', ev.organizer.avatar_path);
+                var orgName = ev.organizer.display_name || ev.organizer.username || '';
+                if (orgAvatar) {
+                    org.innerHTML = '<img src="' + orgAvatar + '" alt="">';
+                } else {
+                    var fb = document.createElement('div');
+                    fb.className = 'ev-org-fallback';
+                    fb.textContent = (orgName || '?').trim().charAt(0).toUpperCase();
+                    org.appendChild(fb);
+                }
+                var nm = document.createElement('span');
+                nm.className = 'ev-org-name';
+                nm.textContent = orgName ? ('Organiza ' + orgName) : '';
+                org.appendChild(nm);
+                show('evOrganizer');
+            }
+
+            if (ev.description) { el('evDesc').textContent = ev.description; show('evDesc'); }
+
+            // ── Coarse location map — BOTH previews (state A and B) ──────────
+            // Always rounded server-side (~1 km); no marker, so it shows an
+            // approximate area and never the exact venue (safety, §8.8). The
+            // limited payload now carries approx_lat/approx_lng too, so the
+            // private-event share preview also places the event on the map.
+            if (typeof ev.approx_lat === 'number' && typeof ev.approx_lng === 'number') {
+                var d = 0.02;
+                var bbox = [ev.approx_lng - d, ev.approx_lat - d, ev.approx_lng + d, ev.approx_lat + d].join(',');
+                var src = 'https://www.openstreetmap.org/export/embed.html?bbox=' +
+                          encodeURIComponent(bbox) + '&layer=mapnik';
+                el('evMap').innerHTML = '<iframe loading="lazy" referrerpolicy="no-referrer" src="' + src + '"></iframe>';
+                show('evMap');
+                show('evMapCap');
+            }
+
+            // ── Gallery — PUBLIC preview only (state A) ───────────────────────
+            // The limited payload carries no gallery, so this stays hidden for
+            // private-event share previews.
+            if (!limited) {
+                // Limited gallery — organizer-first, best-effort. The cover image
+                // is chosen/rendered separately and is NOT part of this gallery.
+                var grid  = el('evGrid');
+                var orgId = firstPathSeg(ev.organizer && ev.organizer.avatar_path);
+                orderGalleryOrganizerFirst(ev.gallery, orgId).forEach(function (item) {
+                    var u = publicUrl('event-photos', item.storage_path);
+                    if (!u) return;
+                    var img = document.createElement('img');
+                    img.src = u;
+                    img.loading = 'lazy';
+                    grid.appendChild(img);
+                });
+            }
+
+            document.title = (ev.title || 'Evento') + ' · Orbiventt';
+            show('eventPreview');
+
+            // App actions — event-flavored copy. The limited preview additionally
+            // shows the private-event conversion card above the CTAs.
+            if (limited) {
+                show('evPrivateNote');
+                el('fallbackTitle').textContent = '¿Quieres ver todo el evento?';
+                el('fallback').querySelector('.card-sub').textContent =
+                    'Descarga Orbiventt para ver la ubicación, los asistentes y participar.';
+            } else {
+                el('fallbackTitle').textContent = '¿Quieres unirte?';
+                el('fallback').querySelector('.card-sub').textContent =
+                    'Descarga Orbiventt para unirte, comentar y ver quién asiste.';
+            }
+            el('openApp').setAttribute('href', deepLink);
+            show('fallback');
+            show('actions');
+        }
+
+        // First path segment of a storage path ({uploaderId}/...) or null.
+        // Used only to compare image uploader vs. organizer for gallery ordering.
+        function firstPathSeg(path) {
+            if (!path) return null;
+            var s = String(path).replace(/^\/+/, '').split('/')[0];
+            return s || null;
+        }
+
+        // ── Gallery ordering: organizer images first (BEST-EFFORT) ───────────
+        //
+        // BACKEND LIMITATION (cannot be fixed here — no backend/RPC/schema changes
+        // in this sprint): get_public_event_preview returns only the 6 OLDEST
+        // non-cover photos (`ORDER BY created_at ASC LIMIT 6`). If the organizer
+        // uploaded after 6+ other photos already existed, their images are NOT in
+        // the payload at all — so this reordering is BEST-EFFORT: it can only
+        // promote organizer images that are already present in the returned set.
+        //
+        // FULL GUARANTEE requires a backend change — rank organizer uploads in the
+        // RPC's ORDER BY *before* the LIMIT 6 — explicitly OUT OF SCOPE here and
+        // tracked for a future sprint.
+        //
+        // COVER: the is_cover image is selected and rendered separately (evCover)
+        // and is NOT part of this gallery — it must remain untouched.
+        //
+        // Detection is layered by CONFIDENCE and is EXTENSIBLE: if the payload ever
+        // gains explicit per-image ownership metadata (a flag, role, or uploader
+        // id), it is honored ahead of the path-derived heuristic with NO call-site
+        // change. Today only the heuristic (tier 4) is available.
+        function isOrganizerImage(item, organizerId) {
+            if (!item) return false;
+            // Tier 1 — explicit organizer flag (future payload field).
+            if (item.is_organizer === true) return true;
+            // Tier 2 — explicit uploader role / source (future payload field).
+            var role = item.uploader_role || item.source;
+            if (role === 'organizer' || role === 'creator' || role === 'owner') return true;
+            // Tier 3 — explicit uploader/owner id (future payload field).
+            if (organizerId && (item.uploader_id === organizerId || item.owner_id === organizerId)) return true;
+            // Tier 4 — heuristic (today): event-photo paths are {uploaderId}/...,
+            // a UUID already public in the image URL; compared for ordering only,
+            // never displayed. Exposes nothing new.
+            if (organizerId && firstPathSeg(item.storage_path) === organizerId) return true;
+            return false;
+        }
+
+        // Returns at most 6 gallery items with organizer images first. STABLE:
+        // ties keep the backend order (created_at ASC), so when no organizer
+        // metadata is resolvable the original order is preserved exactly. Safe on
+        // null/undefined/empty input. The max-6 layout rule is unchanged.
+        function orderGalleryOrganizerFirst(gallery, organizerId) {
+            return (gallery || [])
+                .map(function (item, i) {
+                    return { item: item, i: i, org: isOrganizerImage(item, organizerId) };
+                })
+                .sort(function (a, b) {
+                    if (a.org !== b.org) return a.org ? -1 : 1; // organizer first
+                    return a.i - b.i;                           // else preserve order
+                })
+                .slice(0, 6)
+                .map(function (x) { return x.item; });
+        }
+
+        // Deterministic event status. Cancelled always wins; otherwise derive
+        // from `now` vs. the timestamps. Any missing/invalid date → 'upcoming'
+        // (never throws). Returns: 'upcoming' | 'live' | 'finished' | 'cancelled'.
+        function getEventStatus(now, startsAt, endsAt, isCancelled) {
+            if (isCancelled === true) return 'cancelled';
+            if (!startsAt || !endsAt) return 'upcoming';
+            var t     = (now instanceof Date ? now : new Date(now)).getTime();
+            var start = new Date(startsAt).getTime();
+            var end   = new Date(endsAt).getTime();
+            if (isNaN(t) || isNaN(start) || isNaN(end)) return 'upcoming';
+            if (t < start) return 'upcoming';
+            if (t <= end)  return 'live';
+            return 'finished';
+        }
+
+        function formatWhen(startsAt, endsAt) {
+            if (!startsAt) return '';
+            try {
+                var s = new Date(startsAt);
+                var dateStr = s.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+                var timeStr = s.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+                var out = '📅 ' + dateStr + ' · ' + timeStr;
+                if (endsAt) {
+                    var e = new Date(endsAt);
+                    if (e.toDateString() === s.toDateString()) {
+                        out += '–' + e.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+                    }
+                }
+                return out;
+            } catch (_) { return ''; }
+        }
+
+        function redirectToApp(deepLink) {
+            var ua = navigator.userAgent || '';
+            var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
+
+            function revealFallback() {
+                hide('opening');
+                show('fallback');
+                show('actions');
+            }
+
+            if (!isMobile) { revealFallback(); return; }
+
+            setTimeout(function () { window.location = deepLink; }, 400);
+            setTimeout(function () { if (!document.hidden) revealFallback(); }, 1800);
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) revealFallback();
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
