@@ -1,0 +1,38 @@
+name: Deploy static site to Pages
+
+# Reliable GitHub Actions Pages deploy (replaces the flaky legacy Jekyll
+# builder, which repeatedly errored/wedged on this repo). Serves the repo
+# root verbatim — no Jekyll. Same public URL: cosioyair.github.io/orbiventt-legal/
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact (repo root)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
