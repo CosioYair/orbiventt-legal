@@ -22,8 +22,15 @@
         .card li { margin-bottom: 0.35rem; }
         .email-link { color: var(--primary); text-decoration: none; font-weight: 600; }
         .email-link:hover { text-decoration: underline; }
-        .btn { display: inline-block; margin-top: 1rem; padding: 0.8rem 1.4rem; background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; border-radius: 10px; }
-        .btn:hover { opacity: 0.92; }
+        /* Primary CTA — approved Orbiventt premium treatment, matched to the
+           event-preview page (#openApp in 404.html): blue->purple gradient,
+           glass border, outer + inner glow, hover lift. Shared by every button
+           on this page; inline text links (.back, .email-link, legal links) are
+           unaffected. Geometry (inline-block, padding, radius) is kept as-is so
+           the page layout does not change. */
+        .btn { display: inline-block; margin-top: 1rem; padding: 0.8rem 1.4rem; background: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%); color: #fff; text-decoration: none; font-weight: 600; font-size: 0.95rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.16); box-shadow: 0 8px 28px rgba(84, 60, 232, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 20px rgba(140, 165, 255, 0.20); transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease; }
+        .btn:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 34px rgba(96, 70, 240, 0.55), 0 3px 9px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 0 24px rgba(150, 175, 255, 0.26); }
+        .btn:active { transform: translateY(0); filter: brightness(1.02); }
         .response-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.85rem; }
         details { border-top: 1px solid var(--border); }
         details:first-of-type { border-top: none; }
