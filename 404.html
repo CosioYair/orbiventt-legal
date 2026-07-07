@@ -37,7 +37,7 @@
            "Ir al inicio" .btn are not affected. box-sizing:border-box keeps the
            1px border from altering the button's size. */
         #openApp.btn {
-            background: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%);
+            background: linear-gradient(100deg, #8A18EA 0%, #A522EF 27%, #BD2AF3 50%, #D533F7 74%, #EF3CFB 100%);
             border: 1px solid rgba(255, 255, 255, 0.16);
             box-shadow:
                 0 8px 28px rgba(84, 60, 232, 0.45),
@@ -175,9 +175,10 @@
 
         <div id="actions" class="hidden">
             <a id="openApp" class="btn" href="#">Abrir en Orbiventt</a>
-            <a id="playStore" class="btn secondary"
-               href="https://play.google.com/store/apps/details?id=com.vyvent.mobile"
-               target="_blank" rel="noopener">Descargar Orbiventt</a>
+            <!-- Store CTA(s) are injected by renderStoreButtons() based on the
+                 visitor's platform: Google Play on Android, App Store/TestFlight
+                 on iOS, both on desktop. iOS is never sent to Google Play. -->
+            <div id="storeActions"></div>
         </div>
 
         <div id="notFound" class="card hidden">
@@ -204,12 +205,44 @@
         var SUPA_URL = 'https://lehwxjbjlehsdkqxlzrb.supabase.co';
         var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlaHd4amJqbGVoc2RrcXhsenJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDAxMjcsImV4cCI6MjA5MDcxNjEyN30.Twvct9R8Pj5Bph7KkuqB2ElegYhiVCEz_mW_rlWAFrk';
 
+        // ── App distribution config (single source of truth) ─────────────────
+        // The ONE place store links live. iOS ships via TestFlight only right
+        // now; the public App Store URL does not exist yet. Fill these in as
+        // they become available — the CTAs light up automatically, no other
+        // edits needed:
+        //   • APP_STORE_URL  → paste once the app is live on the App Store,
+        //                       e.g. 'https://apps.apple.com/app/id0000000000'
+        //   • TESTFLIGHT_URL → paste the public TestFlight invite link to expose
+        //                       the iOS beta CTA, e.g.
+        //                       'https://testflight.apple.com/join/XXXXXXXX'
+        // Precedence on iOS: App Store first, then TestFlight, else an explicit
+        // "beta by invitation" note (never a Google Play link).
+        var STORE = {
+            PLAY_STORE_URL: 'https://play.google.com/store/apps/details?id=com.vyvent.mobile',
+            APP_STORE_URL: null,   // TODO(ios-launch): set when public on the App Store
+            TESTFLIGHT_URL: null   // TODO(ios-launch): set to the public TestFlight invite link
+        };
+
+        // ── Platform detection ───────────────────────────────────────────────
+        // iPadOS 13+ masquerades as desktop Safari ("Macintosh"); the touch
+        // probe re-classifies it as iOS so iPad users still get iOS CTAs.
+        var UA = navigator.userAgent || '';
+        var IS_IOS = /iPhone|iPad|iPod/i.test(UA) ||
+                     (/Macintosh/i.test(UA) && typeof document !== 'undefined' && 'ontouchend' in document);
+        var IS_ANDROID = /Android/i.test(UA);
+        var IS_MOBILE = IS_IOS || IS_ANDROID;
+
         var BASE = '/orbiventt-legal/';
         var path = window.location.pathname;
 
         function show(id) { document.getElementById(id).classList.remove('hidden'); }
         function hide(id) { document.getElementById(id).classList.add('hidden'); }
         function el(id) { return document.getElementById(id); }
+
+        // Pre-populate the platform-correct store CTA(s) so every path that
+        // reveals #actions (previews, protected stubs, redirect fallback) shows
+        // the right buttons without each call site knowing about platforms.
+        renderStoreButtons();
 
         // /orbiventt-legal/<kind>/<id>[/chat][/]
         var re = new RegExp('^' + BASE.replace(/\//g, '\\/') + '(e|u|p)\\/([^\\/\\?#]+)(\\/chat)?\\/?$');
@@ -291,6 +324,50 @@
             if (!p) return null;
             if (/^https?:\/\//i.test(p)) return p;
             return SUPA_URL + '/storage/v1/object/public/' + bucket + '/' + String(p).replace(/^\/+/, '');
+        }
+
+        // Build one store <a> button (secondary style, opens in a new tab).
+        function storeButton(href, label) {
+            var a = document.createElement('a');
+            a.className = 'btn secondary';
+            a.href = href;
+            a.target = '_blank';
+            a.rel = 'noopener';
+            a.textContent = label;
+            return a;
+        }
+
+        // The iOS download CTA. App Store link wins if set; otherwise the public
+        // TestFlight invite; otherwise an explicit "beta by invitation" note with
+        // a support mailto. It NEVER falls back to Google Play.
+        function iosCta() {
+            if (STORE.APP_STORE_URL) return storeButton(STORE.APP_STORE_URL, 'Descargar en App Store');
+            if (STORE.TESTFLIGHT_URL) return storeButton(STORE.TESTFLIGHT_URL, 'Probar la beta (TestFlight)');
+            var note = document.createElement('div');
+            note.className = 'card-sub';
+            note.style.marginTop = '0.35rem';
+            note.innerHTML = 'La app para iPhone está disponible en beta por invitación (TestFlight). ' +
+                'Escríbenos a <a href="mailto:vyvent.legal@gmail.com?subject=Acceso%20TestFlight%20Orbiventt%20(iOS)" ' +
+                'style="color:var(--accent-cyan);text-decoration:underline">soporte</a> para recibir tu invitación.';
+            return note;
+        }
+
+        // Populates #storeActions for the visitor's platform. iOS → App Store /
+        // TestFlight only; Android → Google Play (unchanged); desktop → both.
+        // Runs once at init; platform never changes within a page view.
+        function renderStoreButtons() {
+            var c = el('storeActions');
+            if (!c) return;
+            c.innerHTML = '';
+            if (IS_IOS) {
+                c.appendChild(iosCta());
+            } else if (IS_ANDROID) {
+                c.appendChild(storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play'));
+            } else {
+                // Desktop / unknown → offer both platforms.
+                c.appendChild(storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play'));
+                c.appendChild(iosCta());
+            }
         }
 
         function setupAppActions(deepLink) {
@@ -693,16 +770,16 @@
         }
 
         function redirectToApp(deepLink) {
-            var ua = navigator.userAgent || '';
-            var isMobile = /Android|iPhone|iPad|iPod/i.test(ua);
-
             function revealFallback() {
                 hide('opening');
                 show('fallback');
                 show('actions');
             }
 
-            if (!isMobile) { revealFallback(); return; }
+            // Desktop → no scheme redirect, just show the preview/fallback with
+            // both store options. Mobile (iOS + Android alike) → try the custom
+            // scheme first, then reveal the platform-correct store fallback.
+            if (!IS_MOBILE) { revealFallback(); return; }
 
             setTimeout(function () { window.location = deepLink; }, 400);
             setTimeout(function () { if (!document.hidden) revealFallback(); }, 1800);
