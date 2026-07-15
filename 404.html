@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' https://lehwxjbjlehsdkqxlzrb.supabase.co; font-src 'self'; connect-src https://lehwxjbjlehsdkqxlzrb.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/orbiventt-legal/assets/favicon.png">
     <title>Orbiventt</title>
@@ -199,9 +201,15 @@
     <script>
     (function () {
         // ── Supabase config ──────────────────────────────────────────────────
-        // Anon key is a publishable JWT (RLS-protected, ships in the app bundle
-        // by design). MUST point at the SAME project the production app uses.
-        // TODO(confirm): verify this is the production project before launch.
+        // The anon key below is a PUBLISHABLE JWT (role=anon). It is meant to
+        // ship in client code; it is not a secret and must not be removed or
+        // rotated merely because it is visible. All safety comes from backend
+        // authorization (RLS + the SECURITY of the three preview RPCs). This URL
+        // MUST point at the SAME Supabase project the production app uses.
+        // PRE-LAUNCH VERIFICATION (not confirmable from this repo alone): confirm
+        // in the Supabase dashboard that project ref `lehwxjbjlehsdkqxlzrb` is the
+        // production project, and run docs/security/prod-readonly-verification.sql
+        // to validate RLS/grants/RPC exposure before connecting orbiventt.com.
         var SUPA_URL = 'https://lehwxjbjlehsdkqxlzrb.supabase.co';
         var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlaHd4amJqbGVoc2RrcXhsenJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDAxMjcsImV4cCI6MjA5MDcxNjEyN30.Twvct9R8Pj5Bph7KkuqB2ElegYhiVCEz_mW_rlWAFrk';
 
@@ -320,10 +328,67 @@
 
         // ── Helpers ──────────────────────────────────────────────────────────
 
+        // Build a Supabase public Storage URL — FAIL CLOSED. Returns null for
+        // anything that isn't a plain relative object path under a validly named
+        // bucket that resolves to the exact Supabase project origin. This is the
+        // single trusted source of image URLs: rejects absolute/protocol-relative/
+        // cross-origin inputs, parent-directory traversal, control characters, and
+        // any character (quote, angle bracket, backtick, backslash) that could
+        // break out of an HTML attribute or a CSS url(). Every segment is
+        // percent-encoded and the result is rebuilt + origin-checked with the URL
+        // API, so the returned string is only ever a safe same-project URL. The
+        // value is assigned exclusively via img.src / a validated background —
+        // never via innerHTML.
         function publicUrl(bucket, p) {
-            if (!p) return null;
-            if (/^https?:\/\//i.test(p)) return p;
-            return SUPA_URL + '/storage/v1/object/public/' + bucket + '/' + String(p).replace(/^\/+/, '');
+            if (typeof bucket !== 'string' || typeof p !== 'string') return null;
+
+            // Bucket must be a legitimate Supabase bucket name (lowercase, digits,
+            // hyphens). This alone rejects any separator/quote/scheme character.
+            if (!/^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/.test(bucket)) return null;
+
+            // Reject protocol-relative / abnormal leading-slash inputs (//host)
+            // before slash-normalization would hide them.
+            if (/^\/\//.test(p)) return null;
+            var path = p.replace(/^\/+/, '');
+            if (path === '') return null;
+            // Reject control chars and characters that can break an attribute or CSS.
+            if (/[\x00-\x1f\x7f"'`<>\\]/.test(path)) return null;
+            // Reject any scheme (http:, https:, javascript:, data:, blob:, …).
+            if (/^[a-z][a-z0-9+.-]*:/i.test(path)) return null;
+            // Reject protocol-relative and empty path segments.
+            if (path.indexOf('//') !== -1) return null;
+            // Reject parent-directory / current-directory traversal segments.
+            if (path.split('/').some(function (seg) { return seg === '..' || seg === '.'; })) return null;
+
+            try {
+                var encoded = path.split('/').map(encodeURIComponent).join('/');
+                var url = new URL('/storage/v1/object/public/' + bucket + '/' + encoded, SUPA_URL);
+                // Confirm the final origin is exactly the expected Supabase project.
+                if (url.origin !== new URL(SUPA_URL).origin) return null;
+                return url.href;
+            } catch (_) {
+                return null;
+            }
+        }
+
+        // Safe <img> from a validated Storage URL. Never uses innerHTML, so a
+        // malformed URL cannot create event-handler attributes or extra markup.
+        // Returns null when url is falsy so callers keep their text fallback.
+        function imageEl(url, alt) {
+            if (!url) return null;
+            var img = document.createElement('img');
+            img.src = url;                 // validated by publicUrl(); DOM assignment
+            img.setAttribute('alt', alt || '');
+            return img;
+        }
+
+        // Assign a validated Storage URL as a CSS background. `url` comes from
+        // publicUrl(), which guarantees no quotes/backslashes/control chars and a
+        // fully percent-encoded path, so the double-quoted url() cannot be
+        // terminated or escaped. No-op on falsy url (preserves the CSS fallback).
+        function setCoverBackground(node, url) {
+            if (!url) return;
+            node.style.backgroundImage = 'url("' + url + '")';
         }
 
         // Build one store <a> button (secondary style, opens in a new tab).
@@ -347,7 +412,7 @@
             note.className = 'card-sub';
             note.style.marginTop = '0.35rem';
             note.innerHTML = 'La app para iPhone está disponible en beta por invitación (TestFlight). ' +
-                'Escríbenos a <a href="mailto:vyvent.legal@gmail.com?subject=Acceso%20TestFlight%20Orbiventt%20(iOS)" ' +
+                'Escríbenos a <a href="mailto:orbiventt@gmail.com?subject=Acceso%20TestFlight%20Orbiventt%20(iOS)" ' +
                 'style="color:var(--accent-cyan);text-decoration:underline">soporte</a> para recibir tu invitación.';
             return note;
         }
@@ -413,13 +478,16 @@
                 var pr = data.provider;
 
                 // Cover
-                var coverUrl = publicUrl('avatars', pr.cover_path);
-                if (coverUrl) el('pvCover').style.backgroundImage = 'url("' + coverUrl + '")';
+                setCoverBackground(el('pvCover'), publicUrl('avatars', pr.cover_path));
 
                 // Avatar
-                var avatarUrl = publicUrl('avatars', pr.avatar_path);
-                if (avatarUrl) {
-                    el('pvAvatar').innerHTML = '<img src="' + avatarUrl + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover">';
+                var avatarImg = imageEl(publicUrl('avatars', pr.avatar_path), '');
+                if (avatarImg) {
+                    avatarImg.style.width = '100%';
+                    avatarImg.style.height = '100%';
+                    avatarImg.style.borderRadius = '50%';
+                    avatarImg.style.objectFit = 'cover';
+                    el('pvAvatar').replaceChildren(avatarImg);
                 } else {
                     el('pvAvatar').textContent = (pr.display_name || '?').trim().charAt(0).toUpperCase();
                 }
@@ -577,8 +645,7 @@
         // shows an exact venue: both previews only ever receive rounded coords.
         function renderEventCard(ev, deepLink, limited) {
             // Cover
-            var coverUrl = publicUrl('event-photos', ev.cover_path);
-            if (coverUrl) el('evCover').style.backgroundImage = 'url("' + coverUrl + '")';
+            setCoverBackground(el('evCover'), publicUrl('event-photos', ev.cover_path));
 
             // Derived status badge (deterministic, frontend-only — cancelled
             // overrides everything, then time-based state vs. now).
@@ -604,10 +671,10 @@
             // Organizer (public profile identity only — no PII)
             if (ev.organizer) {
                 var org = el('evOrganizer');
-                var orgAvatar = publicUrl('avatars', ev.organizer.avatar_path);
                 var orgName = ev.organizer.display_name || ev.organizer.username || '';
-                if (orgAvatar) {
-                    org.innerHTML = '<img src="' + orgAvatar + '" alt="">';
+                var orgImg = imageEl(publicUrl('avatars', ev.organizer.avatar_path), '');
+                if (orgImg) {
+                    org.appendChild(orgImg);
                 } else {
                     var fb = document.createElement('div');
                     fb.className = 'ev-org-fallback';
