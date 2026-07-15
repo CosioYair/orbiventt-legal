@@ -2,7 +2,8 @@ name: Deploy static site to Pages
 
 # Reliable GitHub Actions Pages deploy (replaces the flaky legacy Jekyll
 # builder, which repeatedly errored/wedged on this repo). Serves the repo
-# root verbatim — no Jekyll. Same public URL: cosioyair.github.io/orbiventt-legal/
+# root verbatim — no Jekyll. Public URL: https://orbiventt.com/ (custom domain
+# via CNAME; legacy cosioyair.github.io/orbiventt-legal/ redirects there).
 
 on:
   push:

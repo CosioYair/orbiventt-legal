@@ -1,6 +1,7 @@
 # Sala de prensa — Orbiventt
 
-Public URL: **https://cosioyair.github.io/orbiventt-legal/prensa/**
+Public URL: **https://orbiventt.com/prensa/**
+(legacy `https://cosioyair.github.io/orbiventt-legal/prensa/` now 301-redirects here)
 
 ## Source of truth
 
@@ -55,5 +56,6 @@ these two files.
 - Social profiles are mentioned by platform name only (per `post.txt`); no
   profile URLs existed in the project, so none were invented.
 - `sitemap.xml` (repo root) lists the page; submit it in Google Search Console
-  for indexing (a project-page `robots.txt` would be ignored by crawlers, so
-  none was added).
+  for indexing. Now that the site is served from the root of `orbiventt.com`,
+  a root `robots.txt` WOULD be honored (it wasn't as a project page) — none is
+  strictly needed, but one can be added later to point crawlers at the sitemap.

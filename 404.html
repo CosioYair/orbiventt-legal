@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' https://lehwxjbjlehsdkqxlzrb.supabase.co; font-src 'self'; connect-src https://lehwxjbjlehsdkqxlzrb.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'none'; form-action 'none'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="/orbiventt-legal/assets/favicon.png">
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
     <title>Orbiventt</title>
     <!-- SEO is intentionally deferred (external-invitations.md §10). This page
          is client-rendered and served with a 404 status, so it stays noindex
@@ -113,7 +113,7 @@
 </head>
 <body>
     <div class="container">
-        <img class="logo" src="/orbiventt-legal/assets/orbiventt-logo.png" alt="Orbiventt">
+        <img class="logo" src="/assets/orbiventt-logo.png" alt="Orbiventt">
         <p class="tagline" id="tagline">Descubre y crea eventos cerca de ti</p>
 
         <div id="opening" class="card hidden">
@@ -189,12 +189,12 @@
         </div>
 
         <div id="genericActions" class="hidden">
-            <a class="btn" href="/orbiventt-legal/">Ir al inicio</a>
+            <a class="btn" href="/">Ir al inicio</a>
         </div>
 
         <footer>
             &copy; 2026 Orbiventt &middot;
-            <a href="/orbiventt-legal/">Información legal</a>
+            <a href="/">Información legal</a>
         </footer>
     </div>
 
@@ -209,7 +209,7 @@
         // PRE-LAUNCH VERIFICATION (not confirmable from this repo alone): confirm
         // in the Supabase dashboard that project ref `lehwxjbjlehsdkqxlzrb` is the
         // production project, and run docs/security/prod-readonly-verification.sql
-        // to validate RLS/grants/RPC exposure before connecting orbiventt.com.
+        // to validate RLS/grants/RPC exposure (gate for the orbiventt.com launch).
         var SUPA_URL = 'https://lehwxjbjlehsdkqxlzrb.supabase.co';
         var SUPA_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxlaHd4amJqbGVoc2RrcXhsenJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNDAxMjcsImV4cCI6MjA5MDcxNjEyN30.Twvct9R8Pj5Bph7KkuqB2ElegYhiVCEz_mW_rlWAFrk';
 
@@ -240,7 +240,6 @@
         var IS_ANDROID = /Android/i.test(UA);
         var IS_MOBILE = IS_IOS || IS_ANDROID;
 
-        var BASE = '/orbiventt-legal/';
         var path = window.location.pathname;
 
         function show(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -252,8 +251,10 @@
         // the right buttons without each call site knowing about platforms.
         renderStoreButtons();
 
-        // /orbiventt-legal/<kind>/<id>[/chat][/]
-        var re = new RegExp('^' + BASE.replace(/\//g, '\\/') + '(e|u|p)\\/([^\\/\\?#]+)(\\/chat)?\\/?$');
+        // /<kind>/<id>[/chat][/] — served from the domain root on orbiventt.com.
+        // The optional legacy /orbiventt-legal prefix keeps old shared
+        // github.io links working even if a proxy ever forwards the full path.
+        var re = new RegExp('^(?:\\/orbiventt-legal)?\\/(e|u|p)\\/([^\\/\\?#]+)(\\/chat)?\\/?$');
         var match = re.exec(path);
 
         if (!match) {
