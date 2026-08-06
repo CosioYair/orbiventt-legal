@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Dos argollas entrelazadas sobre un fondo de lino">
+  <defs>
+    <linearGradient id="s4bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7F1E9"/>
+      <stop offset="100%" stop-color="#E9DDCD"/>
+    </linearGradient>
+    <linearGradient id="s4gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E3C88E"/>
+      <stop offset="45%" stop-color="#B08D57"/>
+      <stop offset="100%" stop-color="#D9BC85"/>
+    </linearGradient>
+    <!-- Linen weave: a coarse cross-hatch at low opacity. -->
+    <pattern id="s4linen" width="14" height="14" patternUnits="userSpaceOnUse">
+      <rect width="14" height="14" fill="none"/>
+      <path d="M0 7 H14 M7 0 V14" stroke="#C7B49B" stroke-width="1" opacity="0.35"/>
+    </pattern>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s4bg)"/>
+  <rect width="800" height="1000" fill="url(#s4linen)"/>
+
+  <!-- Soft fabric folds. -->
+  <g fill="none" stroke="#D6C4AC" stroke-width="10" opacity="0.5" stroke-linecap="round">
+    <path d="M-40 220 C 200 160 560 300 840 210"/>
+    <path d="M-40 810 C 220 880 540 720 840 800"/>
+  </g>
+
+  <!-- Cast shadow, then the two bands. -->
+  <ellipse cx="400" cy="640" rx="200" ry="34" fill="#C9B79E" opacity="0.35"/>
+  <g fill="none" stroke="url(#s4gold)" stroke-width="26">
+    <circle cx="334" cy="500" r="128"/>
+    <circle cx="470" cy="560" r="112"/>
+  </g>
+  <g fill="none" stroke="#FFF6E4" stroke-width="4" opacity="0.7">
+    <path d="M334 372 a 128 128 0 0 1 96 44"/>
+    <path d="M470 448 a 112 112 0 0 1 82 40"/>
+  </g>
+
+  <!-- A sprig of olive resting alongside. -->
+  <g transform="translate(196 784) rotate(-14)">
+    <path d="M0 0 C 90 -22 200 -34 300 -26" fill="none" stroke="#9CA890" stroke-width="5" stroke-linecap="round"/>
+    <g fill="#A9B49B">
+      <path d="M60 -6 C 74 -26 106 -30 124 -14 C 106 3 74 14 60 -6 Z" transform="rotate(-24 92 -10)"/>
+      <path d="M130 -16 C 144 -36 176 -40 194 -24 C 176 -7 144 4 130 -16 Z" transform="rotate(20 162 -20)"/>
+      <path d="M200 -26 C 214 -46 246 -50 264 -34 C 246 -17 214 -6 200 -26 Z" transform="rotate(-18 232 -30)"/>
+    </g>
+  </g>
+</svg>

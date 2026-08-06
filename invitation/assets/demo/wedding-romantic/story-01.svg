@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Dos copas brindando bajo una guirnalda de luces">
+  <defs>
+    <linearGradient id="s1bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F3E0D4"/>
+      <stop offset="60%" stop-color="#EBCDBC"/>
+      <stop offset="100%" stop-color="#D9AF98"/>
+    </linearGradient>
+    <radialGradient id="s1bulb" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF6E2"/>
+      <stop offset="60%" stop-color="#FFE2A8" stop-opacity="0.75"/>
+      <stop offset="100%" stop-color="#FFD98F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s1bg)"/>
+
+  <!-- String lights on a catenary. -->
+  <path d="M-20 210 Q 400 400 820 190" fill="none" stroke="#8A6A55" stroke-width="3" opacity="0.5"/>
+  <g>
+    <circle cx="80" cy="266" r="34" fill="url(#s1bulb)"/><circle cx="80" cy="266" r="9" fill="#FFF3D6"/>
+    <circle cx="200" cy="316" r="34" fill="url(#s1bulb)"/><circle cx="200" cy="316" r="9" fill="#FFF3D6"/>
+    <circle cx="325" cy="350" r="34" fill="url(#s1bulb)"/><circle cx="325" cy="350" r="9" fill="#FFF3D6"/>
+    <circle cx="455" cy="352" r="34" fill="url(#s1bulb)"/><circle cx="455" cy="352" r="9" fill="#FFF3D6"/>
+    <circle cx="580" cy="322" r="34" fill="url(#s1bulb)"/><circle cx="580" cy="322" r="9" fill="#FFF3D6"/>
+    <circle cx="700" cy="266" r="34" fill="url(#s1bulb)"/><circle cx="700" cy="266" r="9" fill="#FFF3D6"/>
+  </g>
+
+  <!-- Two coupe glasses meeting. -->
+  <g fill="none" stroke="#5A4436" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <path d="M262 560 A 96 78 0 0 0 454 560 Z" transform="rotate(-14 358 560)"/>
+    <path d="M358 638 L 344 762" transform="rotate(-14 358 560)"/>
+    <path d="M300 770 L 392 754" transform="rotate(-14 358 560)"/>
+
+    <path d="M346 560 A 96 78 0 0 0 538 560 Z" transform="rotate(14 442 560)"/>
+    <path d="M442 638 L 456 762" transform="rotate(14 442 560)"/>
+    <path d="M408 754 L 500 770" transform="rotate(14 442 560)"/>
+  </g>
+
+  <!-- Wine. -->
+  <g fill="#C08A78" opacity="0.7">
+    <path d="M276 566 A 96 78 0 0 0 440 566 Z" transform="rotate(-14 358 560)"/>
+    <path d="M360 566 A 96 78 0 0 0 524 566 Z" transform="rotate(14 442 560)"/>
+  </g>
+
+  <!-- A few sparks at the point of contact. -->
+  <g fill="#FFF3D6" opacity="0.9">
+    <circle cx="400" cy="512" r="6"/>
+    <circle cx="372" cy="486" r="4"/>
+    <circle cx="428" cy="490" r="4"/>
+    <circle cx="400" cy="462" r="3"/>
+  </g>
+
+  <rect y="880" width="800" height="120" fill="#C79C84" opacity="0.35"/>
+</svg>

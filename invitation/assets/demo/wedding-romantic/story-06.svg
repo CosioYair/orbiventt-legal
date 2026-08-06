@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Cielo nocturno con papel picado y estrellas">
+  <defs>
+    <linearGradient id="s6sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#241C33"/>
+      <stop offset="55%" stop-color="#3B2C4A"/>
+      <stop offset="100%" stop-color="#6A4A54"/>
+    </linearGradient>
+    <radialGradient id="s6moon" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF6DF"/>
+      <stop offset="55%" stop-color="#FFF0CC" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FFEAC0" stop-opacity="0"/>
+    </radialGradient>
+    <!-- One papel-picado flag: a rectangle with cut-outs punched through. -->
+    <g id="s6flag">
+      <path d="M-52 0 L52 0 L52 118 L0 152 L-52 118 Z"/>
+      <g fill="#241C33" opacity="0.55">
+        <circle cx="0" cy="46" r="17"/>
+        <circle cx="-28" cy="82" r="9"/>
+        <circle cx="28" cy="82" r="9"/>
+        <circle cx="0" cy="100" r="7"/>
+        <rect x="-40" y="14" width="12" height="12" rx="3"/>
+        <rect x="28" y="14" width="12" height="12" rx="3"/>
+      </g>
+    </g>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s6sky)"/>
+
+  <circle cx="640" cy="200" r="150" fill="url(#s6moon)"/>
+  <circle cx="640" cy="200" r="52" fill="#FFF6DF" opacity="0.9"/>
+
+  <g fill="#FFF3D8">
+    <circle cx="92" cy="128" r="3.5" opacity="0.9"/>
+    <circle cx="188" cy="72" r="2.5" opacity="0.7"/>
+    <circle cx="268" cy="176" r="3" opacity="0.8"/>
+    <circle cx="404" cy="96" r="2" opacity="0.6"/>
+    <circle cx="470" cy="212" r="3.5" opacity="0.85"/>
+    <circle cx="120" cy="286" r="2.5" opacity="0.7"/>
+    <circle cx="330" cy="300" r="2" opacity="0.55"/>
+    <circle cx="720" cy="420" r="2.5" opacity="0.6"/>
+    <circle cx="60" cy="430" r="3" opacity="0.7"/>
+    <circle cx="560" cy="360" r="2" opacity="0.5"/>
+  </g>
+
+  <!-- Two strands of papel picado. -->
+  <path d="M-30 470 Q 400 596 830 452" fill="none" stroke="#E9D5CB" stroke-width="3" opacity="0.7"/>
+  <g>
+    <use href="#s6flag" transform="translate(70 500) rotate(-9)" fill="#E7A4A0" opacity="0.92"/>
+    <use href="#s6flag" transform="translate(210 548) rotate(-5)" fill="#F0C98C" opacity="0.92"/>
+    <use href="#s6flag" transform="translate(350 578) rotate(-1)" fill="#A9C6C0" opacity="0.92"/>
+    <use href="#s6flag" transform="translate(490 574) rotate(3)" fill="#E9BFD0" opacity="0.92"/>
+    <use href="#s6flag" transform="translate(630 534) rotate(7)" fill="#F2DCA6" opacity="0.92"/>
+    <use href="#s6flag" transform="translate(760 486) rotate(11)" fill="#B7B3D8" opacity="0.92"/>
+  </g>
+
+  <path d="M-30 706 Q 400 812 830 690" fill="none" stroke="#E9D5CB" stroke-width="3" opacity="0.55"/>
+  <g opacity="0.8">
+    <use href="#s6flag" transform="translate(20 730) rotate(-7) scale(0.8)" fill="#F0C98C"/>
+    <use href="#s6flag" transform="translate(160 774) rotate(-4) scale(0.8)" fill="#A9C6C0"/>
+    <use href="#s6flag" transform="translate(300 798) rotate(-1) scale(0.8)" fill="#E7A4A0"/>
+    <use href="#s6flag" transform="translate(440 796) rotate(2) scale(0.8)" fill="#F2DCA6"/>
+    <use href="#s6flag" transform="translate(580 768) rotate(6) scale(0.8)" fill="#E9BFD0"/>
+    <use href="#s6flag" transform="translate(716 726) rotate(9) scale(0.8)" fill="#B7B3D8"/>
+  </g>
+
+  <!-- Rooftop line so the strands read as hung across a street. -->
+  <path d="M0 940 L120 940 L120 900 L260 900 L260 946 L470 946 L470 908 L640 908 L640 950 L800 950 L800 1000 L0 1000 Z" fill="#1B1526" opacity="0.85"/>
+</svg>

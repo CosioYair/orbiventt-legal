@@ -1,0 +1,679 @@
+/* TEMPLATE — wedding_editorial, version 1.
+ *
+ * "Editorial moderna": a magazine. Warm paper, near-black type, one restrained
+ * terracotta accent, and almost no ornament at all — the restraint IS the
+ * design. Its identity is carried by scale, alignment and whitespace:
+ *
+ *   · names set very large and tightly tracked, on a hard LEFT axis;
+ *   · small-caps metadata labels ("FECHA", "LUGAR") above their values;
+ *   · section headings left-aligned over a FULL-WIDTH hairline, numbered with
+ *     a counter rather than decorated;
+ *   · ceremony and reception read as two spreads, not two cards;
+ *   · guidelines are numbered notes in a single safe mobile column;
+ *   · the gallery is a photo essay whose first tile spans both columns;
+ *   · the closing is a colophon.
+ *
+ * SCOPE RULE: every rule below is scoped under `.tpl-wedding-editorial`, which
+ * main.js puts on <html> and the renderer puts on the invitation element. The
+ * only unscoped declarations are the custom-property overrides on `:root`,
+ * which exist to retheme the shared shell in css/base.css.
+ *
+ * ── CONTRAST STRATEGY ───────────────────────────────────────────────────────
+ * The trap in an editorial palette is the warm accent: it is the colour a
+ * designer wants for standfirsts, and at this warmth it is not a body colour.
+ * So the roles are separate tokens and never interchangeable.
+ *
+ * Measured against both grounds (#FCFBF8 white and #F5F2EC paper):
+ *
+ *   --inv-ink         #171717   16.9 : 1  /  15.6 : 1   names, headings, body
+ *   --inv-muted       #4A4844    8.6 : 1  /   7.9 : 1   supporting copy — AA
+ *   --inv-accent-ink  #8A5240    5.2 : 1  /   4.8 : 1   buttons, links, borders
+ *   --tpl-accent      #9A604B    4.2 : 1                LARGE display + rules
+ *   --tpl-rule        #D7D0C5    1.4 : 1                HAIRLINES ONLY
+ *
+ * `--tpl-rule` never carries text; it draws 1px lines. `--tpl-accent` is
+ * allowed on large display type and graphic marks only — anything a reader
+ * must read at body size, or press, uses ink, muted or accent-ink, all of
+ * which clear AA on both grounds.
+ *
+ * RESPONSIVE: mobile-first, single column throughout the phone range. Every
+ * display size is `clamp()`-bounded so the large type cannot clip at 320 px,
+ * and the multi-column spreads only appear from 48em. Nothing is sized with
+ * `100vw`, and the full-bleed band is a block child of a zero-padding parent.
+ *
+ * READING ORDER: the DOM order the shared renderer produces is never changed.
+ * The desktop composition uses column widths and alignment only — no `order`,
+ * no `grid-auto-flow: dense`, no absolute repositioning of content.
+ */
+
+:root.tpl-wedding-editorial {
+    --inv-bg: #FCFBF8;          /* blanco cálido */
+    --inv-surface: #F5F2EC;     /* papel */
+    --inv-ink: #171717;         /* casi negro */
+    --inv-muted: #4A4844;
+    --inv-accent: #9A604B;      /* terracota — display y trazos */
+    --inv-accent-ink: #8A5240;  /* terracota oscuro — texto y controles */
+    --inv-line: #D7D0C5;
+
+    --tpl-accent: #9A604B;
+    --tpl-rule: #D7D0C5;
+
+    --inv-radius: 0;            /* print has no rounded corners */
+    --inv-measure: 38rem;
+}
+
+:root.tpl-wedding-editorial body { background: var(--inv-bg); }
+
+.tpl-wedding-editorial ::selection { background: #E8DFD6; color: var(--inv-ink); }
+
+/* The whole page counts its own sections, so headings can be numbered without
+ * the renderer knowing anything about it. */
+.tpl-wedding-editorial .inv-invitation { counter-reset: inv-section; }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+/* A cover: the media is a band, the type sits BELOW it on paper rather than on
+ * top of the photograph. Nothing is ever set over an image without a
+ * guaranteed contrast layer, and here the simplest guarantee is not to. */
+.tpl-wedding-editorial .inv-hero {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    min-height: 88vh;
+    min-height: 88svh;
+    padding: 2.5rem 1.35rem 3rem;
+    overflow: hidden;
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-editorial .inv-hero__media { position: absolute; inset: 0; z-index: 0; }
+
+.tpl-wedding-editorial .inv-hero__art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+}
+
+/* An opaque paper foot: the lower half is solid, so the names are on paper and
+ * never over the picture. */
+.tpl-wedding-editorial .inv-hero__veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(252, 251, 248, 0) 0%,
+        rgba(252, 251, 248, 0) 34%,
+        rgba(252, 251, 248, 0.96) 52%,
+        var(--inv-bg) 62%,
+        var(--inv-bg) 100%
+    );
+}
+
+.tpl-wedding-editorial .inv-hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 34rem;
+    /* HARD LEFT: the editorial axis, and the first thing that separates this
+     * collection from the three centred ones. */
+    text-align: left;
+    margin-right: auto;
+}
+
+/* A small-caps metadata label, the magazine's standfirst device. */
+.tpl-wedding-editorial .inv-hero__eyebrow {
+    margin: 0 0 0.9rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--inv-ink);
+    display: inline-block;
+    color: var(--inv-ink);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-hero__names {
+    display: block;
+    margin: 0;
+    font-family: var(--inv-font-display);
+    font-weight: 400;
+    /* The largest type on any of the four designs, and bounded hard at the
+     * bottom so a long compound name still fits a 320 px column. */
+    font-size: clamp(2.5rem, 15vw, 5rem);
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    /* Only where the viewport genuinely requires it — headings this large must
+     * not be split mid-word on a comfortable screen. */
+    overflow-wrap: break-word;
+}
+
+/* The conjunction becomes a rule-and-mark, set on its own line. */
+.tpl-wedding-editorial .inv-hero__amp {
+    display: block;
+    margin: 0.35rem 0;
+    font-size: 0.26em;
+    letter-spacing: 0.3em;
+    color: var(--tpl-accent);
+}
+
+.tpl-wedding-editorial .inv-hero__flourish {
+    display: block;
+    width: 100%;
+    max-width: 12rem;
+    height: 2px;
+    margin: 1.5rem 0 1.1rem;
+    background: var(--inv-ink);
+}
+
+.tpl-wedding-editorial .inv-hero__date {
+    margin: 0 0 0.3rem;
+    color: var(--inv-ink);
+    font-size: 0.92rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-hero__place {
+    margin: 0;
+    color: var(--inv-muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+/* ── Section rhythm ─────────────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-section {
+    padding-top: 3.75rem;
+    padding-bottom: 3.75rem;
+}
+
+.tpl-wedding-editorial .inv-section--message,
+.tpl-wedding-editorial .inv-section--dressCode,
+.tpl-wedding-editorial .inv-section--gifts,
+.tpl-wedding-editorial .inv-section--closing {
+    background: var(--inv-surface);
+}
+
+/* LEFT-ALIGNED, NUMBERED, over a full-width hairline. The number is generated
+ * content on a counter, so it is decorative and never announced as text. */
+.tpl-wedding-editorial .inv-section__inner { text-align: left; }
+
+.tpl-wedding-editorial .inv-heading {
+    counter-increment: inv-section;
+    display: block;
+    margin: 0;
+    color: var(--inv-ink);
+    font-family: var(--inv-font-body);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-heading::before {
+    content: counter(inv-section, decimal-leading-zero);
+    margin-right: 0.9rem;
+    color: var(--tpl-accent);
+    font-variant-numeric: tabular-nums;
+}
+
+/* The rule spans the measure instead of being a centred device. */
+.tpl-wedding-editorial .inv-rule {
+    width: 100%;
+    height: 1px;
+    margin: 0.85rem 0 1.9rem;
+    background: var(--tpl-rule);
+    opacity: 1;
+}
+
+/* ── Message ────────────────────────────────────────────────────────────── */
+/* The opening paragraph is a standfirst: larger, tighter, near-black. */
+.tpl-wedding-editorial .inv-message__body {
+    color: var(--inv-ink);
+    font-size: 1.06rem;
+    line-height: 1.75;
+    text-wrap: pretty;
+}
+
+.tpl-wedding-editorial .inv-message__body:first-of-type {
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.25rem, 5.4vw, 1.5rem);
+    line-height: 1.44;
+    letter-spacing: -0.01em;
+}
+
+.tpl-wedding-editorial .inv-message__hosts {
+    margin-top: 2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--tpl-rule);
+    color: var(--inv-muted);
+    font-size: 0.86rem;
+    line-height: 1.7;
+}
+
+/* ── Countdown ──────────────────────────────────────────────────────────── */
+/* Ruled columns rather than boxes: hairlines between, nothing around. */
+.tpl-wedding-editorial .inv-countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--tpl-rule);
+    border-bottom: 1px solid var(--tpl-rule);
+}
+
+.tpl-wedding-editorial .inv-countdown__unit {
+    padding: 1rem 0.2rem;
+    text-align: left;
+    border-left: 1px solid var(--tpl-rule);
+}
+
+.tpl-wedding-editorial .inv-countdown__unit:first-child { border-left: 0; padding-left: 0; }
+
+.tpl-wedding-editorial .inv-countdown__value {
+    display: block;
+    font-family: var(--inv-font-display);
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(1.5rem, 8vw, 2.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-editorial .inv-countdown__label {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--inv-muted);
+    /* Fluid at the bottom end so "segundos" stops setting the min-content width
+     * of its column and the four tracks stay equal below ~360 px. */
+    font-size: clamp(0.52rem, 2.4vw, 0.62rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-countdown__done {
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.3rem, 6vw, 1.6rem);
+    color: var(--inv-ink);
+}
+
+/* ── Ceremony / Reception — two spreads ─────────────────────────────────── */
+.tpl-wedding-editorial .inv-place__when {
+    margin-bottom: 0.9rem;
+    color: var(--tpl-accent);
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-place__venue {
+    margin-bottom: 0.55rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.65rem, 8vw, 2.35rem);
+    line-height: 1.14;
+    letter-spacing: -0.02em;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    overflow-wrap: break-word;
+}
+
+.tpl-wedding-editorial .inv-place__address {
+    margin-bottom: 0.7rem;
+    color: var(--inv-muted);
+    font-size: 0.95rem;
+    line-height: 1.65;
+    /* Addresses are the one field that genuinely needs to break anywhere. */
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-editorial .inv-place__note {
+    margin-bottom: 1.6rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--tpl-accent);
+    color: var(--inv-muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.tpl-wedding-editorial .inv-place__actions { margin: 0; }
+
+/* ── Dress code ─────────────────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-dress__title {
+    margin-bottom: 0.9rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.5rem, 7vw, 2rem);
+    line-height: 1.16;
+    letter-spacing: -0.02em;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-editorial .inv-dress__description {
+    color: var(--inv-ink);
+    font-size: 1rem;
+    line-height: 1.72;
+}
+
+/* NUMBERED NOTES — a single safe column on mobile, ruled rather than boxed. */
+.tpl-wedding-editorial .inv-dress__guidelines {
+    margin: 1.75rem 0 0;
+    padding: 0;
+    /* The number is drawn on ::before, so it is never announced as content and
+     * the element stays a real <ul> for assistive technology. */
+    list-style: none;
+    display: grid;
+    gap: 0;
+    counter-reset: inv-note;
+    text-align: left;
+}
+
+.tpl-wedding-editorial .inv-dress__guideline {
+    counter-increment: inv-note;
+    position: relative;
+    padding: 0.85rem 0 0.85rem 2.3rem;
+    border-top: 1px solid var(--tpl-rule);
+    color: var(--inv-muted);
+    font-size: 0.93rem;
+    line-height: 1.65;
+}
+
+.tpl-wedding-editorial .inv-dress__guideline:last-child {
+    border-bottom: 1px solid var(--tpl-rule);
+}
+
+.tpl-wedding-editorial .inv-dress__guideline::before {
+    content: counter(inv-note, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.95rem;
+    color: var(--tpl-accent);
+    font-size: 0.76rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.06em;
+}
+
+/* ── Gallery — a photo essay ────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* The lead image spans the spread, the way an essay opens. */
+.tpl-wedding-editorial .inv-gallery__item:first-child { grid-column: 1 / -1; }
+
+.tpl-wedding-editorial .inv-gallery__item {
+    position: relative;
+    overflow: hidden;
+    /* Reserved geometry: the tile owns its ratio before the image arrives. The
+     * ratio is the CATEGORY's — a full-width lead is achieved by spanning
+     * columns, never by changing the shape a photograph was cropped to. */
+    aspect-ratio: 4 / 5;
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-editorial .inv-gallery__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tpl-wedding-editorial .inv-gallery__item.is-failed::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 2px;
+    margin: -1px 0 0 -11px;
+    background: var(--tpl-rule);
+}
+
+/* ── Interludes — full-bleed visual pauses ──────────────────────────────── */
+/* THERE IS NO GUTTER TO ESCAPE: the figure is a direct child of
+ * `.inv-invitation`, which carries no horizontal padding — the gutter belongs
+ * to `.inv-section`, i.e. to this band's SIBLINGS. `width: 100%` on a block
+ * child of a zero-padding parent already IS the full invitation width, so
+ * there is no negative margin here and no `100vw`. */
+.tpl-wedding-editorial .inv-interlude {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-editorial .inv-interlude__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* The shell's `img { max-width: 100% }` would otherwise cap the image. */
+    max-width: none;
+    /* COVER, always: the mobile cropper framed this photograph to the band's
+     * own 16:9 category placement, so filling the slot shows exactly the frame
+     * the organizer approved. Never `contain` — that would letterbox it. */
+    object-fit: cover;
+}
+
+/* A single hairline above each band — the pause is the picture, not a frame.
+ * No text is ever laid over a photograph in this collection. */
+.tpl-wedding-editorial .inv-interlude::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--inv-ink);
+    opacity: 0.28;
+    z-index: 1;
+}
+
+.tpl-wedding-editorial .inv-interlude.is-failed { display: none; }
+
+/* ── Gifts ──────────────────────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-gifts__intro {
+    color: var(--inv-ink);
+    font-size: 1rem;
+    line-height: 1.72;
+}
+
+/* The registry links are a real <ul>, and the shell ships NO list reset — so a
+ * template that styles only the ITEMS inherits a browser bullet and a 40 px
+ * indent beside every button. The markup stays a semantic list; only the
+ * default presentation is removed.
+ *
+ * START-aligned rather than centred: this design sets its whole page flush
+ * left, and a centred button column is the one thing that would break that
+ * spine. The other four templates centre theirs for the same reason — each
+ * follows its own composition. */
+.tpl-wedding-editorial .inv-gifts {
+    display: grid;
+    justify-items: start;
+    gap: 0.6rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-editorial .inv-gifts__item { width: 100%; max-width: 22rem; }
+.tpl-wedding-editorial .inv-gifts .inv-btn { width: 100%; }
+
+.tpl-wedding-editorial .inv-gifts__note {
+    margin: 0.6rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+}
+
+/* ── Reclama tus pases — a printed insert ───────────────────────────────── */
+/* The claim card is SKINNED here and nowhere else: its markup, its copy, its
+ * clipboard behaviour and its app handoff are the shared section's. */
+.tpl-wedding-editorial .inv-passes .inv-section__inner {
+    padding: 1.9rem 1.2rem;
+    border: 2px solid var(--inv-ink);
+    background: var(--inv-bg);
+    text-align: left;
+}
+
+.tpl-wedding-editorial .inv-passes.is-demo .inv-section__inner {
+    border-style: dashed;
+}
+
+.tpl-wedding-editorial .inv-passes__body {
+    color: var(--inv-muted);
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+.tpl-wedding-editorial .inv-passes__allocation {
+    margin: 0.5rem 0 0.6rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.05rem, 4.6vw, 1.3rem);
+    line-height: 1.35;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-editorial .inv-passes__code-value {
+    display: inline-block;
+    margin: 0.35rem 0;
+    padding: 0.5rem 0.85rem;
+    background: var(--inv-ink);
+    color: var(--inv-bg);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* Bounded so a 12-character code never sets a width the card cannot hold
+     * at 320 px. */
+    font-size: clamp(0.85rem, 4.1vw, 1rem);
+    letter-spacing: 0.14em;
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-editorial .inv-passes__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    margin-top: 1.15rem;
+}
+
+.tpl-wedding-editorial .inv-passes__status {
+    min-height: 1.2em;
+    margin: 0.6rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+}
+
+.tpl-wedding-editorial .inv-passes__note {
+    margin-top: 0.5rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--tpl-rule);
+    color: var(--inv-muted);
+    font-size: 0.81rem;
+    line-height: 1.55;
+}
+
+/* ── Automatic actions ──────────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.6rem;
+}
+
+.tpl-wedding-editorial .inv-actions__status {
+    min-height: 1.2em;
+    margin: 0.7rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+}
+
+/* Square, typographic controls — print, not an app. */
+.tpl-wedding-editorial .inv-btn {
+    border-radius: 0;
+    border-color: var(--inv-ink);
+    color: var(--inv-ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-editorial .inv-btn--solid {
+    background: var(--inv-ink);
+    border-color: var(--inv-ink);
+    color: var(--inv-bg);
+}
+
+.tpl-wedding-editorial .inv-btn--ghost:hover { background: var(--inv-surface); }
+
+/* ── Closing — a colophon ───────────────────────────────────────────────── */
+.tpl-wedding-editorial .inv-closing__body {
+    color: var(--inv-ink);
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+.tpl-wedding-editorial .inv-closing__flourish {
+    display: block;
+    width: 100%;
+    max-width: 9rem;
+    height: 2px;
+    margin: 1.6rem 0 1.1rem;
+    background: var(--tpl-accent);
+}
+
+.tpl-wedding-editorial .inv-closing__signature {
+    display: block;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.6rem, 8vw, 2.4rem);
+    line-height: 1.14;
+    letter-spacing: -0.02em;
+    color: var(--inv-ink);
+    overflow-wrap: break-word;
+}
+
+/* ── Wider viewports ────────────────────────────────────────────────────── */
+/* Composition only — column widths and alignment. No `order`, no dense flow,
+ * nothing that would let the visual sequence disagree with the DOM. */
+@media (min-width: 48em) {
+    .tpl-wedding-editorial .inv-section { padding-top: 5rem; padding-bottom: 5rem; }
+    .tpl-wedding-editorial .inv-hero__content { max-width: 40rem; }
+    .tpl-wedding-editorial .inv-gallery { gap: 0.75rem; }
+    /* The spreads gain a measure narrower than the page, still left-aligned. */
+    .tpl-wedding-editorial .inv-section--ceremony .inv-section__inner,
+    .tpl-wedding-editorial .inv-section--reception .inv-section__inner,
+    .tpl-wedding-editorial .inv-section--message .inv-section__inner {
+        max-width: 34rem;
+    }
+    .tpl-wedding-editorial .inv-dress__guidelines {
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 2rem;
+    }
+}
+
+@media (min-width: 64em) {
+    .tpl-wedding-editorial .inv-hero { min-height: 92vh; min-height: 92svh; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* This template animates nothing by design; the rule is kept so a future
+ * addition inherits the contract rather than having to remember it. */
+@media (prefers-reduced-motion: reduce) {
+    .tpl-wedding-editorial * { animation: none !important; transition: none !important; }
+}

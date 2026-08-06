@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img">
+  <rect width="800" height="1000" fill="#FCFAF5"/>
+  <g transform="rotate(-70 160 780)">
+    <path d="M 160 780 q 90 -56.00000000000001 200 -68" fill="none" stroke="#697A5D" stroke-width="2.8000000000000003" stroke-linecap="round"/>
+    <ellipse cx="185.0" cy="750.3" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 185.0 750.3)"/>
+    <ellipse cx="185.0" cy="782.8" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 185.0 782.8)"/>
+    <ellipse cx="210.0" cy="741.6" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 210.0 741.6)"/>
+    <ellipse cx="210.0" cy="772.2" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.68" transform="rotate(34 210.0 772.2)"/>
+    <ellipse cx="235.0" cy="734.0" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 235.0 734.0)"/>
+    <ellipse cx="235.0" cy="762.7" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.68" transform="rotate(34 235.0 762.7)"/>
+    <ellipse cx="260.0" cy="727.0" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 260.0 727.0)"/>
+    <ellipse cx="260.0" cy="753.8" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.68" transform="rotate(34 260.0 753.8)"/>
+    <ellipse cx="285.0" cy="720.5" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 285.0 720.5)"/>
+    <ellipse cx="285.0" cy="745.3" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.68" transform="rotate(34 285.0 745.3)"/>
+    <ellipse cx="310.0" cy="714.2" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 310.0 714.2)"/>
+    <ellipse cx="310.0" cy="737.1" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 310.0 737.1)"/>
+    <ellipse cx="335.0" cy="708.3" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 335.0 708.3)"/>
+    <ellipse cx="335.0" cy="729.2" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.68" transform="rotate(34 335.0 729.2)"/>
+  </g>
+  <g transform="rotate(-76 400 780)">
+    <path d="M 400 780 q 90 -56.00000000000001 200 -68" fill="none" stroke="#697A5D" stroke-width="2.8000000000000003" stroke-linecap="round"/>
+    <ellipse cx="425.0" cy="750.3" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 425.0 750.3)"/>
+    <ellipse cx="425.0" cy="782.8" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 425.0 782.8)"/>
+    <ellipse cx="450.0" cy="741.6" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 450.0 741.6)"/>
+    <ellipse cx="450.0" cy="772.2" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.68" transform="rotate(34 450.0 772.2)"/>
+    <ellipse cx="475.0" cy="734.0" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 475.0 734.0)"/>
+    <ellipse cx="475.0" cy="762.7" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.68" transform="rotate(34 475.0 762.7)"/>
+    <ellipse cx="500.0" cy="727.0" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 500.0 727.0)"/>
+    <ellipse cx="500.0" cy="753.8" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.68" transform="rotate(34 500.0 753.8)"/>
+    <ellipse cx="525.0" cy="720.5" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 525.0 720.5)"/>
+    <ellipse cx="525.0" cy="745.3" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.68" transform="rotate(34 525.0 745.3)"/>
+    <ellipse cx="550.0" cy="714.2" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 550.0 714.2)"/>
+    <ellipse cx="550.0" cy="737.1" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 550.0 737.1)"/>
+    <ellipse cx="575.0" cy="708.3" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 575.0 708.3)"/>
+    <ellipse cx="575.0" cy="729.2" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.68" transform="rotate(34 575.0 729.2)"/>
+  </g>
+  <g transform="rotate(-82 640 780)">
+    <path d="M 640 780 q 90 -56.00000000000001 200 -68" fill="none" stroke="#697A5D" stroke-width="2.8000000000000003" stroke-linecap="round"/>
+    <ellipse cx="665.0" cy="750.3" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 665.0 750.3)"/>
+    <ellipse cx="665.0" cy="782.8" rx="14.2" ry="10.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 665.0 782.8)"/>
+    <ellipse cx="690.0" cy="741.6" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 690.0 741.6)"/>
+    <ellipse cx="690.0" cy="772.2" rx="13.3" ry="9.6" fill="#8A9A7B" opacity="0.68" transform="rotate(34 690.0 772.2)"/>
+    <ellipse cx="715.0" cy="734.0" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 715.0 734.0)"/>
+    <ellipse cx="715.0" cy="762.7" rx="12.5" ry="9.0" fill="#8A9A7B" opacity="0.68" transform="rotate(34 715.0 762.7)"/>
+    <ellipse cx="740.0" cy="727.0" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 740.0 727.0)"/>
+    <ellipse cx="740.0" cy="753.8" rx="11.6" ry="8.4" fill="#8A9A7B" opacity="0.68" transform="rotate(34 740.0 753.8)"/>
+    <ellipse cx="765.0" cy="720.5" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 765.0 720.5)"/>
+    <ellipse cx="765.0" cy="745.3" rx="10.8" ry="7.8" fill="#8A9A7B" opacity="0.68" transform="rotate(34 765.0 745.3)"/>
+    <ellipse cx="790.0" cy="714.2" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 790.0 714.2)"/>
+    <ellipse cx="790.0" cy="737.1" rx="9.9" ry="7.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 790.0 737.1)"/>
+    <ellipse cx="815.0" cy="708.3" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 815.0 708.3)"/>
+    <ellipse cx="815.0" cy="729.2" rx="9.1" ry="6.5" fill="#8A9A7B" opacity="0.68" transform="rotate(34 815.0 729.2)"/>
+  </g>
+</svg>

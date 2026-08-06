@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Ramo de peonías y eucalipto">
+  <defs>
+    <linearGradient id="s2bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FBF3ED"/>
+      <stop offset="100%" stop-color="#EFDCD2"/>
+    </linearGradient>
+    <path id="s2leaf" d="M0 0 C 14 -20 46 -24 64 -8 C 46 9 14 20 0 0 Z"/>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s2bg)"/>
+
+  <!-- Eucalyptus fanning out behind the blooms. -->
+  <g opacity="0.9">
+    <g transform="translate(400 620)">
+      <g transform="rotate(-70)"><path d="M0 0 C 70 -20 150 -34 236 -26" fill="none" stroke="#9CA890" stroke-width="5" stroke-linecap="round"/>
+        <use href="#s2leaf" transform="translate(46 -6) rotate(-30) scale(0.7)" fill="#A9B49B"/>
+        <use href="#s2leaf" transform="translate(96 4) rotate(28) scale(0.64)" fill="#B8C1A8"/>
+        <use href="#s2leaf" transform="translate(150 -16) rotate(-34) scale(0.72)" fill="#9DA98E"/>
+        <use href="#s2leaf" transform="translate(200 -22) rotate(18) scale(0.58)" fill="#C0C7B0"/>
+      </g>
+      <g transform="rotate(-110)"><path d="M0 0 C 70 -20 150 -34 236 -26" fill="none" stroke="#9CA890" stroke-width="5" stroke-linecap="round"/>
+        <use href="#s2leaf" transform="translate(46 -6) rotate(-30) scale(0.7)" fill="#A9B49B"/>
+        <use href="#s2leaf" transform="translate(96 4) rotate(28) scale(0.64)" fill="#B8C1A8"/>
+        <use href="#s2leaf" transform="translate(150 -16) rotate(-34) scale(0.72)" fill="#9DA98E"/>
+        <use href="#s2leaf" transform="translate(200 -22) rotate(18) scale(0.58)" fill="#C0C7B0"/>
+      </g>
+      <g transform="rotate(-40)"><path d="M0 0 C 60 -16 130 -28 200 -22" fill="none" stroke="#A6B199" stroke-width="4" stroke-linecap="round"/>
+        <use href="#s2leaf" transform="translate(60 -4) rotate(-26) scale(0.6)" fill="#B4BEA4"/>
+        <use href="#s2leaf" transform="translate(120 -14) rotate(22) scale(0.54)" fill="#C4CAB4"/>
+      </g>
+      <g transform="rotate(-140)"><path d="M0 0 C 60 -16 130 -28 200 -22" fill="none" stroke="#A6B199" stroke-width="4" stroke-linecap="round"/>
+        <use href="#s2leaf" transform="translate(60 -4) rotate(-26) scale(0.6)" fill="#B4BEA4"/>
+        <use href="#s2leaf" transform="translate(120 -14) rotate(22) scale(0.54)" fill="#C4CAB4"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Peonies: concentric petals, largest in front. -->
+  <g>
+    <g transform="translate(300 430)">
+      <circle r="94" fill="#E7C6BA"/><circle r="70" fill="#F0D8CF"/><circle r="46" fill="#F8E9E3"/><circle r="18" fill="#DDA995"/>
+    </g>
+    <g transform="translate(500 400)">
+      <circle r="78" fill="#E2BCAE"/><circle r="58" fill="#EDD2C8"/><circle r="38" fill="#F7E6DF"/><circle r="15" fill="#D79E88"/>
+    </g>
+    <g transform="translate(408 556)">
+      <circle r="86" fill="#EACCC1"/><circle r="64" fill="#F3DDD5"/><circle r="42" fill="#FBEEE9"/><circle r="16" fill="#DCA894"/>
+    </g>
+    <g transform="translate(560 546)">
+      <circle r="54" fill="#E5C3B6"/><circle r="38" fill="#F1D9D0"/><circle r="22" fill="#FAEBE5"/><circle r="9" fill="#D9A28D"/>
+    </g>
+    <g transform="translate(248 570)">
+      <circle r="48" fill="#E8CAC0"/><circle r="34" fill="#F3E0D8"/><circle r="20" fill="#FCF0EB"/><circle r="8" fill="#DBA694"/>
+    </g>
+  </g>
+
+  <!-- Bound stems. -->
+  <g stroke="#8E9A83" stroke-width="7" stroke-linecap="round" fill="none">
+    <path d="M380 640 C 372 740 366 800 372 880"/>
+    <path d="M420 640 C 432 740 442 800 438 880"/>
+    <path d="M400 646 C 400 750 400 810 404 880"/>
+  </g>
+  <rect x="352" y="712" width="100" height="34" rx="10" fill="#C9A98C" opacity="0.9"/>
+  <rect x="352" y="712" width="100" height="34" rx="10" fill="none" stroke="#B08D57" stroke-width="2" opacity="0.7"/>
+</svg>

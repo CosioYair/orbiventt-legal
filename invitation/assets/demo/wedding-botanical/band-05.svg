@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img">
+  <rect width="1600" height="900" fill="#F7F3EA"/>
+  <path d="M 320 738 V 378 a 240 240 0 0 1 480 0 V 738" fill="none" stroke="#697A5D" stroke-width="3" opacity="0.5"/>
+  <g transform="rotate(-30 1152 702)">
+    <path d="M 1152 702 q 135 -84.00000000000001 300 -102.00000000000001" fill="none" stroke="#697A5D" stroke-width="4.2" stroke-linecap="round"/>
+    <ellipse cx="1189.5" cy="657.4" rx="21.2" ry="15.3" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1189.5 657.4)"/>
+    <ellipse cx="1189.5" cy="706.3" rx="21.2" ry="15.3" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1189.5 706.3)"/>
+    <ellipse cx="1227.0" cy="644.4" rx="20.0" ry="14.4" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1227.0 644.4)"/>
+    <ellipse cx="1227.0" cy="690.4" rx="20.0" ry="14.4" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1227.0 690.4)"/>
+    <ellipse cx="1264.5" cy="633.0" rx="18.7" ry="13.5" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1264.5 633.0)"/>
+    <ellipse cx="1264.5" cy="676.0" rx="18.7" ry="13.5" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1264.5 676.0)"/>
+    <ellipse cx="1302.0" cy="622.5" rx="17.4" ry="12.6" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1302.0 622.5)"/>
+    <ellipse cx="1302.0" cy="662.7" rx="17.4" ry="12.6" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1302.0 662.7)"/>
+    <ellipse cx="1339.5" cy="612.7" rx="16.2" ry="11.6" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1339.5 612.7)"/>
+    <ellipse cx="1339.5" cy="649.9" rx="16.2" ry="11.6" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1339.5 649.9)"/>
+    <ellipse cx="1377.0" cy="603.4" rx="14.9" ry="10.7" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1377.0 603.4)"/>
+    <ellipse cx="1377.0" cy="637.6" rx="14.9" ry="10.7" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1377.0 637.6)"/>
+    <ellipse cx="1414.5" cy="594.4" rx="13.6" ry="9.8" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 1414.5 594.4)"/>
+    <ellipse cx="1414.5" cy="625.8" rx="13.6" ry="9.8" fill="#8A9A7B" opacity="0.68" transform="rotate(34 1414.5 625.8)"/>
+  </g>
+</svg>

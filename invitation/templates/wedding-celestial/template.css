@@ -1,0 +1,687 @@
+/* TEMPLATE — wedding_celestial, version 1.
+ *
+ * "Noche estelar": a formal evening wedding. Midnight ground, warm ivory type,
+ * restrained antique gold, and a scatter of small static star points used as
+ * punctuation rather than wallpaper.
+ *
+ * SCOPE RULE: every rule below is scoped under `.tpl-wedding-celestial`, which
+ * main.js puts on <html> and the renderer puts on the invitation element. The
+ * only unscoped declarations are the custom-property overrides on `:root`,
+ * which exist to retheme the shared shell in css/base.css.
+ *
+ * ── CONTRAST STRATEGY (the only LIGHT-ON-DARK collection) ───────────────────
+ * A dark template inverts the usual risk: the danger is not that a pale accent
+ * fails, it is that a decorative token is quietly promoted into body copy. The
+ * roles are therefore separate and never interchangeable.
+ *
+ * Computed against all three grounds this template paints — #0D1323 midnight,
+ * #151D31 navy, #1C263C panel — not estimated:
+ *
+ *                              midnight   navy   panel
+ *   --inv-ink         #F5F0E6    16.30   14.77   13.28   names, headings, body
+ *   --inv-muted       #C9C4B8    10.64    9.64    8.67   supporting copy
+ *   --inv-accent-ink  #D5B875     9.64    8.74    7.86   controls, links, FOCUS
+ *   --tpl-gold        #C09A54     7.04    6.38    5.74   strokes and markers
+ *   --tpl-star        ivory @ low alpha                  DECORATION ONLY
+ *
+ * `--tpl-star` is a decoration token: it draws points and hairlines and never
+ * carries text or a control border. `--tpl-gold` is a STROKE token — rules,
+ * arches and the four-point markers — and is never body copy; its worst case
+ * (5.74 on the panel) clears the large-text bar but not AAA body, which is
+ * precisely why it is kept off running text.
+ *
+ * Everything a reader must read, or press, uses ink, muted or accent-ink. The
+ * worst of those is 7.86 : 1, so all of them clear AAA on every ground — on a
+ * dark template there is no reason to settle for AA.
+ *
+ * FOCUS: the shell draws `:focus-visible` with `--inv-accent-ink`. At #D5B875
+ * that is a bright gold ring at 9.6 : 1 against midnight, so keyboard focus
+ * stays obvious on every surface. It is never removed or recoloured here.
+ *
+ * ── TEXT OVER IMAGES ────────────────────────────────────────────────────────
+ * No text in this template sits on an organizer photograph without an OPAQUE
+ * panel behind it. `.inv-hero__content` carries a solid midnight background —
+ * not a translucent wash and not a gradient — so the names remain readable when
+ * the uploaded photograph is white, bright, busy or high-contrast. Readability
+ * is never inferred from the image, and nothing samples its pixels.
+ *
+ * ── MOTION ──────────────────────────────────────────────────────────────────
+ * There is none. No keyframes, no transitions of our own, no canvas, no
+ * particles, no parallax. The stars are static SVG circles. The shared
+ * reduced-motion block is kept so any future addition inherits the contract.
+ *
+ * RESPONSIVE: mobile-first, verified from 320 px. Every display size is
+ * `clamp()`-bounded, nothing is sized with `100vw`, the hero uses `min-height`
+ * (never a fixed `100vh` lock), and the full-bleed band is a block child of a
+ * zero-padding parent.
+ */
+
+:root.tpl-wedding-celestial {
+    --inv-bg: #0D1323;          /* medianoche */
+    --inv-surface: #151D31;     /* azul noche */
+    --inv-ink: #F5F0E6;         /* marfil cálido */
+    --inv-muted: #C9C4B8;
+    --inv-accent: #C09A54;      /* oro antiguo — decoración */
+    --inv-accent-ink: #D5B875;  /* oro legible — texto, controles y foco */
+    --inv-line: rgba(245, 240, 230, 0.18);
+
+    --tpl-gold: #C09A54;
+    --tpl-panel: #1C263C;       /* superficie elevada */
+    --tpl-star: rgba(245, 240, 230, 0.55);
+
+    --inv-radius: 3px;
+}
+
+/* Painting BOTH html and body midnight is what stops a white flash between
+ * first paint and the moment the template stylesheet lands on iOS Safari. */
+:root.tpl-wedding-celestial,
+:root.tpl-wedding-celestial body {
+    background: var(--inv-bg);
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-celestial ::selection { background: var(--tpl-gold); color: var(--inv-bg); }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* min-height, never height: the composition may grow with long names, and
+     * nothing is ever locked to exactly one screen. svh keeps mobile browser
+     * chrome from cropping it; vh is the fallback for older engines. */
+    min-height: 88vh;
+    min-height: 88svh;
+    padding: 3.5rem 1.3rem;
+    overflow: hidden;
+    background: var(--inv-bg);
+}
+
+.tpl-wedding-celestial .inv-hero__media { position: absolute; inset: 0; z-index: 0; }
+
+.tpl-wedding-celestial .inv-hero__art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 40%;
+}
+
+/* A dark wash over the whole image. This is atmosphere, NOT the readability
+ * guarantee — that is the opaque panel below. */
+.tpl-wedding-celestial .inv-hero__veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(13, 19, 35, 0.72) 0%,
+        rgba(13, 19, 35, 0.58) 42%,
+        rgba(13, 19, 35, 0.86) 100%
+    );
+}
+
+/* THE OPAQUE PANEL — the readability contract of this template.
+ *
+ * A SOLID midnight surface, so the names hold whatever photograph is behind
+ * them: white, bright, busy or high-contrast. A translucent wash would make
+ * readability depend on the organizer's image, which is exactly what a dark
+ * template must never do. */
+.tpl-wedding-celestial .inv-hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 27rem;
+    padding: 2.75rem 1.4rem 2.5rem;
+    text-align: center;
+    background: var(--inv-bg);
+    border: 1px solid var(--inv-line);
+}
+
+/* A gold hairline gate above the names — the evening arch, drawn in CSS. */
+.tpl-wedding-celestial .inv-hero__content::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    width: 4.5rem;
+    height: 2.25rem;
+    margin-left: -2.25rem;
+    border: 1px solid var(--tpl-gold);
+    border-bottom: 0;
+    border-radius: 2.25rem 2.25rem 0 0;
+    background: var(--inv-bg);
+}
+
+.tpl-wedding-celestial .inv-hero__eyebrow {
+    margin: 1rem 0 1.1rem;
+    color: var(--inv-accent-ink);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-celestial .inv-hero__names {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    margin: 0;
+    font-family: var(--inv-font-display);
+    font-weight: 400;
+    /* Bounded at both ends so a long name never overflows 320 px and never
+     * becomes a billboard on a desktop browser. */
+    font-size: clamp(2.2rem, 12vw, 3.5rem);
+    line-height: 1.06;
+    letter-spacing: 0.01em;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    overflow-wrap: break-word;
+}
+
+.tpl-wedding-celestial .inv-hero__amp {
+    font-size: 0.42em;
+    color: var(--tpl-gold);
+    line-height: 1.9;
+}
+
+/* A hairline with a four-point star at its centre, drawn as a rotated square
+ * pair — no asset, no request. */
+.tpl-wedding-celestial .inv-hero__flourish,
+.tpl-wedding-celestial .inv-closing__flourish {
+    position: relative;
+    display: block;
+    width: min(10rem, 66%);
+    height: 1px;
+    margin: 1.5rem auto 1.3rem;
+    background: linear-gradient(to right, transparent, var(--tpl-gold), transparent);
+}
+
+.tpl-wedding-celestial .inv-hero__flourish::after,
+.tpl-wedding-celestial .inv-closing__flourish::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin: -4.5px 0 0 -4.5px;
+    background: var(--inv-accent-ink);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+/* Date and city as a restrained evening line — NOT pretend coordinates. */
+.tpl-wedding-celestial .inv-hero__date {
+    margin: 0 0 0.4rem;
+    font-family: var(--inv-font-display);
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-celestial .inv-hero__place {
+    margin: 0;
+    color: var(--inv-muted);
+    font-size: 0.85rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+/* ── Section rhythm ─────────────────────────────────────────────────────── */
+/* Alternating midnight and navy, explicit rather than nth-child so the
+ * descriptor's fixed order cannot silently re-shuffle the page. */
+.tpl-wedding-celestial .inv-section--message,
+.tpl-wedding-celestial .inv-section--dressCode,
+.tpl-wedding-celestial .inv-section--gifts,
+.tpl-wedding-celestial .inv-section--closing {
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-celestial .inv-heading {
+    font-family: var(--inv-font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--inv-accent-ink);
+}
+
+/* A constellation rule: a hairline with three points on it. */
+.tpl-wedding-celestial .inv-rule {
+    position: relative;
+    width: 5rem;
+    height: 1px;
+    margin: 1rem auto 1.8rem;
+    background: var(--tpl-star);
+    opacity: 1;
+}
+
+.tpl-wedding-celestial .inv-rule::before,
+.tpl-wedding-celestial .inv-rule::after {
+    content: "";
+    position: absolute;
+    top: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--tpl-gold);
+}
+
+.tpl-wedding-celestial .inv-rule::before { left: 0; }
+.tpl-wedding-celestial .inv-rule::after { right: 0; }
+
+/* ── Message ────────────────────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-message__body {
+    font-family: var(--inv-font-display);
+    font-size: 1.14rem;
+    line-height: 1.82;
+    color: var(--inv-ink);
+    text-wrap: pretty;
+}
+
+.tpl-wedding-celestial .inv-message__hosts {
+    margin-top: 2rem;
+    padding-top: 1.35rem;
+    border-top: 1px solid var(--inv-line);
+    color: var(--inv-muted);
+    font-size: 0.86rem;
+    line-height: 1.7;
+}
+
+/* ── Countdown ──────────────────────────────────────────────────────────── */
+/* Luminous numerals on the ground, separated by hairlines — not app cards. */
+.tpl-wedding-celestial .inv-countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-celestial .inv-countdown__unit {
+    padding: 0.85rem 0.15rem;
+    border-left: 1px solid var(--inv-line);
+}
+
+.tpl-wedding-celestial .inv-countdown__unit:first-child { border-left: 0; }
+
+.tpl-wedding-celestial .inv-countdown__value {
+    display: block;
+    font-family: var(--inv-font-display);
+    /* Tabular figures stop the row twitching as the seconds change. */
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(1.5rem, 8vw, 2.2rem);
+    line-height: 1.08;
+    color: var(--inv-accent-ink);
+}
+
+.tpl-wedding-celestial .inv-countdown__label {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--inv-muted);
+    /* Fluid at the bottom end so "segundos" stops setting the min-content width
+     * of its column and the four tracks stay equal below ~360 px. */
+    font-size: clamp(0.55rem, 2.5vw, 0.64rem);
+    font-weight: 600;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-celestial .inv-countdown__done {
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.3rem, 6vw, 1.55rem);
+    color: var(--inv-accent-ink);
+}
+
+/* ── Ceremony / Reception — two evening moments ─────────────────────────── */
+.tpl-wedding-celestial .inv-place__when {
+    margin-bottom: 1.05rem;
+    font-family: var(--inv-font-display);
+    font-size: 0.98rem;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+    color: var(--inv-accent-ink);
+}
+
+.tpl-wedding-celestial .inv-place__venue {
+    margin-bottom: 0.5rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.4rem, 6.2vw, 1.75rem);
+    line-height: 1.26;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    overflow-wrap: break-word;
+}
+
+.tpl-wedding-celestial .inv-place__address {
+    margin-bottom: 0.7rem;
+    color: var(--inv-muted);
+    font-size: 0.93rem;
+    line-height: 1.65;
+    /* Addresses are the one field that genuinely needs to break anywhere. */
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-celestial .inv-place__note {
+    margin-bottom: 1.6rem;
+    color: var(--inv-muted);
+    font-size: 0.87rem;
+    font-style: italic;
+}
+
+.tpl-wedding-celestial .inv-place__actions { margin: 0; }
+
+/* ── Dress code ─────────────────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-dress__title {
+    margin-bottom: 1rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.35rem, 5.8vw, 1.65rem);
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-celestial .inv-dress__description { color: var(--inv-ink); }
+
+/* Star-marked evening notes on a raised surface. */
+.tpl-wedding-celestial .inv-dress__guidelines {
+    margin: 1.6rem 0 0;
+    padding: 1.2rem 1rem;
+    border: 1px solid var(--inv-line);
+    background: var(--tpl-panel);
+    /* The marker is drawn on ::before, so it is never announced as content and
+     * the element stays a real <ul> for assistive technology. */
+    list-style: none;
+    display: grid;
+    gap: 0.75rem;
+    text-align: left;
+}
+
+.tpl-wedding-celestial .inv-dress__guideline {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--inv-muted);
+    font-size: 0.91rem;
+    line-height: 1.65;
+}
+
+.tpl-wedding-celestial .inv-dress__guideline::before {
+    content: "";
+    position: absolute;
+    left: 0.15rem;
+    top: 0.62em;
+    width: 9px;
+    height: 9px;
+    background: var(--tpl-gold);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+/* ── Gallery — a night album ────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-gallery {
+    display: grid;
+    /* Two columns from 320 px up; the tiles are portrait so two always fit. */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-celestial .inv-gallery__item {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--inv-line);
+    /* Reserved geometry: the tile owns its ratio before the image arrives. The
+     * ratio is the CATEGORY's. */
+    aspect-ratio: 4 / 5;
+    background: var(--tpl-panel);
+}
+
+.tpl-wedding-celestial .inv-gallery__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tpl-wedding-celestial .inv-gallery__item.is-failed::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 11px;
+    height: 11px;
+    margin: -5.5px 0 0 -5.5px;
+    background: var(--tpl-star);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+}
+
+/* ── Interludes — atmospheric night pauses ──────────────────────────────── */
+/* THERE IS NO GUTTER TO ESCAPE: the figure is a direct child of
+ * `.inv-invitation`, which carries no horizontal padding — the gutter belongs
+ * to `.inv-section`, i.e. to this band's SIBLINGS. `width: 100%` on a block
+ * child of a zero-padding parent already IS the full invitation width, so
+ * there is no negative margin here and no `100vw`.
+ *
+ * NO TEXT IS LAID OVER THESE IMAGES. The band is the pause; a caption over an
+ * organizer photograph would need a contrast guarantee this design refuses to
+ * fake. */
+.tpl-wedding-celestial .inv-interlude {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    /* An opaque dark ground, so a transparent corner of any decorative asset
+     * can never reveal the white page beneath it. */
+    background: var(--inv-bg);
+}
+
+.tpl-wedding-celestial .inv-interlude__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* The shell's `img { max-width: 100% }` would otherwise cap the image. */
+    max-width: none;
+    /* COVER, always: the mobile cropper framed this photograph to the band's
+     * own 16:9 category placement, so filling the slot shows exactly the frame
+     * the organizer approved. Never `contain` — that would letterbox it. */
+    object-fit: cover;
+}
+
+/* A single gold point at each end of the band's upper edge — the "subtle edge
+ * stars", drawn rather than imported. */
+.tpl-wedding-celestial .inv-interlude::before,
+.tpl-wedding-celestial .inv-interlude::after {
+    content: "";
+    position: absolute;
+    top: 0.75rem;
+    width: 7px;
+    height: 7px;
+    background: var(--tpl-gold);
+    clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+    opacity: 0.85;
+    z-index: 1;
+}
+
+.tpl-wedding-celestial .inv-interlude::before { left: 0.9rem; }
+.tpl-wedding-celestial .inv-interlude::after { right: 0.9rem; }
+
+/* An image that failed to load collapses the band entirely: a blank strip
+ * mid-invitation is worse than the page simply moving on. */
+.tpl-wedding-celestial .inv-interlude.is-failed { display: none; }
+
+/* ── Gifts ──────────────────────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-gifts__intro { color: var(--inv-ink); }
+
+/* The registry links are a real <ul>, and the shell ships NO list reset — a
+ * template that forgets this gets a stray bullet and a 40 px indent beside
+ * every button. Centred, full-width buttons, no marker. */
+.tpl-wedding-celestial .inv-gifts {
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-celestial .inv-gifts__item { width: 100%; max-width: 22rem; }
+.tpl-wedding-celestial .inv-gifts .inv-btn { width: 100%; }
+
+.tpl-wedding-celestial .inv-gifts__note {
+    margin: 0.5rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.83rem;
+    font-style: italic;
+}
+
+/* ── Reclama tus pases — a midnight insert ──────────────────────────────── */
+/* The claim card is SKINNED here and nowhere else: its markup, its copy, its
+ * clipboard behaviour and its app handoff are the shared section's. */
+.tpl-wedding-celestial .inv-passes .inv-section__inner {
+    padding: 1.9rem 1.15rem;
+    border: 1px solid var(--tpl-gold);
+    background: var(--tpl-panel);
+    text-align: center;
+}
+
+.tpl-wedding-celestial .inv-passes.is-demo .inv-section__inner {
+    border-style: dashed;
+}
+
+.tpl-wedding-celestial .inv-passes__body { color: var(--inv-muted); }
+
+.tpl-wedding-celestial .inv-passes__allocation {
+    margin: 0.35rem 0 0.55rem;
+    font-family: var(--inv-font-display);
+    font-weight: 600;
+    font-size: clamp(1rem, 4.4vw, 1.15rem);
+    color: var(--inv-ink);
+}
+
+/* The code is the highest-contrast thing on the page: ivory on midnight. */
+.tpl-wedding-celestial .inv-passes__code-value {
+    display: inline-block;
+    margin: 0.3rem 0;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--inv-accent-ink);
+    background: var(--inv-bg);
+    color: var(--inv-ink);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* Bounded so a 12-character code never sets a width the card cannot hold
+     * at 320 px. */
+    font-size: clamp(0.86rem, 4.2vw, 1rem);
+    letter-spacing: 0.15em;
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-celestial .inv-passes__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+    margin-top: 1.1rem;
+}
+
+.tpl-wedding-celestial .inv-passes__status {
+    min-height: 1.2em;
+    margin: 0.6rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.85rem;
+}
+
+.tpl-wedding-celestial .inv-passes__note {
+    margin-top: 0.45rem;
+    color: var(--inv-muted);
+    font-size: 0.81rem;
+    line-height: 1.55;
+    font-style: italic;
+}
+
+/* ── Automatic actions ──────────────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+}
+
+.tpl-wedding-celestial .inv-actions__status {
+    min-height: 1.2em;
+    margin: 0.7rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.85rem;
+}
+
+/* Controls read light-on-dark; the solid one inverts to midnight-on-gold. */
+.tpl-wedding-celestial .inv-btn {
+    border-color: var(--inv-accent-ink);
+    color: var(--inv-accent-ink);
+    letter-spacing: 0.09em;
+    font-size: 0.85rem;
+}
+
+.tpl-wedding-celestial .inv-btn--solid {
+    background: var(--inv-accent-ink);
+    border-color: var(--inv-accent-ink);
+    color: var(--inv-bg);
+}
+
+.tpl-wedding-celestial .inv-btn--ghost:hover { background: var(--tpl-panel); }
+
+/* ── Closing — a celestial gate ─────────────────────────────────────────── */
+.tpl-wedding-celestial .inv-closing__body {
+    font-family: var(--inv-font-display);
+    font-size: 1.08rem;
+    line-height: 1.8;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-celestial .inv-closing__signature {
+    position: relative;
+    display: inline-block;
+    margin-top: 1.5rem;
+    padding: 0 2.4rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.5rem, 7vw, 1.95rem);
+    color: var(--inv-accent-ink);
+    overflow-wrap: break-word;
+}
+
+/* A paired crescent either side of the signature, drawn in CSS. */
+.tpl-wedding-celestial .inv-closing__signature::before,
+.tpl-wedding-celestial .inv-closing__signature::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: -0.575rem;
+    border: 1px solid var(--tpl-gold);
+    border-radius: 50%;
+    box-shadow: inset -0.3rem 0 0 -0.05rem var(--tpl-gold);
+}
+
+.tpl-wedding-celestial .inv-closing__signature::before { left: 0.2rem; }
+.tpl-wedding-celestial .inv-closing__signature::after { right: 0.2rem; transform: scaleX(-1); }
+
+/* ── Wider viewports ────────────────────────────────────────────────────── */
+@media (min-width: 40em) {
+    .tpl-wedding-celestial .inv-hero__content { padding: 3.5rem 2.5rem 3rem; }
+    .tpl-wedding-celestial .inv-gallery { gap: 0.85rem; }
+}
+
+@media (min-width: 64em) {
+    .tpl-wedding-celestial .inv-hero { min-height: 92vh; min-height: 92svh; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* This template animates nothing by design — no keyframes, no transitions of
+ * its own. The rule is kept so a future addition inherits the contract rather
+ * than having to remember it. */
+@media (prefers-reduced-motion: reduce) {
+    .tpl-wedding-celestial * { animation: none !important; transition: none !important; }
+}

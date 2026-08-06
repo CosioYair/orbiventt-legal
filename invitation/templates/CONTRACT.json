@@ -1,0 +1,79 @@
+{
+  "_comment": [
+    "THE THREE-AXIS TEMPLATE CONTRACT.",
+    "",
+    "This file is the single written-down copy of a fact that lives in three",
+    "places that cannot import each other:",
+    "",
+    "  invitation/js/registry.js            the web renderer  (this repository)",
+    "  src/features/digitalInvitations/registry.ts   the mobile editor",
+    "  digital_invitations_template_known   the database CHECK constraint",
+    "",
+    "Each of the three tests itself against THIS file rather than against the",
+    "other two. That is the whole mechanism: there is no runtime synchronization,",
+    "no network call and no generated code — just three suites failing loudly the",
+    "moment one list moves without the others.",
+    "",
+    "WHY A FILE AND NOT A SHARED MODULE: the mobile app is a different repository",
+    "with a different toolchain, and the database has neither. A checked-in JSON",
+    "document is the only artefact all three can read. It is duplicated ON PURPOSE",
+    "and the duplication is what the tests pin.",
+    "",
+    "ORDER IS SIGNIFICANT. It is the order the mobile picker draws, and the tests",
+    "compare sequences, not sets — so a reshuffle is a deliberate edit here.",
+    "",
+    "ADDING A DESIGN: web renderer first (it must be drawable and deployed), then",
+    "this file, then mobile, then the database. Each step only widens what the",
+    "previous one already handles, so there is never a window where an organizer",
+    "can author something that cannot be drawn or cannot be stored."
+  ],
+  "contractVersion": 1,
+  "categories": ["wedding"],
+  "templates": [
+    {
+      "id": "wedding_romantic_v1",
+      "categoryKey": "wedding",
+      "templateKey": "wedding_romantic",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Romántica",
+      "assetDir": "wedding-romantic"
+    },
+    {
+      "id": "wedding_classic_gold_v1",
+      "categoryKey": "wedding",
+      "templateKey": "wedding_classic_gold",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Clásica elegante",
+      "assetDir": "wedding-classic-gold"
+    },
+    {
+      "id": "wedding_botanical_v1",
+      "categoryKey": "wedding",
+      "templateKey": "wedding_botanical",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Botánica",
+      "assetDir": "wedding-botanical"
+    },
+    {
+      "id": "wedding_editorial_v1",
+      "categoryKey": "wedding",
+      "templateKey": "wedding_editorial",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Editorial moderna",
+      "assetDir": "wedding-editorial"
+    },
+    {
+      "id": "wedding_celestial_v1",
+      "categoryKey": "wedding",
+      "templateKey": "wedding_celestial",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Noche estelar",
+      "assetDir": "wedding-celestial"
+    }
+  ]
+}

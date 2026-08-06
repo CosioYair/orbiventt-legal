@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1400" width="1000" height="1400" role="img" aria-label="Arco de flores y follaje en tonos marfil y rosa empolvado">
+  <!-- Demonstration artwork for wedding_romantic_v1. Authored for this
+       repository: no stock photography, no licensed asset, no third-party URL.
+       Vector, so it stays crisp at any density and costs a few kilobytes. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F6E7DE"/>
+      <stop offset="42%" stop-color="#F9F1EA"/>
+      <stop offset="100%" stop-color="#FBF8F4"/>
+    </linearGradient>
+    <linearGradient id="arch" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#F1DED4" stop-opacity="0.25"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="34%" r="52%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="stemGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9AA68F"/>
+      <stop offset="100%" stop-color="#B9C0A8"/>
+    </linearGradient>
+
+    <!-- One leaf, reused everywhere with a transform. -->
+    <path id="leaf" d="M0 0 C 12 -17 40 -21 55 -7 C 40 8 12 17 0 0 Z"/>
+
+    <!-- A sprig: a curved stem with leaves stepping along it. -->
+    <g id="sprig">
+      <path d="M0 0 C 60 -18 132 -30 210 -22" fill="none" stroke="url(#stemGrad)" stroke-width="4" stroke-linecap="round"/>
+      <use href="#leaf" transform="translate(24 -6) rotate(-28) scale(0.72)" fill="#A7B199" opacity="0.9"/>
+      <use href="#leaf" transform="translate(52 2) rotate(26) scale(0.66)" fill="#B7C0A6" opacity="0.85"/>
+      <use href="#leaf" transform="translate(88 -14) rotate(-34) scale(0.78)" fill="#9DA98E" opacity="0.9"/>
+      <use href="#leaf" transform="translate(120 -6) rotate(20) scale(0.62)" fill="#BCC4AC" opacity="0.8"/>
+      <use href="#leaf" transform="translate(156 -22) rotate(-24) scale(0.7)" fill="#A7B199" opacity="0.88"/>
+      <use href="#leaf" transform="translate(186 -14) rotate(16) scale(0.56)" fill="#C2C9B2" opacity="0.78"/>
+    </g>
+
+    <!-- A soft, layered bloom. -->
+    <g id="bloom">
+      <circle r="46" fill="#EBD0C6"/>
+      <circle r="34" fill="#F3DED6"/>
+      <circle r="21" fill="#FBEDE7"/>
+      <circle r="9" fill="#E4B9A9"/>
+    </g>
+  </defs>
+
+  <rect width="1000" height="1400" fill="url(#sky)"/>
+  <rect width="1000" height="1400" fill="url(#glow)"/>
+
+  <!-- The arch: the structural motif the whole template is composed around. -->
+  <path d="M232 1400 L232 605 A268 268 0 0 1 768 605 L768 1400 Z" fill="url(#arch)"/>
+  <path d="M232 1400 L232 605 A268 268 0 0 1 768 605 L768 1400" fill="none" stroke="#C9AE8E" stroke-width="2" opacity="0.5"/>
+
+  <!-- Botanical crown over the arch. -->
+  <g opacity="0.95">
+    <use href="#sprig" transform="translate(452 380) rotate(-152)"/>
+    <use href="#sprig" transform="translate(548 380) rotate(-28)"/>
+    <use href="#sprig" transform="translate(300 520) rotate(-118) scale(0.86)"/>
+    <use href="#sprig" transform="translate(700 520) rotate(-62) scale(0.86)"/>
+    <use href="#sprig" transform="translate(252 760) rotate(-96) scale(0.7)"/>
+    <use href="#sprig" transform="translate(748 760) rotate(-84) scale(0.7)"/>
+  </g>
+
+  <g opacity="0.92">
+    <use href="#bloom" transform="translate(430 372) scale(0.92)"/>
+    <use href="#bloom" transform="translate(566 386) scale(0.74)"/>
+    <use href="#bloom" transform="translate(500 342) scale(0.6)"/>
+    <use href="#bloom" transform="translate(296 566) scale(0.68)"/>
+    <use href="#bloom" transform="translate(704 566) scale(0.68)"/>
+    <use href="#bloom" transform="translate(258 812) scale(0.52)"/>
+    <use href="#bloom" transform="translate(742 812) scale(0.52)"/>
+  </g>
+
+  <!-- Loose petals drifting down through the arch. -->
+  <g fill="#E9D0C5" opacity="0.55">
+    <use href="#leaf" transform="translate(392 700) rotate(38) scale(0.3)"/>
+    <use href="#leaf" transform="translate(620 780) rotate(-22) scale(0.26)"/>
+    <use href="#leaf" transform="translate(468 900) rotate(64) scale(0.22)"/>
+    <use href="#leaf" transform="translate(586 986) rotate(12) scale(0.2)"/>
+    <use href="#leaf" transform="translate(414 1046) rotate(-48) scale(0.18)"/>
+  </g>
+
+  <!-- Ground haze so the composition dissolves into the page rather than
+       ending on a hard edge. -->
+  <rect y="1080" width="1000" height="320" fill="#FBF8F4" opacity="0.55"/>
+  <rect y="1240" width="1000" height="160" fill="#FBF8F4" opacity="0.8"/>
+</svg>

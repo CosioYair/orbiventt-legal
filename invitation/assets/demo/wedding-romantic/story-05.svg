@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Mesa larga con velas encendidas y follaje">
+  <defs>
+    <linearGradient id="s5bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3E3128"/>
+      <stop offset="55%" stop-color="#5B4536"/>
+      <stop offset="100%" stop-color="#7A5C46"/>
+    </linearGradient>
+    <radialGradient id="s5flame" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF4D2"/>
+      <stop offset="45%" stop-color="#FFD98F" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#FFC46B" stop-opacity="0"/>
+    </radialGradient>
+    <g id="s5candle">
+      <rect x="-11" y="0" width="22" height="150" rx="6" fill="#F6EBD9"/>
+      <rect x="-11" y="0" width="8" height="150" rx="4" fill="#FFFFFF" opacity="0.35"/>
+      <circle cx="0" cy="-14" r="46" fill="url(#s5flame)"/>
+      <path d="M0 -34 C 9 -22 8 -8 0 -2 C -8 -8 -9 -22 0 -34 Z" fill="#FFE9AE"/>
+    </g>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s5bg)"/>
+
+  <!-- Warm bokeh in the depth of the room. -->
+  <g fill="#FFD9A0" opacity="0.16">
+    <circle cx="110" cy="150" r="46"/>
+    <circle cx="292" cy="96" r="30"/>
+    <circle cx="520" cy="140" r="38"/>
+    <circle cx="690" cy="86" r="26"/>
+    <circle cx="640" cy="220" r="20"/>
+    <circle cx="180" cy="272" r="18"/>
+  </g>
+
+  <!-- Table. -->
+  <path d="M40 660 L760 660 L800 1000 L0 1000 Z" fill="#8C6B51"/>
+  <path d="M40 660 L760 660 L768 700 L32 700 Z" fill="#A08061"/>
+  <rect x="0" y="700" width="800" height="300" fill="#F3E7D6" opacity="0.92"/>
+
+  <!-- Runner of foliage down the centre. -->
+  <g fill="#7E8C72" opacity="0.95">
+    <path d="M60 760 C 200 736 300 782 400 758 C 500 734 620 780 740 756 L 740 792 C 620 816 500 770 400 794 C 300 818 200 772 60 796 Z"/>
+  </g>
+  <g fill="#96A388" opacity="0.9">
+    <ellipse cx="150" cy="754" rx="30" ry="16" transform="rotate(-16 150 754)"/>
+    <ellipse cx="300" cy="784" rx="28" ry="15" transform="rotate(12 300 784)"/>
+    <ellipse cx="470" cy="756" rx="30" ry="16" transform="rotate(-14 470 756)"/>
+    <ellipse cx="630" cy="786" rx="26" ry="14" transform="rotate(10 630 786)"/>
+  </g>
+  <g fill="#E7C6BA" opacity="0.95">
+    <circle cx="222" cy="768" r="22"/><circle cx="222" cy="768" r="10" fill="#F6E3DB"/>
+    <circle cx="392" cy="774" r="26"/><circle cx="392" cy="774" r="12" fill="#F6E3DB"/>
+    <circle cx="556" cy="766" r="20"/><circle cx="556" cy="766" r="9" fill="#F6E3DB"/>
+  </g>
+
+  <!-- Candles along the table. -->
+  <g>
+    <use href="#s5candle" transform="translate(120 590)"/>
+    <use href="#s5candle" transform="translate(264 566) scale(1.12)"/>
+    <use href="#s5candle" transform="translate(400 546) scale(1.24)"/>
+    <use href="#s5candle" transform="translate(540 566) scale(1.12)"/>
+    <use href="#s5candle" transform="translate(682 590)"/>
+  </g>
+</svg>

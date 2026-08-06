@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1400" width="1000" height="1400" role="img" aria-label="Arco de follaje y flores en marfil, rosa empolvado y oro viejo">
+  <!-- OFFICIAL TEMPLATE ARTWORK for wedding_romantic_v1.
+       Authored for this repository: no stock photography, no licensed asset,
+       no third-party URL, no text, and nothing that belongs to any particular
+       couple. This is the template's OWN image, offered in the editor as
+       "Imagen del diseño" — an organizer chooses it explicitly and it is
+       stored as {source:'template', assetKey:'hero-default'}.
+
+       It is NOT the demonstration artwork under assets/demo/, and the two are
+       deliberately separate files: demo content may never become real
+       invitation content, so the official asset does not live in, or depend
+       on, the demo directory.
+
+       Palette matches template.css exactly:
+         marfil #FBF8F4  papel #F3EAE2  rosa #B98B77
+         oro    #A8853F  salvia #8F9C86  blush #E9D5CB
+
+       GEOMETRY. The arch is a circle of radius 264 centred at (500,660) with
+       legs dropping from y=660. Every ornament is placed on that circle by
+       angle and rotated onto its tangent, so the garland follows the arch
+       instead of floating near it. The right half is the left half mirrored
+       about x=500, which is why the two sides match exactly. -->
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#F4E6DC"/>
+      <stop offset="40%"  stop-color="#F9F1EA"/>
+      <stop offset="100%" stop-color="#FBF8F4"/>
+    </linearGradient>
+
+    <radialGradient id="halo" cx="50%" cy="32%" r="52%">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.94"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="stem" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#8F9C86"/>
+      <stop offset="100%" stop-color="#B4BEA6"/>
+    </linearGradient>
+
+    <!-- One leaf, reused along every stem with a transform. -->
+    <path id="lf" d="M0 0 C 10 -13 32 -17 44 -5 C 32 6 10 13 0 0 Z"/>
+
+    <!-- A sprig: a gently curved stem running along +x with leaves stepping
+         off both sides. Drawn at the origin so it can be placed by transform. -->
+    <g id="sprig">
+      <path d="M0 0 C 60 -10 130 -22 196 -20" fill="none" stroke="url(#stem)"
+            stroke-width="4.5" stroke-linecap="round"/>
+      <use href="#lf" fill="#8F9C86" transform="translate(38,-7)   rotate(-34) scale(0.86)"/>
+      <use href="#lf" fill="#9EAB94" transform="translate(84,-15)  rotate(-28) scale(0.98)"/>
+      <use href="#lf" fill="#8F9C86" transform="translate(132,-21) rotate(-22) scale(0.88)"/>
+      <use href="#lf" fill="#A7B29B" transform="translate(174,-22) rotate(-16) scale(0.68)"/>
+      <use href="#lf" fill="#9EAB94" transform="translate(58,-4)   rotate(40)  scale(0.72)"/>
+      <use href="#lf" fill="#8F9C86" transform="translate(108,-13) rotate(46)  scale(0.64)"/>
+      <use href="#lf" fill="#A7B29B" transform="translate(152,-19) rotate(52)  scale(0.52)"/>
+    </g>
+
+    <!-- A garden rose seen face on: two rings of radiating petals around a
+         small gold heart. Petals are individual shapes, so it reads as a
+         flower rather than as a shaded bead. -->
+    <g id="flower">
+      <g fill="#E3C6B8">
+        <ellipse rx="30" ry="16" transform="rotate(0)   translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(45)  translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(90)  translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(135) translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(180) translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(225) translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(270) translate(24,0)"/>
+        <ellipse rx="30" ry="16" transform="rotate(315) translate(24,0)"/>
+      </g>
+      <g fill="#F2DCD1">
+        <ellipse rx="20" ry="11" transform="rotate(22)  translate(15,0)"/>
+        <ellipse rx="20" ry="11" transform="rotate(82)  translate(15,0)"/>
+        <ellipse rx="20" ry="11" transform="rotate(142) translate(15,0)"/>
+        <ellipse rx="20" ry="11" transform="rotate(202) translate(15,0)"/>
+        <ellipse rx="20" ry="11" transform="rotate(262) translate(15,0)"/>
+        <ellipse rx="20" ry="11" transform="rotate(322) translate(15,0)"/>
+      </g>
+      <circle r="9"   fill="#B98B77"/>
+      <circle r="4.5" fill="#A8853F"/>
+    </g>
+
+    <!-- A small five-petal filler bloom. -->
+    <g id="bud">
+      <g fill="#EFD8CD">
+        <ellipse rx="15" ry="9" transform="rotate(0)   translate(12,0)"/>
+        <ellipse rx="15" ry="9" transform="rotate(72)  translate(12,0)"/>
+        <ellipse rx="15" ry="9" transform="rotate(144) translate(12,0)"/>
+        <ellipse rx="15" ry="9" transform="rotate(216) translate(12,0)"/>
+        <ellipse rx="15" ry="9" transform="rotate(288) translate(12,0)"/>
+      </g>
+      <circle r="4.5" fill="#A8853F" fill-opacity="0.75"/>
+    </g>
+
+    <!-- HALF THE GARLAND: everything from the crown down the LEFT shoulder.
+         Positions are points on the arch circle; rotations put each ornament
+         on that point's tangent. The right half is this mirrored. -->
+    <g id="garland-half">
+      <use href="#sprig" transform="translate(500,396) rotate(96)  scale(0.98)"/>
+      <use href="#sprig" transform="translate(445,402) rotate(120) scale(0.92)"/>
+      <use href="#sprig" transform="translate(349,444) rotate(145) scale(0.96)"/>
+      <use href="#sprig" transform="translate(271,528) rotate(124) scale(0.80)"/>
+      <use href="#sprig" transform="translate(238,640) rotate(96)  scale(0.66)"/>
+      <use href="#sprig" transform="translate(236,824) rotate(92)  scale(0.52)"/>
+
+      <use href="#flower" transform="translate(430,410) scale(0.92)"/>
+      <use href="#flower" transform="translate(320,470) scale(0.72)"/>
+      <use href="#flower" transform="translate(252,600) scale(0.56)"/>
+      <use href="#bud"    transform="translate(378,428) scale(0.95)"/>
+      <use href="#bud"    transform="translate(274,540) scale(0.85)"/>
+      <use href="#bud"    transform="translate(240,726) scale(0.70)"/>
+      <use href="#bud"    transform="translate(236,912) scale(0.55)"/>
+    </g>
+  </defs>
+
+  <rect width="1000" height="1400" fill="url(#ground)"/>
+  <rect width="1000" height="1400" fill="url(#halo)"/>
+
+  <!-- The arch: one thin gold line with a rose echo just inside it. Open at
+       the bottom; the couple's names sit within it. -->
+  <path d="M 236 1300 L 236 660 A 264 264 0 0 1 764 660 L 764 1300"
+        fill="none" stroke="#A8853F" stroke-opacity="0.44"
+        stroke-width="3" stroke-linecap="round"/>
+  <path d="M 262 1300 L 262 664 A 238 238 0 0 1 738 664 L 738 1300"
+        fill="none" stroke="#B98B77" stroke-opacity="0.20"
+        stroke-width="1.5" stroke-linecap="round"/>
+
+  <use href="#garland-half"/>
+  <use href="#garland-half" transform="translate(1000,0) scale(-1,1)"/>
+
+  <!-- The crown flower, centred, drawn last so it sits above both halves. -->
+  <use href="#flower" transform="translate(500,392) scale(1.10)"/>
+
+  <!-- Loose petals drifting down the ivory field. Decorative, low contrast. -->
+  <g fill="#E9D5CB" fill-opacity="0.50">
+    <ellipse rx="13" ry="8" transform="translate(352,1090) rotate(-28)"/>
+    <ellipse rx="10" ry="6" transform="translate(648,1158) rotate(16)"/>
+    <ellipse rx="9"  ry="6" transform="translate(462,1224) rotate(-10)"/>
+    <ellipse rx="8"  ry="5" transform="translate(572,1288) rotate(24)"/>
+  </g>
+
+  <!-- A whisper of warmth at the base so the composition settles into the
+       page rather than stopping at a hard edge. -->
+  <rect y="1170" width="1000" height="230" fill="#F3EAE2" opacity="0.40"/>
+</svg>

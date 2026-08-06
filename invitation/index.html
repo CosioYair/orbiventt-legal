@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <!-- CONTENT SECURITY POLICY — still tighter than the rest of the site.
+         EXACTLY TWO directives name a host, and it is exactly one host: the
+         Supabase project this deployment belongs to. `connect-src` allows the
+         two invitation read RPCs; `img-src` allows the images an organizer
+         chose, which live in that project's Storage. Nothing else on the
+         internet is reachable from this page — no CDN, no analytics, no font
+         host, no frame.
+         The project ref is the one `devToProd()` rewrites on promotion, so
+         production allows the production project and nothing else.
+         DEMO MODE STILL MAKES ZERO BACKEND REQUESTS. That is no longer
+         browser-enforced (it cannot be, on a page that must also load drafts),
+         so it is enforced where it now lives: `demo-data.js` is loaded through
+         a dynamic import inside the demo branch, the demo branch passes no
+         storage resolver, and the network panel shows a single document plus
+         local assets. A test asserts the code shape; the deployment check
+         asserts the observed traffic.
+         `script-src 'self'` (no 'unsafe-inline') means this page has no inline
+         script at all; every behavior comes from a module file. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https://lehwxjbjlehsdkqxlzrb.supabase.co; font-src 'self'; connect-src https://lehwxjbjlehsdkqxlzrb.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <!-- ENV-SPECIFIC: deployment base path. Rewritten to "/" on promotion. -->
+    <base href="/">
+    <!-- PERMANENT, both environments. An invitation is addressed to the people
+         who were given the link; it is not a page that should turn up in a
+         search result. This is NOT the DEV-only noindex block — it survives
+         promotion on purpose. Link-preview crawlers (WhatsApp, Facebook) are
+         unaffected and still read the Open Graph tags below. -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- GENERIC, CATEGORY-NEUTRAL METADATA.
+         One invitation page serves every category, and the link preview is
+         generated from the static document — there is no server-side rendering
+         and no per-invitation tag. So the title, description and image describe
+         the PRODUCT, never the event: a wedding invitation and a future
+         birthday invitation share these exact bytes, and no couple's names
+         leak into a chat thread's preview card. -->
+    <title>Invitación digital · Orbiventt</title>
+    <meta name="description" content="Abre esta invitación para conocer los detalles del evento y reclamar tus pases en Orbiventt.">
+
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="Orbiventt">
+    <meta property="og:url" content="https://orbiventt.com/invitation/">
+    <meta property="og:title" content="Invitación digital · Orbiventt">
+    <meta property="og:description" content="Abre esta invitación para conocer los detalles del evento y reclamar tus pases en Orbiventt.">
+    <meta property="og:image" content="https://orbiventt.com/invitation/assets/og-invitation.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Invitación digital · Orbiventt">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Invitación digital · Orbiventt">
+    <meta name="twitter:description" content="Abre esta invitación para conocer los detalles del evento y reclamar tus pases en Orbiventt.">
+    <meta name="twitter:image" content="https://orbiventt.com/invitation/assets/og-invitation.jpg">
+    <meta name="twitter:image:alt" content="Invitación digital · Orbiventt">
+
+    <!-- The shell: frame, controlled states and the accessibility primitives.
+         Render-blocking on purpose — it is small, and it is what keeps the
+         first paint from shifting. The TEMPLATE stylesheet is attached by
+         main.js from the registry descriptor. -->
+    <link rel="stylesheet" href="invitation/css/base.css">
+
+    <!-- ENV-SPECIFIC. The single environment boundary of the whole site: which
+         Supabase project this deployment reads, and whether the DEV badge
+         exists. Demo mode reads ONLY `devBadge`; the draft and published routes
+         additionally read the project URL and the publishable anon key. There
+         is deliberately no fallback project — a deployment whose env.js did not
+         load fails closed rather than querying the wrong environment. -->
+    <script src="env.js"></script>
+    <!-- The SHARED app-handoff resolver — the same classic script 404.html
+         loads, exposing `window.__ORB_APP_RETURN__`. The pass-claim card's
+         "Abrir Orbiventt" destination is resolved exclusively through it, so
+         this page inherits the event-preview page's exact DEV/production
+         behavior: production links open `vyvent://`, the DEV mirror only ever
+         opens a re-validated Expo Go return address, and never falls back
+         across environments. Same-origin, so `script-src 'self'` allows it. -->
+    <script src="app-return.js"></script>
+</head>
+<body>
+    <div class="env-badge" id="envBadge" hidden>DEV</div>
+
+    <main class="inv-page" id="invitation-main">
+        <!-- First paint. Replaced by the invitation or by a controlled state;
+             never left on screen. -->
+        <div class="inv-loading" id="invitation-loading" role="status">
+            <span class="inv-loading__mark" aria-hidden="true"></span>
+            <p class="inv-loading__text">Preparando la invitación…</p>
+        </div>
+
+        <!-- The rendered invitation is appended here. -->
+        <div id="invitation-root" hidden></div>
+
+        <!-- The single controlled state. Its text is set by main.js; there is
+             one of these rather than one element per failure so no path can
+             reveal two states at once. -->
+        <div class="inv-state" id="invitation-state" hidden>
+            <span class="inv-state__mark" aria-hidden="true"></span>
+            <h1 class="inv-state__title" id="invitation-state-title"></h1>
+            <p class="inv-state__body" id="invitation-state-body"></p>
+            <p class="inv-state__actions">
+                <a class="inv-btn inv-btn--ghost" href="./">
+                    <span class="inv-btn__label">Ir a Orbiventt</span>
+                </a>
+            </p>
+        </div>
+    </main>
+
+    <footer class="inv-footer">
+        <p>Invitación digital creada con <a href="./">Orbiventt</a></p>
+    </footer>
+
+    <noscript>
+        <div class="inv-noscript">
+            <h2>Activa JavaScript para ver la invitación</h2>
+            <p>Esta invitación se arma en tu navegador. Activa JavaScript y vuelve a cargar la página.</p>
+        </div>
+    </noscript>
+
+    <script type="module" src="invitation/js/main.js"></script>
+</body>
+</html>

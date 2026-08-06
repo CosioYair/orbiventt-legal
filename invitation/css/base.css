@@ -1,0 +1,263 @@
+/* INVITATION SHELL — template-agnostic.
+ *
+ * Everything here is true of EVERY invitation category: the page frame, the
+ * controlled states, the button primitive, the accessibility helpers and the
+ * reduced-motion contract. A template stylesheet dresses these; it never has to
+ * re-declare them.
+ *
+ * The custom properties below are the theming surface. A template overrides
+ * them on `:root` and adds its own rules scoped under its theme class, so two
+ * templates can never bleed into each other.
+ *
+ * MOBILE FIRST: every rule is written for a phone in portrait, because that is
+ * where an invitation is opened — from a message. Wider viewports are handled
+ * by two `min-width` queries at the bottom and nothing else.
+ */
+
+:root {
+    /* Palette — neutral defaults; templates override.
+     *
+     * TWO ACCENTS ON PURPOSE. `--inv-accent` dresses decoration (rules,
+     * flourishes, ornaments) where contrast is a matter of taste.
+     * `--inv-accent-ink` is the only one allowed to carry TEXT or a control
+     * border, and every template must keep it at or above 4.5:1 against both
+     * `--inv-bg` and `--inv-surface`. Collapsing these into one token is how a
+     * warm, soft palette quietly ends up failing WCAG AA on its buttons. */
+    --inv-bg: #ffffff;
+    --inv-surface: #f6f4f1;
+    --inv-ink: #1d1b1a;
+    --inv-muted: #64605b;
+    --inv-accent: #8a6a55;
+    --inv-accent-ink: #7a5a45;
+    --inv-line: rgba(29, 27, 26, 0.14);
+
+    /* Type */
+    --inv-font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --inv-font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Rhythm */
+    --inv-measure: 34rem;   /* readable column */
+    --inv-gutter: 1.5rem;
+    --inv-section-y: 3.25rem;
+    --inv-radius: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+    /* 320 px is the narrowest viewport we support; nothing may overflow it. */
+    min-width: 320px;
+    background: var(--inv-bg);
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--inv-bg);
+    color: var(--inv-ink);
+    font-family: var(--inv-font-body);
+    font-size: 1rem;
+    line-height: 1.65;
+    /* The single guard against horizontal overflow: no descendant may create a
+     * scrollbar on the page itself. Wide content clips its own box instead. */
+    overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+a { color: var(--inv-accent-ink); }
+
+/* ── Focus ──────────────────────────────────────────────────────────────── */
+/* Always visible, never removed. Two declarations so browsers without
+ * :focus-visible still get a ring rather than nothing. */
+:focus { outline: 2px solid var(--inv-accent-ink); outline-offset: 3px; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--inv-accent-ink); outline-offset: 3px; }
+
+/* ── Accessibility helpers ──────────────────────────────────────────────── */
+.inv-sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Page frame ─────────────────────────────────────────────────────────── */
+.inv-page {
+    max-width: 46rem;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.inv-section {
+    padding: var(--inv-section-y) var(--inv-gutter);
+}
+
+.inv-section__inner {
+    max-width: var(--inv-measure);
+    margin: 0 auto;
+    text-align: center;
+}
+
+.inv-heading {
+    font-family: var(--inv-font-display);
+    font-weight: 400;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--inv-ink);
+}
+
+/* The rule under every section heading. Decorative, so it is aria-hidden in
+ * the markup and drawn entirely in CSS — no asset, no request. */
+.inv-rule {
+    display: block;
+    width: 3.5rem;
+    height: 1px;
+    margin: 0.9rem auto 1.6rem;
+    background: var(--inv-accent);
+    opacity: 0.55;
+}
+
+.inv-section p { margin: 0 0 1rem; }
+.inv-section p:last-child { margin-bottom: 0; }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.inv-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    /* 48 px tall: a comfortable touch target on a phone. */
+    min-height: 48px;
+    padding: 0.75rem 1.4rem;
+    border: 1px solid var(--inv-accent-ink);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--inv-accent-ink);
+    font-family: var(--inv-font-body);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.inv-btn--solid { background: var(--inv-accent-ink); color: #fff; }
+.inv-btn:hover { transform: translateY(-1px); }
+.inv-btn--ghost:hover { background: var(--inv-surface); }
+.inv-btn:active { transform: translateY(0); }
+.inv-btn__ext { font-size: 0.8em; opacity: 0.8; }
+
+/* ── Loading + controlled states ────────────────────────────────────────── */
+.inv-loading,
+.inv-state {
+    max-width: var(--inv-measure);
+    margin: 0 auto;
+    padding: 5rem var(--inv-gutter);
+    text-align: center;
+}
+
+.inv-loading__mark,
+.inv-state__mark {
+    display: block;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    border: 2px solid var(--inv-line);
+    border-top-color: var(--inv-accent);
+}
+
+.inv-loading__mark {
+    border-top-color: var(--inv-accent-ink);
+    animation: inv-spin 1s linear infinite;
+}
+.inv-state__mark { border-top-color: var(--inv-line); }
+
+@keyframes inv-spin { to { transform: rotate(360deg); } }
+
+.inv-loading__text { color: var(--inv-muted); margin: 0; }
+
+.inv-state__title {
+    font-family: var(--inv-font-display);
+    font-weight: 400;
+    font-size: 1.5rem;
+    margin: 0 0 0.75rem;
+}
+
+.inv-state__body { color: var(--inv-muted); margin: 0 0 1.75rem; }
+.inv-state__actions { margin: 0; }
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+.inv-footer {
+    padding: 2rem var(--inv-gutter) 2.75rem;
+    text-align: center;
+    color: var(--inv-muted);
+    font-size: 0.8rem;
+}
+.inv-footer p { margin: 0; }
+
+/* ── noscript ───────────────────────────────────────────────────────────── */
+.inv-noscript {
+    max-width: var(--inv-measure);
+    margin: 0 auto;
+    padding: 4rem var(--inv-gutter);
+    text-align: center;
+}
+
+/* ── Environment marker ─────────────────────────────────────────────────── */
+/* Shared markup and styles in both deployments; only env.js can reveal it, so
+ * production is structurally unable to show it. Same contract as 404.html. */
+.env-badge {
+    position: fixed;
+    top: 0; right: 0;
+    z-index: 999;
+    padding: 0.2rem 0.6rem;
+    border-bottom-left-radius: 8px;
+    background: #EC4899;
+    color: #fff;
+    font-family: var(--inv-font-body);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+[hidden] { display: none !important; }
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* Every animation on this page is decorative — the countdown reads its value
+ * from text, not from movement — so honoring the preference costs nothing. */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+    .inv-btn:hover { transform: none; }
+}
+
+/* ── Wider viewports ────────────────────────────────────────────────────── */
+@media (min-width: 40em) {
+    :root {
+        --inv-gutter: 2.25rem;
+        --inv-section-y: 4.25rem;
+    }
+    .inv-heading { font-size: 1.7rem; }
+}
+
+@media (min-width: 64em) {
+    :root { --inv-section-y: 5rem; }
+    .inv-page { max-width: 48rem; }
+}

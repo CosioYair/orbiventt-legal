@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img">
+  <rect width="800" height="1000" fill="#F7F3EA"/>
+  <g transform="rotate(-22 144 700)">
+    <path d="M 144 700 q 180 -112.00000000000001 400 -136" fill="none" stroke="#697A5D" stroke-width="5.6000000000000005" stroke-linecap="round"/>
+    <ellipse cx="194.0" cy="640.6" rx="28.3" ry="20.4" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 194.0 640.6)"/>
+    <ellipse cx="194.0" cy="705.7" rx="28.3" ry="20.4" fill="#8A9A7B" opacity="0.68" transform="rotate(34 194.0 705.7)"/>
+    <ellipse cx="244.0" cy="623.3" rx="26.6" ry="19.2" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 244.0 623.3)"/>
+    <ellipse cx="244.0" cy="684.5" rx="26.6" ry="19.2" fill="#8A9A7B" opacity="0.68" transform="rotate(34 244.0 684.5)"/>
+    <ellipse cx="294.0" cy="608.0" rx="24.9" ry="18.0" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 294.0 608.0)"/>
+    <ellipse cx="294.0" cy="665.4" rx="24.9" ry="18.0" fill="#8A9A7B" opacity="0.68" transform="rotate(34 294.0 665.4)"/>
+    <ellipse cx="344.0" cy="594.1" rx="23.3" ry="16.7" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 344.0 594.1)"/>
+    <ellipse cx="344.0" cy="647.5" rx="23.3" ry="16.7" fill="#8A9A7B" opacity="0.68" transform="rotate(34 344.0 647.5)"/>
+    <ellipse cx="394.0" cy="580.9" rx="21.6" ry="15.5" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 394.0 580.9)"/>
+    <ellipse cx="394.0" cy="630.5" rx="21.6" ry="15.5" fill="#8A9A7B" opacity="0.68" transform="rotate(34 394.0 630.5)"/>
+    <ellipse cx="444.0" cy="568.5" rx="19.9" ry="14.3" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 444.0 568.5)"/>
+    <ellipse cx="444.0" cy="614.2" rx="19.9" ry="14.3" fill="#8A9A7B" opacity="0.68" transform="rotate(34 444.0 614.2)"/>
+    <ellipse cx="494.0" cy="556.5" rx="18.2" ry="13.1" fill="#8A9A7B" opacity="0.88" transform="rotate(-34 494.0 556.5)"/>
+    <ellipse cx="494.0" cy="598.4" rx="18.2" ry="13.1" fill="#8A9A7B" opacity="0.68" transform="rotate(34 494.0 598.4)"/>
+  </g>
+</svg>

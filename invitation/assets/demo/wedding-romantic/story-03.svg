@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img" aria-label="Cúpula y campanario recortados contra un cielo de atardecer">
+  <defs>
+    <linearGradient id="s3sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F6D9C4"/>
+      <stop offset="45%" stop-color="#EFC0A9"/>
+      <stop offset="100%" stop-color="#D89C86"/>
+    </linearGradient>
+    <radialGradient id="s3sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF0D6"/>
+      <stop offset="70%" stop-color="#FFDCB0" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#FFD3A2" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#s3sky)"/>
+  <circle cx="560" cy="330" r="190" fill="url(#s3sun)"/>
+  <circle cx="560" cy="330" r="66" fill="#FFF2DC" opacity="0.85"/>
+
+  <!-- Distant rooftops. -->
+  <g fill="#B8836C" opacity="0.45">
+    <rect x="0" y="742" width="150" height="258"/>
+    <rect x="120" y="700" width="120" height="300"/>
+    <rect x="620" y="726" width="180" height="274"/>
+  </g>
+
+  <!-- Bell tower and dome, silhouetted. -->
+  <g fill="#8A5A46">
+    <rect x="238" y="404" width="118" height="596"/>
+    <path d="M238 404 L297 330 L356 404 Z"/>
+    <rect x="266" y="452" width="62" height="86" rx="31" fill="#D89C86" opacity="0.55"/>
+    <rect x="272" y="612" width="50" height="76" rx="25" fill="#D89C86" opacity="0.4"/>
+    <rect x="291" y="286" width="12" height="48"/>
+    <rect x="279" y="300" width="36" height="10"/>
+
+    <path d="M394 1000 L394 700 A 118 118 0 0 1 630 700 L630 1000 Z"/>
+    <path d="M512 566 A 46 46 0 0 1 512 586 Z"/>
+    <rect x="506" y="524" width="12" height="62"/>
+    <rect x="494" y="542" width="36" height="10"/>
+    <rect x="430" y="800" width="52" height="118" rx="26" fill="#D89C86" opacity="0.4"/>
+    <rect x="542" y="800" width="52" height="118" rx="26" fill="#D89C86" opacity="0.4"/>
+  </g>
+
+  <!-- Birds. -->
+  <g fill="none" stroke="#7A4C3A" stroke-width="4" stroke-linecap="round" opacity="0.65">
+    <path d="M150 250 q 18 -16 34 0 q 16 -16 34 0"/>
+    <path d="M230 178 q 13 -12 25 0 q 12 -12 25 0"/>
+    <path d="M96 340 q 11 -10 21 0 q 10 -10 21 0"/>
+  </g>
+</svg>

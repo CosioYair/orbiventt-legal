@@ -2,12 +2,14 @@
 <html lang="es-MX">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <!-- ENV-SPECIFIC: deployment base path. Rewritten to "/" on promotion. -->
+    <base href="/">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <title>Orbiventt | Red social de eventos para Android y iPhone</title>
     <meta name="description" content="Orbiventt es una red social gratuita para descubrir, crear, organizar y compartir eventos públicos o privados. Disponible para Android y iPhone.">
     <link rel="canonical" href="https://orbiventt.com/">
@@ -101,7 +103,7 @@
 <body>
     <main class="container">
         <header>
-            <img class="logo" src="/assets/orbiventt-logo.png" alt="Orbiventt" width="1398" height="493">
+            <img class="logo" src="assets/orbiventt-logo.png" alt="Orbiventt" width="1398" height="493">
             <h1>Orbiventt: red social de eventos</h1>
             <p class="tagline">Descubre eventos públicos cerca de ti, crea encuentros públicos o privados y organiza invitaciones, chat, listas colaborativas y proveedores desde un mismo espacio.</p>
             <p class="availability">Disponible gratis para Android y iPhone.</p>

@@ -1,0 +1,6 @@
+{
+  "name": "orbiventt-invitation",
+  "private": true,
+  "type": "module",
+  "description": "Marks invitation/**/*.js as ES modules for Node's resolver so the test suite can import the exact files the site serves. Not a package, never installed, no dependencies, no build step. The browser ignores this file entirely."
+}

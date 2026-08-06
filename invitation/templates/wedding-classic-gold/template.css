@@ -1,0 +1,624 @@
+/* TEMPLATE — wedding_classic_gold, version 1.
+ *
+ * "Clásica elegante": engraved stationery. Ivory sheet, warm gold, a serif set
+ * in small caps over double rules, and every section centred inside a thin
+ * frame. The composition is SYMMETRICAL throughout — that, and the ruled
+ * furniture, is what separates it from Romántica rather than the palette.
+ *
+ * SCOPE RULE: every rule below is scoped under `.tpl-wedding-classic-gold`,
+ * which main.js puts on <html> and the renderer puts on the invitation element.
+ * The only unscoped declarations are the custom-property overrides on `:root`,
+ * which exist to retheme the shared shell in css/base.css.
+ *
+ * CONTRAST BUDGET (measured against both grounds, #FDFBF6 and #F6F1E6):
+ *
+ *   --inv-ink        14.1 : 1  /  13.1 : 1
+ *   --inv-muted       5.6 : 1  /   5.2 : 1   body copy — WCAG AA
+ *   --inv-accent-ink  4.9 : 1  /   4.6 : 1   buttons, links, control borders
+ *   --tpl-gold        3.1 : 1                decorative + large display only
+ *
+ * The gold that gives this template its character is a DECORATION token. Any
+ * gold that carries text or a control border uses `--inv-accent-ink`, a
+ * darkened bronze that clears AA on both grounds — which is how the design
+ * stays warm without a single label failing contrast.
+ *
+ * RESPONSIVE: written mobile-first and verified from 320 px up. Nothing is
+ * sized with `100vw`, and the full-bleed band is a block child of a
+ * zero-padding parent, so it is exactly the invitation width by construction
+ * (see the interlude block).
+ */
+
+:root.tpl-wedding-classic-gold {
+    --inv-bg: #FDFBF6;          /* marfil */
+    --inv-surface: #F6F1E6;     /* papel crema */
+    --inv-ink: #2A2723;         /* tinta */
+    --inv-muted: #635C51;
+    --inv-accent: #C9A961;      /* oro — decoración */
+    --inv-accent-ink: #8A6A28;  /* bronce — texto y controles */
+    --inv-line: rgba(42, 39, 35, 0.16);
+
+    --tpl-gold: #B08A3E;
+    --tpl-gold-soft: #D8C08A;
+    --tpl-frame: rgba(176, 138, 62, 0.55);
+
+    --inv-radius: 2px;          /* stationery is cut, not rounded */
+}
+
+:root.tpl-wedding-classic-gold body { background: var(--inv-bg); }
+
+.tpl-wedding-classic-gold ::selection { background: var(--tpl-gold-soft); color: var(--inv-ink); }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* svh keeps mobile browser chrome from cropping the composition; vh is the
+     * fallback for engines that do not know the small-viewport unit. */
+    min-height: 88vh;
+    min-height: 88svh;
+    padding: 3.5rem 1.25rem;
+    overflow: hidden;
+    background: var(--inv-bg);
+}
+
+.tpl-wedding-classic-gold .inv-hero__media { position: absolute; inset: 0; z-index: 0; }
+
+.tpl-wedding-classic-gold .inv-hero__art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 38%;
+}
+
+/* A flat ivory wash rather than a gradient stack: the sheet stays paper, and
+ * the names sit on it instead of on a photograph. */
+.tpl-wedding-classic-gold .inv-hero__veil {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(253, 251, 246, 0.72) 0%,
+        rgba(253, 251, 246, 0.52) 45%,
+        rgba(253, 251, 246, 0.86) 100%
+    );
+}
+
+/* THE ENGRAVED FRAME — the template's signature. A double rule inset from the
+ * edge, drawn in CSS so it costs no request and scales with the viewport. */
+.tpl-wedding-classic-gold .inv-hero__content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 28rem;
+    padding: 2.75rem 1.5rem;
+    text-align: center;
+    border: 1px solid var(--tpl-frame);
+    outline: 1px solid var(--tpl-frame);
+    outline-offset: 6px;
+    background: rgba(253, 251, 246, 0.72);
+}
+
+.tpl-wedding-classic-gold .inv-hero__eyebrow {
+    margin: 0 0 1.25rem;
+    color: var(--inv-accent-ink);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-classic-gold .inv-hero__names {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    margin: 0;
+    font-family: var(--inv-font-display);
+    font-weight: 400;
+    /* Bounded at both ends so a long name never overflows 320 px and never
+     * becomes a billboard on a desktop browser. */
+    font-size: clamp(2.15rem, 11.5vw, 3.4rem);
+    line-height: 1.08;
+    letter-spacing: 0.02em;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    /* Long single-word names break rather than push the frame open. */
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-classic-gold .inv-hero__amp {
+    font-size: 0.42em;
+    color: var(--tpl-gold);
+    letter-spacing: 0.2em;
+    line-height: 2;
+}
+
+/* The drawn ornament: a double rule with a lozenge at its centre. */
+.tpl-wedding-classic-gold .inv-hero__flourish,
+.tpl-wedding-classic-gold .inv-closing__flourish {
+    position: relative;
+    display: block;
+    width: min(11rem, 70%);
+    height: 1px;
+    margin: 1.5rem auto 1.4rem;
+    background: var(--tpl-gold);
+    opacity: 0.85;
+}
+
+.tpl-wedding-classic-gold .inv-hero__flourish::before,
+.tpl-wedding-classic-gold .inv-closing__flourish::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 5px;
+    height: 1px;
+    background: var(--tpl-gold-soft);
+}
+
+.tpl-wedding-classic-gold .inv-hero__flourish::after,
+.tpl-wedding-classic-gold .inv-closing__flourish::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 9px;
+    height: 9px;
+    margin: -4px 0 0 -4px;
+    background: var(--inv-bg);
+    border: 1.5px solid var(--tpl-gold);
+    transform: rotate(45deg);
+}
+
+.tpl-wedding-classic-gold .inv-hero__date {
+    margin: 0 0 0.45rem;
+    font-family: var(--inv-font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-classic-gold .inv-hero__place {
+    margin: 0;
+    color: var(--inv-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+/* ── Section rhythm ─────────────────────────────────────────────────────── */
+/* Alternating ivory and cream, explicit rather than nth-child so the order the
+ * descriptor fixes cannot silently re-shuffle the page. */
+.tpl-wedding-classic-gold .inv-section--message,
+.tpl-wedding-classic-gold .inv-section--dressCode,
+.tpl-wedding-classic-gold .inv-section--gifts,
+.tpl-wedding-classic-gold .inv-section--closing {
+    background: var(--inv-surface);
+}
+
+/* Every section is a centred plate inside a hairline frame. */
+.tpl-wedding-classic-gold .inv-section__inner {
+    position: relative;
+    padding: 0.5rem 0;
+}
+
+.tpl-wedding-classic-gold .inv-heading {
+    font-family: var(--inv-font-display);
+    font-size: 0.92rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--inv-accent-ink);
+}
+
+/* The rule under every heading becomes the template's double rule. */
+.tpl-wedding-classic-gold .inv-rule {
+    position: relative;
+    width: 4.5rem;
+    height: 1px;
+    margin: 1rem auto 1.7rem;
+    background: var(--tpl-gold);
+    opacity: 1;
+}
+
+.tpl-wedding-classic-gold .inv-rule::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 4px;
+    height: 1px;
+    background: var(--tpl-gold-soft);
+}
+
+/* ── Message ────────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-message__body {
+    font-family: var(--inv-font-display);
+    font-size: 1.12rem;
+    line-height: 1.85;
+    color: var(--inv-ink);
+    text-wrap: pretty;
+}
+
+.tpl-wedding-classic-gold .inv-message__hosts {
+    margin-top: 2rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--inv-line);
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+    letter-spacing: 0.05em;
+    font-style: italic;
+}
+
+/* ── Countdown ──────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.45rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-classic-gold .inv-countdown__unit {
+    padding: 0.9rem 0.15rem;
+    border: 1px solid var(--tpl-frame);
+    background: var(--inv-bg);
+}
+
+.tpl-wedding-classic-gold .inv-countdown__value {
+    display: block;
+    font-family: var(--inv-font-display);
+    /* Tabular figures stop the row twitching as the seconds change. */
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(1.4rem, 7.5vw, 2rem);
+    line-height: 1.1;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-classic-gold .inv-countdown__label {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--inv-accent-ink);
+    /* Fluid at the bottom end so "segundos" stops setting the min-content width
+     * of its column and the four tracks stay equal below ~360 px. */
+    font-size: clamp(0.55rem, 2.5vw, 0.64rem);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.tpl-wedding-classic-gold .inv-countdown__done {
+    font-family: var(--inv-font-display);
+    font-size: 1.35rem;
+    letter-spacing: 0.06em;
+    color: var(--inv-accent-ink);
+}
+
+/* ── Ceremony / Reception ───────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-place__when {
+    margin-bottom: 1.2rem;
+    font-family: var(--inv-font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--inv-accent-ink);
+}
+
+.tpl-wedding-classic-gold .inv-place__venue {
+    margin-bottom: 0.5rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.35rem, 6vw, 1.65rem);
+    line-height: 1.3;
+    color: var(--inv-ink);
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-classic-gold .inv-place__address {
+    margin-bottom: 0.7rem;
+    color: var(--inv-muted);
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-classic-gold .inv-place__note {
+    margin-bottom: 1.6rem;
+    color: var(--inv-muted);
+    font-size: 0.86rem;
+    font-style: italic;
+}
+
+.tpl-wedding-classic-gold .inv-place__actions { margin: 0; }
+
+/* ── Dress code ─────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-dress__title {
+    margin-bottom: 1rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.3rem, 5.5vw, 1.55rem);
+    letter-spacing: 0.04em;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-classic-gold .inv-dress__description { color: var(--inv-ink); }
+
+.tpl-wedding-classic-gold .inv-dress__guidelines {
+    margin: 1.6rem auto 0;
+    padding: 1.3rem 1.1rem;
+    max-width: 30rem;
+    border: 1px solid var(--tpl-frame);
+    /* The marker is drawn on ::before, so it is never announced as content and
+     * the element stays a real <ul> for assistive technology. */
+    list-style: none;
+    display: grid;
+    gap: 0.7rem;
+    text-align: left;
+}
+
+.tpl-wedding-classic-gold .inv-dress__guideline {
+    position: relative;
+    padding-left: 1.4rem;
+    color: var(--inv-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.tpl-wedding-classic-gold .inv-dress__guideline::before {
+    content: "";
+    position: absolute;
+    left: 0.2rem;
+    top: 0.62em;
+    width: 6px;
+    height: 6px;
+    border: 1px solid var(--tpl-gold);
+    transform: rotate(45deg);
+}
+
+/* ── Gallery ────────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-gallery {
+    display: grid;
+    /* Two columns from 320 px up; the tiles are portrait so two always fit. */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-classic-gold .inv-gallery__item {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--tpl-frame);
+    /* Reserved geometry: the tile owns its ratio before the image arrives, so
+     * nothing below it moves when it does. The ratio is the CATEGORY's. */
+    aspect-ratio: 4 / 5;
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-classic-gold .inv-gallery__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tpl-wedding-classic-gold .inv-gallery__item.is-failed::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border: 1px solid var(--tpl-gold);
+    opacity: 0.5;
+    transform: rotate(45deg);
+}
+
+/* ── Interludes ─────────────────────────────────────────────────────────── */
+/* A photograph the reader passes THROUGH between two parts of the invitation.
+ *
+ * THERE IS NO GUTTER TO ESCAPE: the figure is a direct child of
+ * `.inv-invitation`, which carries no horizontal padding — the gutter belongs
+ * to `.inv-section`, i.e. to this band's SIBLINGS. `width: 100%` on a block
+ * child of a zero-padding parent already IS the full invitation width, so
+ * there is no negative margin here and no `100vw` (which would overflow by the
+ * scrollbar width wherever one exists). */
+.tpl-wedding-classic-gold .inv-interlude {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--inv-surface);
+}
+
+.tpl-wedding-classic-gold .inv-interlude__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* The shell's `img { max-width: 100% }` would otherwise cap the image. */
+    max-width: none;
+    /* COVER, always: the mobile cropper framed this photograph to the band's
+     * own 16:9 category placement, so filling the slot shows exactly the frame
+     * the organizer approved. Never `contain` — that would letterbox it. */
+    object-fit: cover;
+}
+
+/* A gold hairline above and below every band, so the photograph is framed by
+ * the stationery rather than dropped into it. Both parities are ruled — this
+ * collection is symmetrical, so they do not alternate. */
+.tpl-wedding-classic-gold .inv-interlude::before,
+.tpl-wedding-classic-gold .inv-interlude::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--tpl-gold);
+    opacity: 0.5;
+    z-index: 1;
+}
+
+.tpl-wedding-classic-gold .inv-interlude::before { top: 0; }
+.tpl-wedding-classic-gold .inv-interlude::after { bottom: 0; }
+
+/* An image that failed to load collapses the band entirely: a blank strip
+ * mid-invitation is worse than the page simply moving on. */
+.tpl-wedding-classic-gold .inv-interlude.is-failed { display: none; }
+
+/* ── Gifts ──────────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-gifts__intro { color: var(--inv-ink); }
+
+/* The registry links are a real <ul>, and the shell ships NO list reset — so a
+ * template that styles only the ITEMS inherits a browser bullet and a 40 px
+ * indent beside every button. The markup stays a semantic list; only the
+ * default presentation is removed. */
+.tpl-wedding-classic-gold .inv-gifts {
+    display: grid;
+    justify-items: center;
+    gap: 0.7rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tpl-wedding-classic-gold .inv-gifts__item { width: 100%; max-width: 22rem; }
+.tpl-wedding-classic-gold .inv-gifts .inv-btn { width: 100%; }
+
+.tpl-wedding-classic-gold .inv-gifts__note {
+    margin: 0.5rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.82rem;
+    font-style: italic;
+}
+
+/* ── Reclama tus pases ──────────────────────────────────────────────────── */
+/* The claim card is SKINNED here and nowhere else: its markup, its copy, its
+ * clipboard behaviour and its app handoff are the shared section's. */
+.tpl-wedding-classic-gold .inv-passes .inv-section__inner {
+    padding: 1.9rem 1.15rem;
+    border: 1px solid var(--tpl-gold);
+    outline: 1px solid var(--tpl-frame);
+    outline-offset: 5px;
+    background: var(--inv-bg);
+    text-align: center;
+}
+
+.tpl-wedding-classic-gold .inv-passes.is-demo .inv-section__inner {
+    border-style: dashed;
+}
+
+.tpl-wedding-classic-gold .inv-passes__allocation {
+    margin: 0.3rem 0 0.5rem;
+    font-family: var(--inv-font-display);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-classic-gold .inv-passes__code-value {
+    display: inline-block;
+    margin: 0.3rem 0;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--tpl-gold);
+    background: var(--inv-surface);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    /* Bounded so a 12-character code never sets a width the card cannot hold
+     * at 320 px. */
+    font-size: clamp(0.86rem, 4.2vw, 1rem);
+    letter-spacing: 0.16em;
+    color: var(--inv-ink);
+    overflow-wrap: anywhere;
+}
+
+.tpl-wedding-classic-gold .inv-passes__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+    margin-top: 1.1rem;
+}
+
+.tpl-wedding-classic-gold .inv-passes__status {
+    min-height: 1.2em;
+    margin: 0.6rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+}
+
+.tpl-wedding-classic-gold .inv-passes__note {
+    margin-top: 0.4rem;
+    color: var(--inv-muted);
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+/* ── Automatic actions ──────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+}
+
+.tpl-wedding-classic-gold .inv-actions__status {
+    min-height: 1.2em;
+    margin: 0.7rem 0 0;
+    color: var(--inv-muted);
+    font-size: 0.84rem;
+}
+
+/* Squared, ruled controls rather than pills — stationery, not an app. */
+.tpl-wedding-classic-gold .inv-btn {
+    border-radius: 0;
+    border-color: var(--inv-accent-ink);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.tpl-wedding-classic-gold .inv-btn--solid {
+    background: var(--inv-accent-ink);
+    color: var(--inv-bg);
+}
+
+/* ── Closing ────────────────────────────────────────────────────────────── */
+.tpl-wedding-classic-gold .inv-closing__body {
+    font-family: var(--inv-font-display);
+    font-size: 1.08rem;
+    line-height: 1.8;
+    color: var(--inv-ink);
+}
+
+.tpl-wedding-classic-gold .inv-closing__signature {
+    margin-top: 1.4rem;
+    font-family: var(--inv-font-display);
+    font-size: clamp(1.5rem, 7vw, 1.9rem);
+    letter-spacing: 0.04em;
+    color: var(--inv-accent-ink);
+    overflow-wrap: anywhere;
+}
+
+/* ── Wider viewports ────────────────────────────────────────────────────── */
+@media (min-width: 40em) {
+    .tpl-wedding-classic-gold .inv-hero__content { padding: 3.5rem 2.5rem; }
+    .tpl-wedding-classic-gold .inv-heading { font-size: 1rem; }
+    .tpl-wedding-classic-gold .inv-gallery { gap: 0.9rem; }
+}
+
+@media (min-width: 64em) {
+    .tpl-wedding-classic-gold .inv-hero { min-height: 92vh; min-height: 92svh; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* This template animates nothing by design; the rule is kept so a future
+ * addition inherits the contract rather than having to remember it. */
+@media (prefers-reduced-motion: reduce) {
+    .tpl-wedding-classic-gold * { animation: none !important; transition: none !important; }
+}
