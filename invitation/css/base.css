@@ -65,6 +65,41 @@ body {
 
 img { max-width: 100%; height: auto; display: block; }
 
+/* ── Advanced photo framing — ONE engine for every design ───────────────── */
+/* A photograph saved with a framing window renders as a wrapper that KEEPS the
+ * slot's own class (so each template's sizing, radius and clipping still
+ * apply) plus these two layers. The sharp foreground's geometry arrives as
+ * slot-percentage inline styles computed in js/framing.js — the same mapping
+ * the mobile preview uses — so the composition is identical at every viewport
+ * width. The blurred layer exists ONLY when the window reaches past the image;
+ * a full-cover framing renders exactly one sharp layer, like the legacy path.
+ * `max-width: none` on both layers defeats the global img rule above, which
+ * would otherwise cap the scaled foreground at the slot width. */
+.inv-framed {
+    position: relative;
+    overflow: hidden;
+}
+
+.inv-framed__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    /* The story treatment: same image, cover-scaled, softly blurred and
+     * slightly subdued. The scale hides the blur's edge bleed inside the
+     * slot's own clipping. */
+    filter: blur(24px) brightness(0.94);
+    transform: scale(1.12);
+}
+
+.inv-framed__fg {
+    position: absolute;
+    display: block;
+    max-width: none;
+}
+
 a { color: var(--inv-accent-ink); }
 
 /* ── Focus ──────────────────────────────────────────────────────────────── */

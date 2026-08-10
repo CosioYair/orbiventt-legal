@@ -25,6 +25,7 @@
  */
 import { el } from '../dom.js';
 import { resolveImage } from '../security.js';
+import { framedArt } from '../framing.js';
 import { INTERLUDE_SLOTS } from '../config.js';
 
 /** Fallback intrinsic size, used only if a template declares no placement. */
@@ -50,8 +51,11 @@ function renderInterlude(slot, index, ctx) {
     // this photograph to — so the reserved box and the file agree exactly.
     const place = (ctx.placements && ctx.placements.interlude) || null;
 
-    const img = el('img', {
-        class: 'inv-interlude__img',
+    const art = framedArt({
+        document: d,
+        src,
+        framing: data.image && data.image.framing,
+        className: 'inv-interlude__img',
         attrs: {
             src,
             // ALT IS ACCESSIBILITY, NOT VISIBILITY. An empty description makes
@@ -64,7 +68,6 @@ function renderInterlude(slot, index, ctx) {
             decoding: 'async',
             'aria-hidden': data.alt ? null : 'true',
         },
-        document: d,
     });
 
     const figure = el('figure', {
@@ -77,14 +80,14 @@ function renderInterlude(slot, index, ctx) {
             // the ones already placed.
             'data-parity': index % 2 === 0 ? 'even' : 'odd',
         },
-        children: [img],
+        children: [art.node],
         document: d,
     });
 
-    if (typeof img.addEventListener === 'function') {
-        img.addEventListener('error', () => {
+    if (typeof art.img.addEventListener === 'function') {
+        art.img.addEventListener('error', () => {
             figure.setAttribute('class', 'inv-interlude is-failed');
-            if (img.parentNode) img.parentNode.removeChild(img);
+            if (art.node.parentNode) art.node.parentNode.removeChild(art.node);
         }, { once: true });
     }
 

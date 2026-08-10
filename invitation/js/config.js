@@ -34,6 +34,7 @@ import {
     safeAssetPath,
     resolveMapUrl,
 } from './security.js';
+import { framingWindow } from './framing.js';
 
 /** The contract version this renderer understands. */
 export const CONTRACT_VERSION = 1;
@@ -94,6 +95,13 @@ function imageRef(value) {
     if (value.source === 'storage') {
         if (typeof value.bucket !== 'string') return null;
         ref.bucket = value.bucket;
+        /* The ADVANCED framing window (mobile writes it; framing.js draws it).
+         * Validated here so an unusable window is gone before the renderer —
+         * the reference then renders through the legacy cover path, which is
+         * the correct degradation. Legacy `origin`/`crop` bookkeeping remains
+         * dropped as before: it belongs to the mobile editor alone. */
+        const framing = framingWindow(value.framing);
+        if (framing) ref.framing = framing;
     }
     return ref;
 }

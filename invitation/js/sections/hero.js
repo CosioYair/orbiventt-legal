@@ -11,6 +11,7 @@
  */
 import { el } from '../dom.js';
 import { resolveImage } from '../security.js';
+import { framedArt } from '../framing.js';
 import { formatLongDate } from '../config.js';
 import { timeEl } from './shell.js';
 
@@ -29,8 +30,14 @@ export default function renderHero(data, ctx) {
     const place = (ctx.placements && ctx.placements.hero) || null;
 
     const art = artSrc
-        ? el('img', {
-            class: 'inv-hero__art',
+        ? framedArt({
+            document: d,
+            src: artSrc,
+            // The saved view window, when the organizer framed this photograph
+            // with the advanced editor. Absent (legacy derivatives, template
+            // artwork) the builder returns the exact plain <img> of old.
+            framing: data.image && data.image.framing,
+            className: 'inv-hero__art',
             attrs: {
                 src: artSrc,
                 // Accessibility, never visibility.
@@ -42,8 +49,7 @@ export default function renderHero(data, ctx) {
                 // carries a real description.
                 'aria-hidden': data.imageAlt ? null : 'true',
             },
-            document: d,
-        })
+        }).node
         : null;
 
     const names = el('h1', {

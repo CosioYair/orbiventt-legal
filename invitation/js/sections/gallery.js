@@ -18,6 +18,7 @@
  */
 import { el } from '../dom.js';
 import { resolveImage } from '../security.js';
+import { framedArt } from '../framing.js';
 import { section } from './shell.js';
 
 /** Fallback intrinsic size, used only if a template declares no placement. */
@@ -42,8 +43,11 @@ export default function renderGallery(data, ctx) {
             // framed this photograph to.
             const place = (ctx.placements && ctx.placements.gallery) || null;
 
-            const img = el('img', {
-                class: 'inv-gallery__img',
+            const art = framedArt({
+                document: d,
+                src,
+                framing: item.image && item.image.framing,
+                className: 'inv-gallery__img',
                 attrs: {
                     src,
                     // Accessibility, never visibility: an item with no
@@ -55,19 +59,18 @@ export default function renderGallery(data, ctx) {
                     decoding: 'async',
                     'aria-hidden': item.alt ? null : 'true',
                 },
-                document: d,
             });
 
             const tile = el('li', {
                 class: 'inv-gallery__item',
-                children: [img],
+                children: [art.node],
                 document: d,
             });
 
-            if (typeof img.addEventListener === 'function') {
-                img.addEventListener('error', () => {
+            if (typeof art.img.addEventListener === 'function') {
+                art.img.addEventListener('error', () => {
                     tile.setAttribute('class', 'inv-gallery__item is-failed');
-                    if (img.parentNode) img.parentNode.removeChild(img);
+                    if (art.node.parentNode) art.node.parentNode.removeChild(art.node);
                 }, { once: true });
             }
 
