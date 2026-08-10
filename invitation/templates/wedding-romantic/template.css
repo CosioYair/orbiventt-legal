@@ -27,7 +27,25 @@
  * The soft rose that gives this template its character reads at 2.8:1, which is
  * fine for a hairline ornament and not fine for a button label. Keeping the two
  * roles in separate tokens is what lets the palette stay warm without any text
- * on the page failing AA. */
+ * on the page failing AA.
+ *
+ * THE HERO IS THE ONE PLACE THOSE NUMBERS DO NOT APPLY, and that is what the
+ * 2026-08-10 legibility hotfix fixes. Every ratio above is measured against a
+ * PAPER ground. In the hero the same tokens sit on a photograph the couple
+ * uploaded, and the veil that would restore a paper-like ground is a bottom-up
+ * gradient — 0.00 alpha at 34%, 0.62 only at 68%. The eyebrow is the FIRST line
+ * of the text block, so it sits highest, exactly where the veil has barely
+ * begun: its 5.3:1 was never in force there. The two tokens below carry the
+ * repair, and they repair it PER GLYPH rather than by dimming the photograph:
+ *
+ *   --tpl-hero-halo  a soft halo in the marfil ground itself, so each glyph
+ *                    brings the ground the budget assumed with it. Invisible
+ *                    over a light photograph (it IS that colour) and separating
+ *                    over a dark or busy one, which is why one value serves
+ *                    every image without tuning for any of them.
+ *   --tpl-gold-hero  4.7:1 on marfil against --tpl-gold's 3.3:1. The ampersand
+ *                    is decorative AND large, so gold was legitimate on paper;
+ *                    over a bright photograph 3.3:1 simply stopped reading. */
 :root.tpl-wedding-romantic {
     --inv-bg: #FBF8F4;          /* marfil */
     --inv-surface: #F3EAE2;     /* papel cálido */
@@ -40,6 +58,12 @@
     --tpl-gold: #A8853F;
     --tpl-sage: #8F9C86;
     --tpl-blush: #E9D5CB;
+
+    /* Hero-over-photograph only — see the note above the budget. */
+    --tpl-gold-hero: #8A6A2A;
+    --tpl-hero-halo:
+        0 0 3px rgba(251, 248, 244, 0.95),
+        0 0 14px rgba(251, 248, 244, 0.70);
 }
 
 :root.tpl-wedding-romantic body { background: var(--inv-bg); }
@@ -103,13 +127,23 @@
     to   { opacity: 1; transform: none; }
 }
 
+/* Secondary by SIZE, not by fading. It was 0.78rem of --inv-muted spread over
+ * 0.26em of tracking with nothing between it and the photograph — a little
+ * grey mass stretched thin across the weakest part of the veil. It now carries
+ * the same ink as the date and brings its own ground; the couple's names are
+ * still three to four times its size, which is what makes it subordinate.
+ * Tracking comes in slightly so the wider glyphs read as one word and the line
+ * stays far inside 320 px. */
 .tpl-wedding-romantic .inv-hero__eyebrow {
     margin: 0 0 1rem;
-    color: var(--inv-muted);
-    font-size: 0.78rem;
+    color: var(--inv-ink);
+    /* Floor on every phone, a little air on desktop — and capped below the
+     * date's 1.05rem so the hierarchy cannot invert. */
+    font-size: clamp(0.95rem, 3.6vw, 1rem);
     font-weight: 600;
-    letter-spacing: 0.26em;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
+    text-shadow: var(--tpl-hero-halo);
 }
 
 .tpl-wedding-romantic .inv-hero__names {
@@ -129,11 +163,17 @@
     text-wrap: balance;
 }
 
+/* Still the decorative separator, no longer a rumour. The deeper gold is what
+ * makes it survive a bright photograph; the halo is what makes it survive a
+ * dark one. `line-height` comes down as the glyph goes up so the line BOX
+ * grows about two pixels — the names keep their spacing and the hero does not
+ * change height. */
 .tpl-wedding-romantic .inv-hero__amp {
-    font-size: 0.5em;
+    font-size: 0.62em;
     font-style: italic;
-    color: var(--tpl-gold);
-    line-height: 1.6;
+    color: var(--tpl-gold-hero);
+    line-height: 1.35;
+    text-shadow: var(--tpl-hero-halo);
 }
 
 /* A drawn ornament: a hairline with a rotated square at its centre. No asset,
