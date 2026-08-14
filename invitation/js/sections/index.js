@@ -23,6 +23,7 @@ import renderGifts from './gifts.js';
 import renderPasses from './passes.js';
 import renderActions from './actions.js';
 import renderClosing from './closing.js';
+import renderDesign from './design.js';
 import { INTERLUDE_RENDERERS, interludeSectionId } from './interlude.js';
 
 const RENDERERS = Object.create(null);
@@ -37,6 +38,10 @@ RENDERERS.gifts = { render: renderGifts, shell: false };
 RENDERERS.passes = { render: renderPasses, shell: true };
 RENDERERS.actions = { render: renderActions, shell: true };
 RENDERERS.closing = { render: renderClosing, shell: false };
+/* The `custom` category's single content section: the uploaded design,
+ * rendered whole. Only the custom_design descriptor lists it; a wedding
+ * document cannot reach it because no wedding descriptor names the id. */
+RENDERERS.design = { render: renderDesign, shell: false };
 
 /* The six photograph positions. SHELL sections: they take no configuration
  * section of their own — each reads its own named slot from

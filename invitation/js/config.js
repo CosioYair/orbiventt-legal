@@ -39,7 +39,15 @@ import { framingWindow } from './framing.js';
 /** The contract version this renderer understands. */
 export const CONTRACT_VERSION = 1;
 
-/** Sections that must be present and valid for an invitation to render. */
+/** The bring-your-own-design category. Its configuration is normalized by its
+ *  OWN branch below — a custom document has a design image, not a couple and a
+ *  ceremony, and bending it through the wedding normalizers is exactly the
+ *  coupling the category registry exists to prevent. */
+export const CUSTOM_CATEGORY_KEY = 'custom';
+
+/** Sections that must be present and valid for a WEDDING invitation to
+ *  render. The custom category has its own single required section, `design`,
+ *  enforced in `normalizeCustomConfig`. */
 export const REQUIRED_SECTIONS = ['hero', 'message', 'ceremony'];
 
 /** Sections an organizer may switch on or off. */
@@ -351,6 +359,99 @@ const SECTION_NORMALIZERS = {
     },
 };
 
+/* ── the custom category ────────────────────────────────────────────────── */
+
+/** Sanity ceiling for the stored pixel dimensions of a custom design image.
+ *  Far above anything the mobile pipeline produces (2048 long edge); a value
+ *  outside it is a document this system never wrote, and the attributes are
+ *  simply omitted — the image still renders complete, sized on load. */
+const MAX_DESIGN_EDGE = 8192;
+
+function designDimension(value) {
+    return Number.isInteger(value) && value > 0 && value <= MAX_DESIGN_EDGE ? value : null;
+}
+
+/**
+ * The `design` section: ONE uploaded image that IS the whole invitation.
+ *
+ * Storage references only. Template artwork has no meaning here (this category
+ * ships none) and demo art may never become invitation content — both are
+ * refused rather than ignored, so the section either resolves to the
+ * organizer's own upload or does not exist.
+ *
+ * A `framing` window never survives: the FULL image is the contract, and a
+ * window would mean rendering less (or more) than what was uploaded. Dropping
+ * it here means every renderer downstream draws the complete photograph
+ * whatever an older or hand-edited document claims.
+ */
+function designSection(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const image = imageRef(raw.image);
+    if (!image || image.source !== 'storage') return null;
+    // The bucket allowlist, HERE and not merely at the URL resolver: for this
+    // category the image IS the invitation, so a reference the resolver would
+    // later refuse must fail normalization (draft reads "incomplete") rather
+    // than publish a page whose only content silently resolves to nothing.
+    if (image.bucket !== 'event-photos' && image.bucket !== 'invitation-media') return null;
+    delete image.framing;
+
+    const out = { image, alt: sanitizeText(raw.imageAlt, LIMITS.LINE) };
+    const width = designDimension(raw.width);
+    const height = designDimension(raw.height);
+    if (width && height) {
+        out.width = width;
+        out.height = height;
+    }
+    return out;
+}
+
+/**
+ * Normalize a CUSTOM (Personalizada) configuration.
+ *
+ * Deliberately minimal: the one required section is the design image, there
+ * are no optional sections, no interlude photographs and no page actions —
+ * the uploaded image carries all invitation information, and the pass card
+ * (a shell section driven by the route, not by configuration) is the only
+ * other thing the template draws.
+ *
+ * The failure vocabulary matches the wedding branch's (`section:design`), so
+ * the caller's draft/published handling needs no category knowledge.
+ */
+function normalizeCustomConfig(raw, identity) {
+    const rawSections = raw.sections && typeof raw.sections === 'object' ? raw.sections : {};
+
+    let design = null;
+    try {
+        design = designSection(rawSections.design);
+    } catch (_) {
+        design = null;
+    }
+
+    if (!design) {
+        return { ok: false, config: null, errors: ['section:design'], incomplete: [] };
+    }
+
+    return {
+        ok: true,
+        errors: [],
+        incomplete: [],
+        config: {
+            contractVersion: CONTRACT_VERSION,
+            categoryKey: identity.categoryKey,
+            templateKey: identity.templateKey,
+            templateVersion: identity.templateVersion,
+            locale: sanitizeText(raw.locale, 12) || DEFAULTS.locale,
+            timeZone: sanitizeText(raw.timeZone, 60) || DEFAULTS.timeZone,
+            sections: { design },
+            interludeImages: {},
+            // No page actions: there is no date to add to a calendar and no
+            // address to map — they live inside the image, unreadable to us by
+            // design. Sharing the page is the chat thread's job, as the link.
+            actions: { calendar: false, share: false, map: false },
+        },
+    };
+}
+
 /* ── entry point ────────────────────────────────────────────────────────── */
 
 /**
@@ -379,6 +480,15 @@ export function normalizeConfig(raw) {
         : null;
     if (!categoryKey || !templateKey || !templateVersion) {
         return { ok: false, config: null, errors: ['config:missing-template-identity'], incomplete: [] };
+    }
+
+    /* THE CATEGORY DECIDES THE SHAPE. The custom category branches here, before
+     * any wedding normalizer runs: a custom document must never be asked for a
+     * couple or a ceremony, and a wedding document must never satisfy itself
+     * with a design image. Everything below this line is the wedding contract,
+     * byte-for-byte as it always was. */
+    if (categoryKey === CUSTOM_CATEGORY_KEY) {
+        return normalizeCustomConfig(raw, { categoryKey, templateKey, templateVersion });
     }
 
     const rawSections = raw.sections && typeof raw.sections === 'object' ? raw.sections : {};

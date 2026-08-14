@@ -21,7 +21,15 @@
  *   demo       the Milestone A explainer, unchanged — badged as demonstration,
  *              claims nothing, offers no control.
  *   published  the real card.
- *   draft      nothing. The organizer's private rehearsal never offers a claim.
+ *   draft      no CLAIM, ever — the organizer's private rehearsal never offers
+ *              one. On the CUSTOM (Personalizada) template only, the draft
+ *              renders a clearly-labelled EXAMPLE of the card instead
+ *              (`draftExampleCard`): the custom page is design-then-passes
+ *              inside ONE shell and nothing else, so a preview showing only
+ *              the image told the organizer nothing about the layout their
+ *              guests will actually open. The example is the real component
+ *              with a placeholder code and no controls; wedding drafts keep
+ *              rendering nothing here.
  *
  * The "Abrir Orbiventt" destination arrives PRE-RESOLVED in `ctx.handoff`
  * (main.js → app-return.js). When the resolver produced no usable destination —
@@ -97,6 +105,58 @@ function demoCard(code, ctx) {
     ], { class: 'inv-passes is-demo' });
 }
 
+/** The placeholder the example card shows where a real code would sit.
+ *  Deliberately NOT code-shaped: `X` is outside the code alphabet's visual
+ *  register and reads as "your code goes here", so nobody can mistake the
+ *  example for a claimable credential or try to type it into the app. */
+export const EXAMPLE_CODE_PLACEHOLDER = 'XXXX-XXXX-XXXX';
+
+/**
+ * The DRAFT-ONLY example of the claim card, for the custom template.
+ *
+ * The real component's bones — same section id, same heading, same body and
+ * code classes, so the template's own card styling draws it — with three
+ * honest differences: a placeholder where the code sits, NO controls (nothing
+ * to copy, nothing to open), and copy that says exactly when the real card
+ * appears and what happens without a code. `is-example` gives it the sketchy
+ * dashed frame, the same convention `is-demo` established.
+ */
+function draftExampleCard(ctx) {
+    const d = ctx.document;
+    return section('passes', ctx.labels.passesHeading, ctx, [
+        el('p', {
+            class: 'inv-passes__body',
+            text: 'Así verán tus invitados sus pases cuando compartas el enlace '
+                + 'con un código de invitación.',
+            document: d,
+        }),
+        el('p', {
+            class: 'inv-passes__code',
+            children: [
+                el('span', {
+                    class: 'inv-passes__code-value',
+                    text: EXAMPLE_CODE_PLACEHOLDER,
+                    attrs: { 'aria-hidden': 'true' },
+                    document: d,
+                }),
+                el('span', {
+                    class: 'inv-sr-only',
+                    text: 'Ejemplo del lugar donde aparecerá el código de invitación.',
+                    document: d,
+                }),
+            ],
+            document: d,
+        }),
+        el('p', {
+            class: 'inv-passes__note',
+            text: 'Ejemplo de la vista previa: aquí no se reclama ningún pase. '
+                + 'Si compartes el enlace sin código, tus invitados verán '
+                + 'directamente tu diseño.',
+            document: d,
+        }),
+    ], { class: 'inv-passes is-example' });
+}
+
 function copyButton(code, ctx, status) {
     const d = ctx.document;
     const button = el('button', {
@@ -128,9 +188,19 @@ function copyButton(code, ctx, status) {
 }
 
 export default function renderPasses(_data, ctx) {
+    /* DRAFT: never a claim. The custom template alone gets the labelled
+     * example — its published page IS this card plus the design, so the
+     * organizer's preview must show the complete layout. This branch runs
+     * BEFORE the code check on purpose: a draft link that happens to carry a
+     * code still renders the example, never the real card. */
+    if (ctx.route && ctx.route.mode === MODE.DRAFT) {
+        return ctx.template && ctx.template.categoryKey === 'custom'
+            ? draftExampleCard(ctx)
+            : null;
+    }
+
     const code = ctx.route && ctx.route.code;
     if (!code) return null;
-    if (!ctx.route) return null;
 
     if (ctx.route.mode === MODE.DEMO) return demoCard(code, ctx);
     if (ctx.route.mode !== MODE.PUBLISHED) return null;

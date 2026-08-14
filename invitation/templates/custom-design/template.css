@@ -1,0 +1,333 @@
+/* TEMPLATE — custom_design, version 1 · "Tu diseño".
+ *
+ * ONE INVITATION OBJECT (frozen composition, 2026-08-14). The renderer's own
+ * `article.inv-invitation` — the shared parent every template already has —
+ * is styled here as the UNIFIED ORBIVENTT SHELL: a single dark, quietly
+ * branded container holding
+ *
+ *      the host's uploaded artwork, FIRST and flush to the shell,
+ *      then the Orbiventt pass module, directly beneath it,
+ *
+ * separated only by a thin brand-gradient seam. No second card, no page gap,
+ * no restart: without a code the shell simply ends after the artwork and still
+ * reads as a finished, framed invitation.
+ *
+ * TWO VISUAL OWNERS, ONE SYSTEM. The image is the ORGANIZER's identity and
+ * stays unobstructed and dominant; the pass area is ORBIVENTT's functional
+ * identity — the canonical dark tokens and the existing premium "Abrir
+ * Orbiventt" treatment from the event-preview page (404.html), not an
+ * invented look; the shell connects both. Branding is deliberately
+ * restrained: a hairline violet border, a soft glow, one 2px gradient seam.
+ * Nothing competes with the artwork.
+ *
+ * THE IMAGE IS NEVER CROPPED. It renders as a flowing <img> at the shell's
+ * width with height following its own aspect ratio; the ONLY clipping is the
+ * shell's rounded corners (`overflow: hidden`), which trims the corner
+ * pixels of the frame — never content, never a fit-crop, no fixed heights.
+ *
+ * BRAND TOKENS (verbatim from the canonical dark surface in 404.html):
+ *   surface #15101F · text #E8E0F0 · muted #9B8FB8 · primary #A855F7
+ *   premium CTA gradient: 100deg #8A18EA → #5A18D4 → #3826CE → #2348D6 → #1E74E6
+ *
+ * CONTRAST (on the shell surface #15101F):
+ *   #E8E0F0 text        ≈ 13.9 : 1
+ *   #9B8FB8 muted       ≈  5.9 : 1   body copy — WCAG AA
+ *   #C4B5FD eyebrow     ≈  9.2 : 1
+ *   #FFFFFF on the CTA gradient ≥ 4.6 : 1 at its lightest stop
+ *
+ * SCOPE RULE: every rule is scoped under `.tpl-custom-design`. The shell
+ * selector is `.inv-invitation.tpl-custom-design` — the ARTICLE, never the
+ * `:root` that carries the same theme class.
+ *
+ * VERSION LOCK: this stylesheet is version 1. A visual change that would
+ * alter an already-published invitation ships as version 2.
+ */
+:root.tpl-custom-design {
+    --inv-bg: #F7F6F3;          /* the page ground the shell floats on */
+    --inv-surface: #FFFFFF;
+    --inv-ink: #26242B;
+    --inv-muted: #5D5A64;
+    --inv-accent: #8F8CA3;
+    --inv-accent-ink: #4F4A82;
+    --inv-line: rgba(38, 36, 43, 0.14);
+
+    /* The Orbiventt shell's own palette — canonical dark tokens. */
+    --tpl-shell: #15101F;
+    --tpl-shell-text: #E8E0F0;
+    --tpl-shell-muted: #9B8FB8;
+    --tpl-shell-eyebrow: #C4B5FD;
+    --tpl-brand-seam: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%);
+}
+
+:root.tpl-custom-design body {
+    background: var(--inv-bg);
+    /* The card backdrop below spans the FULL viewport width behind the card
+     * (the calc(50% − 50vw) breakout). The band is sized in viewport units,
+     * so a desktop scrollbar can leave it a few pixels wider than the
+     * layout viewport — this guard swallows that epsilon so the page can
+     * never scroll or pan horizontally. Scoped to this template only. */
+    overflow-x: hidden;
+}
+
+.tpl-custom-design ::selection { background: #E4E2EC; color: var(--inv-ink); }
+
+/* NOTE (2026-08-14 correction): an earlier revision painted this blur as a
+ * FIXED page-level atmosphere. On device that read as a blurred strip above
+ * the invitation — the shell's margin exposed it — while the image, filling
+ * its own width, never had gaps for the blur to fill. The blur now lives
+ * ONLY inside the media stage below; nothing in this template is
+ * position: fixed and no page/body/root surface ever carries the image. */
+
+/* ── THE UNIFIED SHELL ──────────────────────────────────────────────────────
+ * The article that already wraps every section becomes the invitation object:
+ * one width, one radius, one surface, one shadow — for the artwork AND the
+ * pass module. `overflow: hidden` is what lets the flush image share the
+ * shell's top corners without any clipping of its own. */
+.inv-invitation.tpl-custom-design {
+    /* RELATIVE + z-index: 0 — BOTH matter (2026-08-14 live-visibility fix).
+     * `relative` makes the shell the containing block that anchors the
+     * blurred band. `z-index: 0` is what makes the band VISIBLE: base.css
+     * paints `html` itself with the light ground, so `body`'s background
+     * does not promote to the canvas and paints as an ordinary in-flow
+     * background — which covers root-level negative-z elements (measured
+     * live: the gutter's topmost paint was BODY). With an explicit z-index
+     * the shell is a stacking CONTEXT and a positioned element: it paints
+     * above the body's ground, and the z:−1 backdrop inside it paints above
+     * the shell's own background but below every piece of card content.
+     *
+     * Consequences handled below: the shell's border/shadow would now paint
+     * UNDER the backdrop, so the hairline moved to the ::after ring and the
+     * glow is retired (the band replaces it); the pass module carries its
+     * own opaque surface. The shell background stays as the fail-closed
+     * ground if the backdrop image never paints. */
+    position: relative;
+    z-index: 0;
+    width: calc(100% - 1.75rem);
+    max-width: 27rem;              /* the phone-stage width, on every viewport */
+    margin: 1.25rem auto 2.25rem;
+    background: var(--tpl-shell);
+    border-radius: 20px;
+}
+
+/* The violet hairline, as an overlay ring: inside the shell's stacking
+ * context the shell's OWN border would be buried under the backdrop, so the
+ * ring paints on top (z-index 1) — a 1px edge with a transparent interior
+ * that crisps the card against the blur without covering anything. */
+.inv-invitation.tpl-custom-design::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border: 1px solid rgba(168, 85, 247, 0.30);
+    border-radius: 20px;
+    pointer-events: none;
+}
+
+/* ── The design: flush artwork, top of the shell ──────────────────────────── */
+.tpl-custom-design .inv-section--design {
+    padding: 0;
+}
+
+.tpl-custom-design .inv-section--design .inv-section__inner {
+    max-width: none;
+}
+
+/* THE CARD BACKDROP (2026-08-14 final correction — supersedes the 9:16
+ * media stage, which letterboxed non-9:16 uploads INSIDE the frame and
+ * shrank the invitation; and the earlier fixed page atmosphere, which read
+ * as a detached strip). The blur now lives BEHIND THE CARD:
+ *
+ *   absolutely positioned, anchored by the shell (its containing block),
+ *   bleeding ~1.25rem past the card on every side, z-index −1 — behind the
+ *   card's own opaque surface, so what remains visible is the soft aura of
+ *   the invitation's own colours hugging the component. It scrolls with the
+ *   card (document-anchored, never position: fixed) and reduces the image
+ *   area by exactly nothing. */
+.tpl-custom-design .inv-design__backdrop {
+    position: absolute;
+    /* A FULL-VIEWPORT-WIDTH BAND behind the card (2026-08-14 outer-shell
+     * fix): the previous 1.25rem halo left the page's light ground visible
+     * beside the card, which read as a white slab under it. The classic
+     * breakout — left/right at calc(50% − 50vw) from the centred card —
+     * takes the backdrop to the screen edges on every device, so the sides
+     * show the invitation's own blurred colours instead of the page ground.
+     * Vertically it still hugs the component (1.25rem bleed), and the blur's
+     * natural edge fade is the soft transition into the neutral page above
+     * and below. */
+    top: -1.25rem;
+    bottom: -1.25rem;
+    left: calc(50% - 50vw);
+    right: calc(50% - 50vw);
+    z-index: -1;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    filter: blur(24px);
+    pointer-events: none;
+}
+
+/* A LIGHT wash only — the aura must carry the invitation's palette, not turn
+ * grey; blur's natural edge fade is exactly the soft boundary we want. */
+.tpl-custom-design .inv-design__backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(12, 10, 20, 0.2);
+}
+
+/* THE INVITATION ITSELF — restored to the full-size treatment: flowing at
+ * the card's full width, height from its own aspect ratio (the width/height
+ * attributes reserve the box before the bytes arrive). Complete, dominant,
+ * no stage, no letterbox, no blur anywhere inside its frame. With the
+ * shell's overflow gone, the image carries its own corner radii: the top
+ * pair always (shell radius minus its 1px border), the bottom pair only
+ * when the image is the card's last content (a code-less page). */
+.tpl-custom-design .inv-design__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 19px 19px 0 0;
+}
+
+.tpl-custom-design .inv-section--design:last-child .inv-design__img {
+    border-bottom-left-radius: 19px;
+    border-bottom-right-radius: 19px;
+}
+
+/* ── The seam: a 2px brand-gradient line between artwork and pass area ──────
+ * The module also carries its OWN opaque shell surface now: inside the
+ * shell's stacking context the article background sits under the backdrop,
+ * so the dark ground the light-on-dark pass palette depends on must be
+ * painted by the module itself — with the card's bottom rounding, since it
+ * is always the card's last content when present. */
+.tpl-custom-design .inv-passes {
+    background: var(--tpl-shell);
+    border-top: 2px solid transparent;
+    border-image: var(--tpl-brand-seam) 1;
+    border-radius: 0 0 19px 19px;
+}
+
+/* ── Reclama tus pases — Orbiventt's half of the invitation ─────────────────
+ * Continues INSIDE the shell on the shell's own surface: no card of its own,
+ * no second radius, no gap. Compact (the previous pass's footprint kept),
+ * instantly identifiable: eyebrow → allocation → code capsule → CTA row. */
+.tpl-custom-design .inv-section--passes {
+    padding: 0;
+}
+
+.tpl-custom-design .inv-passes .inv-section__inner {
+    max-width: none;
+    padding: 1rem 1.1rem 1.05rem;
+    text-align: center;
+}
+
+/* The h2 as an eyebrow: the access cue, in the brand's light violet. */
+.tpl-custom-design .inv-passes .inv-heading {
+    font-family: var(--inv-font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--tpl-shell-eyebrow);
+}
+
+.tpl-custom-design .inv-passes .inv-rule { display: none; }
+
+.tpl-custom-design .inv-passes__body {
+    margin: 0.4rem 0 0.1rem;
+    color: var(--tpl-shell-muted);
+    font-size: 0.82rem;
+    line-height: 1.4;
+}
+
+.tpl-custom-design .inv-passes__allocation {
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+    color: var(--tpl-shell-text);
+    font-size: 0.85rem;
+}
+
+/* The code capsule: the highest-contrast element in the module. */
+.tpl-custom-design .inv-passes__code {
+    margin: 0.55rem 0 0;
+}
+
+.tpl-custom-design .inv-passes__code-value {
+    display: inline-block;
+    padding: 0.45rem 1.15rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(168, 85, 247, 0.40);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.02rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #FFFFFF;
+}
+
+.tpl-custom-design .inv-passes__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.7rem;
+}
+
+/* Buttons: compact layout, ≥44px targets. On the dark shell the base
+ * light-surface button identity is unreadable, so the two controls adopt the
+ * CANONICAL Orbiventt treatments — copied, not invented:
+ *   solid  = the premium "Abrir Orbiventt" CTA from the event-preview page
+ *            (404.html #openApp.btn): the purple→blue gradient, glass border,
+ *            restrained glow.
+ *   ghost  = the canonical dark-surface secondary: quiet outline, shell text.
+ * These overrides live ONLY inside `.inv-passes` on this template. */
+.tpl-custom-design .inv-passes .inv-btn {
+    min-height: 44px;
+    padding: 0.55rem 1.15rem;
+    font-size: 0.88rem;
+}
+
+.tpl-custom-design .inv-passes .inv-btn--solid {
+    background: var(--tpl-brand-seam);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #fff;
+    box-shadow:
+        0 6px 20px rgba(84, 60, 232, 0.38),
+        inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.tpl-custom-design .inv-passes .inv-btn--ghost {
+    border-color: rgba(232, 224, 240, 0.35);
+    color: var(--tpl-shell-text);
+    background: transparent;
+}
+
+.tpl-custom-design .inv-passes .inv-btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tpl-custom-design .inv-passes .inv-btn:focus-visible {
+    outline: 2px solid var(--tpl-shell-eyebrow);
+    outline-offset: 2px;
+}
+
+.tpl-custom-design .inv-passes__status {
+    min-height: 1.1em;
+    margin: 0.4rem 0 0;
+    color: var(--tpl-shell-muted);
+    font-size: 0.78rem;
+}
+
+.tpl-custom-design .inv-passes__note {
+    margin: 0.35rem 0 0;
+    color: var(--tpl-shell-muted);
+    font-size: 0.72rem;
+    font-style: normal;
+    line-height: 1.4;
+}
+
+/* The DRAFT EXAMPLE reads as a mockup inside the same shell: a dashed inset
+ * outline — the is-demo convention translated to the dark surface. */
+.tpl-custom-design .inv-passes.is-example .inv-section__inner {
+    outline: 1px dashed rgba(196, 181, 253, 0.45);
+    outline-offset: -7px;
+}

@@ -28,7 +28,7 @@
     "can author something that cannot be drawn or cannot be stored."
   ],
   "contractVersion": 1,
-  "categories": ["wedding"],
+  "categories": ["wedding", "custom"],
   "templates": [
     {
       "id": "wedding_romantic_v1",
@@ -74,6 +74,15 @@
       "contractVersion": 1,
       "label": "Noche estelar",
       "assetDir": "wedding-celestial"
+    },
+    {
+      "id": "custom_design_v1",
+      "categoryKey": "custom",
+      "templateKey": "custom_design",
+      "templateVersion": 1,
+      "contractVersion": 1,
+      "label": "Tu diseño",
+      "assetDir": "custom-design"
     }
   ]
 }
