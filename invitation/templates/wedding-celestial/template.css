@@ -609,12 +609,6 @@
     gap: 0.7rem;
 }
 
-.tpl-wedding-celestial .inv-actions__status {
-    min-height: 1.2em;
-    margin: 0.7rem 0 0;
-    color: var(--inv-muted);
-    font-size: 0.85rem;
-}
 
 /* Controls read light-on-dark; the solid one inverts to midnight-on-gold. */
 .tpl-wedding-celestial .inv-btn {

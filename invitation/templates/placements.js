@@ -100,7 +100,7 @@ export const WEDDING_LABELS = Object.freeze({
 
     mapAction: 'Cómo llegar',
     calendarAction: 'Agregar al calendario',
-    shareAction: 'Compartir invitación',
-    locationAction: 'Abrir ubicación',
+    // "Compartir invitación" / "Abrir ubicación" were removed from the page
+    // (2026-08-16) — the labels went with the controls; see sections/actions.js.
     externalHint: ' (se abre en una pestaña nueva)',
 });

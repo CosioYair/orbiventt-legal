@@ -607,12 +607,6 @@
     gap: 0.7rem;
 }
 
-.tpl-wedding-botanical .inv-actions__status {
-    min-height: 1.2em;
-    margin: 0.7rem 0 0;
-    color: var(--inv-muted);
-    font-size: 0.85rem;
-}
 
 /* Softly grown controls: one rounded corner pair, echoing the leaf shape. */
 .tpl-wedding-botanical .inv-btn {
