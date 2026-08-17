@@ -1,25 +1,24 @@
 /* AUTOMATIC ACTIONS — shell section.
  *
- * Three things a guest actually wants to do from a phone: put it in the
- * calendar, forward it to someone, and open the venue in maps. All three are
- * FUNCTIONAL here, not placeholders, and none of them contacts a server:
+ * ONE control: put the event in the calendar. It is FUNCTIONAL, not a
+ * placeholder, and contacts no server — an RFC 5545 payload built on the
+ * client and handed over as a `data:` download. No third-party "add to
+ * calendar" host, so a guest's interest in the event stays on their device.
  *
- *   Add to calendar  an RFC 5545 payload built on the client and handed over as
- *                    a `data:` download. No third-party "add to calendar" host,
- *                    so a guest's interest in the event stays on their device.
- *   Share            `navigator.share()` where the platform has it, otherwise
- *                    the clipboard, otherwise an honest failure message. The
- *                    outcome is announced through a `role="status"` line rather
- *                    than a toast that a screen reader would miss.
- *   Open location    a link to the map URL the renderer already built and
- *                    validated for the ceremony.
+ * "Compartir invitación" and "Abrir ubicación" were REMOVED from this section
+ * by product decision (2026-08-16): a guest forwards the chat message that
+ * brought them here, and the venue is reached through the place section's own
+ * "Cómo llegar" link — the two page-bottom buttons duplicated both. The
+ * stored `actions.share` / `actions.map` flags are still ACCEPTED by the
+ * normalizer (existing documents carry them) but no longer render anything.
  *
- * Each control is omitted entirely when its inputs are missing. There is never
- * a button that looks live and does nothing.
+ * The control is omitted entirely when its inputs are missing — and then the
+ * whole section is, so no empty block ever reaches the page. There is never a
+ * button that looks live and does nothing.
  */
-import { el, setText } from '../dom.js';
+import { el } from '../dom.js';
 import { buildIcs, icsDataUrl, icsFileName } from '../calendar.js';
-import { section, externalButton } from './shell.js';
+import { section } from './shell.js';
 
 /** A reception that runs late is the real end of the day; otherwise assume 5 h. */
 const DEFAULT_DURATION_MS = 5 * 60 * 60 * 1000;
@@ -72,77 +71,14 @@ function calendarControl(config, ctx) {
     });
 }
 
-function shareControl(config, ctx, status) {
-    if (!config.actions.share) return null;
-    const d = ctx.document;
-
-    const button = el('button', {
-        class: 'inv-btn inv-btn--ghost',
-        attrs: { type: 'button' },
-        children: [el('span', { class: 'inv-btn__label', text: ctx.labels.shareAction, document: d })],
-        document: d,
-    });
-
-    if (typeof button.addEventListener !== 'function') return button;
-
-    button.addEventListener('click', () => {
-        const nav = ctx.navigator;
-        const url = ctx.pageUrl;
-        const hero = config.sections.hero;
-        const payload = {
-            title: 'Invitación digital · Orbiventt',
-            text: 'Invitación de ' + hero.partnerA + ' y ' + hero.partnerB,
-            url,
-        };
-
-        if (nav && typeof nav.share === 'function') {
-            Promise.resolve()
-                .then(() => nav.share(payload))
-                .then(() => setText(status, ''))
-                // A cancelled share is a normal outcome, not an error worth
-                // announcing — fall back only when sharing is unavailable.
-                .catch(() => {});
-            return;
-        }
-
-        if (nav && nav.clipboard && typeof nav.clipboard.writeText === 'function') {
-            Promise.resolve()
-                .then(() => nav.clipboard.writeText(url))
-                .then(() => setText(status, 'Enlace copiado.'))
-                .catch(() => setText(status, 'No se pudo copiar el enlace.'));
-            return;
-        }
-
-        setText(status, 'Copia el enlace desde la barra de direcciones para compartirlo.');
-    });
-
-    return button;
-}
-
 export default function renderActions(_data, ctx) {
     const config = ctx.config;
     if (!config) return null;
-    const d = ctx.document;
 
-    const status = el('p', {
-        class: 'inv-actions__status',
-        attrs: { role: 'status', 'aria-live': 'polite' },
-        document: d,
-    });
-
-    const ceremony = config.sections.ceremony;
-    const controls = [
-        calendarControl(config, ctx),
-        shareControl(config, ctx, status),
-        config.actions.map && ceremony && ceremony.mapUrl
-            ? externalButton(ceremony.mapUrl, ctx.labels.locationAction, ctx)
-            : null,
-    ].filter(Boolean);
-
-    if (controls.length === 0) return null;
+    const control = calendarControl(config, ctx);
+    if (!control) return null;
 
     return section('actions', '', ctx, [
-        el('div', { class: 'inv-actions', children: controls, document: d }),
-        status,
+        el('div', { class: 'inv-actions', children: [control], document: ctx.document }),
     ], { class: 'inv-actions-section' });
 }

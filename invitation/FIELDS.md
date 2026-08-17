@@ -47,7 +47,7 @@ omitted.
 | `templateVersion` | int | ✅ | none (system) | registry | technical |
 | `locale` | text | — | none (system) | ≤12 chars, default `es-MX` | technical |
 | `timeZone` | text | — | none (system) | ≤60 chars, default `America/Mexico_City` | technical |
-| `actions.calendar` / `.share` / `.map` | bool | — | toggles | default `true` | technical |
+| `actions.calendar` / `.share` / `.map` | bool | — | toggles | default `true`; `.share`/`.map` render nothing since 2026-08-16 | technical |
 
 ---
 
@@ -244,8 +244,12 @@ nothing.
 | Action | Data source | Kind |
 |---|---|---|
 | Add to calendar | built client-side from `hero` + `ceremony` + `reception` | derived |
-| Share invitation | the page URL + `hero` names | derived |
-| Open location | `ceremony.mapUrl` (organizer link, else built from venue+address) | derived |
+
+"Share invitation" and "Open location" were removed from the page on
+2026-08-16: guests forward the chat message that brought them here, and the
+venue opens through the place section's "Cómo llegar" link. Their
+`actions.share` / `actions.map` flags are still accepted (existing documents
+carry them) but render nothing.
 
 No duplicate content fields exist for these — they derive from configured
 section data, as required.

@@ -567,12 +567,6 @@
     gap: 0.7rem;
 }
 
-.tpl-wedding-classic-gold .inv-actions__status {
-    min-height: 1.2em;
-    margin: 0.7rem 0 0;
-    color: var(--inv-muted);
-    font-size: 0.84rem;
-}
 
 /* Squared, ruled controls rather than pills — stationery, not an app. */
 .tpl-wedding-classic-gold .inv-btn {

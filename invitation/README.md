@@ -119,8 +119,8 @@ renderer.
 | `locale` | — | `es-MX` | BCP-47, used for date formatting |
 | `timeZone` | — | `America/Mexico_City` | IANA zone; all instants are stored with an offset |
 | `actions.calendar` | — | `true` | show "Agregar al calendario" |
-| `actions.share` | — | `true` | show "Compartir invitación" |
-| `actions.map` | — | `true` | show "Abrir ubicación" |
+| `actions.share` | — | `true` | accepted for compatibility; renders nothing since 2026-08-16 |
+| `actions.map` | — | `true` | accepted for compatibility; renders nothing since 2026-08-16 |
 
 The template identity must match the descriptor the invitation is rendered with
 (`registry.matchesConfig`), so a stored invitation can never be drawn by a
