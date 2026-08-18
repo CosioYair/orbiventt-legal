@@ -18,6 +18,11 @@
          Loaded synchronously, like env.js, so the inline script below can treat
          it as present-or-definitively-absent (it fails closed either way). -->
     <script src="app-return.js"></script>
+    <!-- SHARED. The single declaration of the store listings and of the platform
+         decision, so this page and the Digital Invitation's claim card cannot
+         drift apart on where "get the app" leads. Loaded synchronously for the
+         same reason as the resolver. -->
+    <script src="app-store-links.js"></script>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <title>Orbiventt</title>
     <!-- SEO is intentionally deferred (external-invitations.md §10). This page
@@ -250,32 +255,25 @@
         var SUPA_URL = ENV.supaUrl;
         var SUPA_ANON = ENV.supaAnon;
 
-        // ── App distribution config (single source of truth) ─────────────────
-        // The ONE place store links live. iOS ships via TestFlight only right
-        // now; the public App Store URL does not exist yet. Fill these in as
-        // they become available — the CTAs light up automatically, no other
-        // edits needed:
-        //   • APP_STORE_URL  → paste once the app is live on the App Store,
-        //                       e.g. 'https://apps.apple.com/app/id0000000000'
-        //   • TESTFLIGHT_URL → paste the public TestFlight invite link to expose
-        //                       the iOS beta CTA, e.g.
-        //                       'https://testflight.apple.com/join/XXXXXXXX'
-        // Precedence on iOS: App Store first, then TestFlight, else an explicit
-        // "beta by invitation" note (never a Google Play link).
-        var STORE = {
-            PLAY_STORE_URL: 'https://play.google.com/store/apps/details?id=com.vyvent.mobile',
-            APP_STORE_URL: null,   // TODO(ios-launch): set when public on the App Store
-            TESTFLIGHT_URL: null   // TODO(ios-launch): set to the public TestFlight invite link
-        };
+        // ── App distribution (single source of truth) ────────────────────────
+        // Both store URLs and the platform rule come from app-store-links.js —
+        // the same module the Digital Invitation's claim card uses. Nothing
+        // here hardcodes a listing, so the two surfaces cannot disagree about
+        // where "get the app" leads. FAILS CLOSED, like the handoff resolver
+        // above: without the module there are no store CTAs rather than a
+        // second, stale copy of the links.
+        var LINKS = window.__ORB_APP_LINKS__ || null;
+        var STORE = LINKS ? LINKS.STORE : { PLAY_STORE_URL: null, APP_STORE_URL: null };
 
         // ── Platform detection ───────────────────────────────────────────────
-        // iPadOS 13+ masquerades as desktop Safari ("Macintosh"); the touch
-        // probe re-classifies it as iOS so iPad users still get iOS CTAs.
-        var UA = navigator.userAgent || '';
-        var IS_IOS = /iPhone|iPad|iPod/i.test(UA) ||
-                     (/Macintosh/i.test(UA) && typeof document !== 'undefined' && 'ontouchend' in document);
-        var IS_ANDROID = /Android/i.test(UA);
-        var IS_MOBILE = IS_IOS || IS_ANDROID;
+        // iPadOS 13+ masquerades as desktop Safari ("Macintosh"); the module's
+        // touch probe re-classifies it as iOS so iPad users still get iOS CTAs.
+        var PLATFORM = LINKS
+            ? LINKS.detectPlatform(navigator.userAgent || '', typeof document !== 'undefined' && 'ontouchend' in document)
+            : 'desktop';
+        var IS_IOS = PLATFORM === 'ios';
+        var IS_ANDROID = PLATFORM === 'android';
+        var IS_MOBILE = LINKS ? LINKS.isMobilePlatform(PLATFORM) : false;
 
         // Routing works on the path RELATIVE to the deployment root, so a
         // project-site deployment (served under /<repo>/) and the custom
@@ -478,7 +476,10 @@
         }
 
         // Build one store <a> button (secondary style, opens in a new tab).
+        // No-op on a missing URL, which is the fail-closed state when
+        // app-store-links.js did not load.
         function storeButton(href, label) {
+            if (!href) return null;
             var a = document.createElement('a');
             a.className = 'btn secondary';
             a.href = href;
@@ -488,36 +489,29 @@
             return a;
         }
 
-        // The iOS download CTA. App Store link wins if set; otherwise the public
-        // TestFlight invite; otherwise an explicit "beta by invitation" note with
-        // a support mailto. It NEVER falls back to Google Play.
+        // The iOS download CTA. Orbiventt has been public on the App Store since
+        // 2026-07 (the TestFlight-only period this branch used to describe is
+        // over), so this is a plain store link. It NEVER falls back to Google
+        // Play.
         function iosCta() {
-            if (STORE.APP_STORE_URL) return storeButton(STORE.APP_STORE_URL, 'Descargar en App Store');
-            if (STORE.TESTFLIGHT_URL) return storeButton(STORE.TESTFLIGHT_URL, 'Probar la beta (TestFlight)');
-            var note = document.createElement('div');
-            note.className = 'card-sub';
-            note.style.marginTop = '0.35rem';
-            note.innerHTML = 'La app para iPhone está disponible en beta por invitación (TestFlight). ' +
-                'Escríbenos a <a href="mailto:contact@orbiventt.com?subject=Acceso%20TestFlight%20Orbiventt%20(iOS)" ' +
-                'style="color:var(--accent-cyan);text-decoration:underline">soporte</a> para recibir tu invitación.';
-            return note;
+            return storeButton(STORE.APP_STORE_URL, 'Descargar en App Store');
         }
 
-        // Populates #storeActions for the visitor's platform. iOS → App Store /
-        // TestFlight only; Android → Google Play (unchanged); desktop → both.
-        // Runs once at init; platform never changes within a page view.
+        // Populates #storeActions for the visitor's platform. iOS → App Store
+        // only; Android → Google Play; desktop → both, since the visitor's phone
+        // is the thing being equipped and this page cannot see it. Runs once at
+        // init; platform never changes within a page view.
         function renderStoreButtons() {
             var c = el('storeActions');
             if (!c) return;
             c.innerHTML = '';
-            if (IS_IOS) {
-                c.appendChild(iosCta());
-            } else if (IS_ANDROID) {
-                c.appendChild(storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play'));
-            } else {
-                // Desktop / unknown → offer both platforms.
-                c.appendChild(storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play'));
-                c.appendChild(iosCta());
+            var buttons = IS_IOS
+                ? [iosCta()]
+                : IS_ANDROID
+                    ? [storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play')]
+                    : [storeButton(STORE.PLAY_STORE_URL, 'Descargar en Google Play'), iosCta()];
+            for (var i = 0; i < buttons.length; i++) {
+                if (buttons[i]) c.appendChild(buttons[i]);
             }
         }
 

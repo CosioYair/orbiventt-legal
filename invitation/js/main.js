@@ -167,6 +167,13 @@ async function paint(template, config, route, storageUrl, handoff, passSummary) 
         navigator: typeof navigator !== 'undefined' ? navigator : null,
         pageUrl: window.location.href,
         handoff: handoff || null,
+        // The SMART half of the same handoff: what "Abrir Orbiventt" should do
+        // on THIS device when Orbiventt turns out not to be installed. Resolved
+        // by the caller, like the handoff itself, so no section ever assembles
+        // an app URL or a store URL of its own. Null on every path that has
+        // nothing to add — the DEV Expo Go address above all — and null means
+        // the card behaves exactly as it did before this existed.
+        smartOpen: smartOpenPlan(handoff),
         passSummary: passSummary || null,
     });
 
@@ -272,6 +279,30 @@ function passHandoff(route, eventId) {
         id: eventId,
         isChat: false,
         code: route.code,
+    });
+}
+
+/**
+ * Turn a resolved handoff into a device-specific open-or-install plan.
+ *
+ * EVERYTHING here goes through `app-store-links.js` — the same classic script
+ * the event-preview page loads, and the only declaration of the store listings
+ * on this site. This module never builds an intent URL, a store URL or a
+ * fallback timer itself.
+ *
+ * It returns null — meaning "use the handoff verbatim, as always" — whenever
+ * the module did not load, the handoff is closed, or the destination is the DEV
+ * mirror's Expo Go address. That last case is deliberate: Expo Go is a
+ * different application, and Orbiventt's store page is not where a guest who
+ * lacks it should be sent.
+ */
+function smartOpenPlan(handoff) {
+    const links = (typeof window !== 'undefined' && window.__ORB_APP_LINKS__) || null;
+    if (!links || typeof links.smartOpen !== 'function') return null;
+    return links.smartOpen(handoff, {
+        window,
+        document,
+        navigator: typeof navigator !== 'undefined' ? navigator : null,
     });
 }
 

@@ -24,6 +24,11 @@ export const SHARED_FILES = [
   // decision code, taking its `env !== 'dev'` branch, so the DEV-only Expo Go
   // path is proven inert there rather than merely absent.
   'app-return.js',
+  // The app-distribution module: the store listings, the platform rule and the
+  // open-or-install plan. SHARED for the same reason as the resolver — both
+  // deployments must run the same decision code, and the store URLs must have
+  // exactly one declaration across the two repositories.
+  'app-store-links.js',
   'index.html',
   'support.html',
   'privacy-policy.html',

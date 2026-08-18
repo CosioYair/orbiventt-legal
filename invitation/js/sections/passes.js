@@ -32,10 +32,14 @@
  *              rendering nothing here.
  *
  * The "Abrir Orbiventt" destination arrives PRE-RESOLVED in `ctx.handoff`
- * (main.js → app-return.js). When the resolver produced no usable destination —
- * the DEV mirror without a validated Expo Go return address — the automatic
- * button is simply absent and the copy path carries the guest, which is the
- * same fail-closed posture the event-preview page has.
+ * (main.js → app-return.js), and the device-specific way to REACH it arrives
+ * alongside in `ctx.smartOpen` (main.js → app-store-links.js). One button owns
+ * both outcomes — the app when it is installed, the correct store when it is
+ * not — and there is deliberately no second "Descargar" control. When the
+ * resolver produced no usable destination at all — the DEV mirror without a
+ * validated Expo Go return address — the automatic button is simply absent and
+ * the copy path carries the guest, which is the same fail-closed posture the
+ * event-preview page has.
  */
 import { el, setText } from '../dom.js';
 import { MODE } from '../route.js';
@@ -157,6 +161,47 @@ function draftExampleCard(ctx) {
     ], { class: 'inv-passes is-example' });
 }
 
+/**
+ * The ONE call to action — "Abrir Orbiventt" — which owns BOTH outcomes.
+ *
+ * There is deliberately no second button. A guest who has Orbiventt gets the
+ * behavior this card has always had: the pre-resolved handoff href, carrying
+ * the event route and the invitation code, opening the app straight into the
+ * claim flow. A guest who does NOT have it reaches the right store instead of
+ * reaching nothing, and never has to notice that two different things happened.
+ *
+ * WHICH href IS RENDERED is the whole mechanism. `ctx.smartOpen` (built by
+ * main.js through `app-store-links.js`) has already decided what this device
+ * needs — an Android intent URL that carries its own Play Store fallback, the
+ * plain `vyvent://` scheme on iOS, or the store listing itself on a desktop
+ * where no scheme can work. When it is null, the handoff href is used verbatim,
+ * which is exactly the code that shipped before: the DEV mirror's Expo Go
+ * address is never wrapped, and neither is a handoff this module could not
+ * safely rewrite.
+ *
+ * `arm()` attaches the lifecycle guards that only iOS and the intent-refusing
+ * embedded browsers actually need; it is a no-op for the desktop plan and is
+ * absent entirely in the null case. Nothing here reads, copies or logs the
+ * code — it travels inside the href it was handed, and nowhere else.
+ */
+function buildOpenControl(handoff, smartOpen, d) {
+    if (!handoff || !handoff.open || !handoff.href) return null;
+
+    const href = smartOpen && typeof smartOpen.href === 'string' && smartOpen.href
+        ? smartOpen.href
+        : handoff.href;
+
+    const anchor = el('a', {
+        class: 'inv-btn inv-btn--solid',
+        attrs: { href },
+        children: [el('span', { class: 'inv-btn__label', text: 'Abrir Orbiventt', document: d })],
+        document: d,
+    });
+
+    if (smartOpen && typeof smartOpen.arm === 'function') smartOpen.arm(anchor);
+    return anchor;
+}
+
 function copyButton(code, ctx, status) {
     const d = ctx.document;
     const button = el('button', {
@@ -215,14 +260,7 @@ export default function renderPasses(_data, ctx) {
         document: d,
     });
 
-    const openControl = handoff && handoff.open && handoff.href
-        ? el('a', {
-            class: 'inv-btn inv-btn--solid',
-            attrs: { href: handoff.href },
-            children: [el('span', { class: 'inv-btn__label', text: 'Abrir Orbiventt', document: d })],
-            document: d,
-        })
-        : null;
+    const openControl = buildOpenControl(handoff, ctx.smartOpen, d);
 
     const allocation = allocationLine(ctx.passSummary);
 

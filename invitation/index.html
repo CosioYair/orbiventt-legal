@@ -86,6 +86,15 @@
          opens a re-validated Expo Go return address, and never falls back
          across environments. Same-origin, so `script-src 'self'` allows it. -->
     <script src="app-return.js"></script>
+    <!-- The SHARED app-distribution module, exposing `window.__ORB_APP_LINKS__`.
+         It turns the resolved handoff into the plan THIS device needs, so the
+         one "Abrir Orbiventt" button also reaches the right store when Orbiventt
+         is not installed. It is the only declaration of the store listings on
+         the site, and it never touches the DEV Expo Go handoff. Same-origin,
+         and loaded synchronously like the resolver so main.js can treat it as
+         present-or-definitively-absent — absent simply means the button keeps
+         the behavior it had before. -->
+    <script src="app-store-links.js"></script>
 </head>
 <body>
     <div class="env-badge" id="envBadge" hidden>DEV</div>
