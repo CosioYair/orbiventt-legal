@@ -38,6 +38,7 @@ import { matchesConfig } from './registry.js';
  *   navigator {object}   share/clipboard provider
  *   pageUrl   {string}   the URL the share action offers
  *   handoff   {?object}  resolved app handoff for a pass-claim code (app-return.js)
+ *   smartOpen {?object}  device-specific open-or-install plan (app-store-links.js)
  *   passSummary {?object} validated pass counts for the claim card (resolve.js)
  *
  * @returns {{ok: boolean, node: ?Element, rendered: string[], skipped: string[],
@@ -92,6 +93,13 @@ export function renderInvitation(opts) {
         // Built by the CALLER through the shared resolver — the renderer and
         // its sections never assemble an app URL themselves.
         handoff: o.handoff || null,
+        // The device-specific open-or-install plan for that same handoff
+        // ({strategy, href, storeUrl, arm} from app-store-links.js), or null.
+        // Only the `passes` shell section reads it, and null simply means the
+        // handoff href is used exactly as it always was. Built by the CALLER
+        // for the same reason the handoff is: no section assembles an app or
+        // store URL of its own.
+        smartOpen: o.smartOpen || null,
         // Validated pass counts ({seatCapacity, seatsRemaining} from
         // normalizePassSummary), or null → the card omits the allocation line.
         passSummary: o.passSummary || null,
