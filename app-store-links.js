@@ -77,12 +77,23 @@
      * app is not left staring at a page that did nothing. */
     var FALLBACK_MS = 1500;
 
-    /* When the app DOES open, the browser is suspended and our timer stops
-     * running with it — so on return it can fire late, long after the moment it
-     * was meant to describe. Any firing this much past its deadline is a
-     * returning visitor, never a failed launch. This is the guard that stops
-     * the store from opening behind someone who is already inside the app. */
-    var SUSPEND_SLACK_MS = 800;
+    /* RETIRED 2026-08-18, and the reason is worth keeping.
+     *
+     * This used to be a wall-clock slack: a timer firing more than
+     * FALLBACK_MS + 800 ms late was read as "the tab was suspended while the
+     * app was open, and the visitor has just come back", and the fallback was
+     * cancelled. It was a PROXY for foreground departure, and the proxy was
+     * wrong — the same lateness is produced by anything that blocks the run
+     * loop without the page ever leaving the foreground, including the native
+     * "la dirección no es válida" alert iOS shows when no app answers the
+     * scheme. A guest who took more than 2.3 s to dismiss that alert had their
+     * fallback cancelled by this line and was stranded.
+     *
+     * Departure is now measured directly (`everHidden`) instead of guessed
+     * from a clock, so the proxy is gone rather than merely retuned. The
+     * export is kept at 0 so anything reading it sees "no slack".
+     */
+    var SUSPEND_SLACK_MS = 0;
 
     /**
      * Which device is holding this page.
@@ -174,15 +185,21 @@
      *   • The listeners and the timer are registered together and removed
      *     together by `disarm()`. There is no path that clears one and leaves
      *     the other.
-     *   • `visibilitychange` → hidden, `pagehide` and `blur` each mean the app
-     *     took over. Any of them cancels.
+     *   • ONLY foreground DEPARTURE cancels: `visibilitychange` with
+     *     `document.hidden`, or `pagehide`. Those two mean another application
+     *     really did take the screen.
+     *   • `blur` is deliberately NOT a cancel signal. Losing keyboard focus is
+     *     not leaving: Safari blurs the page for its own native UI, including
+     *     the "la dirección no es válida" alert it shows when NOTHING answers
+     *     the custom scheme. Treating that as a successful launch cancelled
+     *     the fallback at the exact moment it was needed and stranded the
+     *     guest at the error — the 2026-08-18 production incident.
+     *   • Departure is REMEMBERED (`everHidden`), not inferred from a clock. A
+     *     timer that runs late because the run loop was blocked is still a
+     *     failed launch if the page never went away, so it still reaches the
+     *     store; a timer that survives an actual departure never does.
      *   • A timer that fires while the document is hidden cancels — the visit
      *     is happening inside Orbiventt.
-     *   • A timer that fires far past its deadline cancels — it was suspended
-     *     with the tab while the app was open, and the visitor has just come
-     *     back. This is the case a naive `setTimeout(store, 1000)` gets wrong,
-     *     and it is the one that sends people to the store from inside a
-     *     working app.
      *   • Navigation is wrapped: an embedded browser that refuses the scheme
      *     outright goes to the store immediately instead of hanging.
      *
@@ -200,11 +217,19 @@
         var win = e.window;
         var doc = e.document;
         if (!win || !doc) return noop;
-        var now = typeof e.now === 'function' ? e.now : function () { return Date.now(); };
+        // No clock. The decision used to consult one; it now consults whether
+        // the page actually left, which is the thing a clock was standing in
+        // for. `env.now` is still accepted by callers and simply unused here.
 
         var armed = false;
         var timer = null;
         var bound = [];
+        /* Did this page actually leave the foreground since the tap? This is
+         * the ONLY thing that distinguishes "Orbiventt opened" from "nothing
+         * answered and Safari put an alert on top of us", and it is recorded
+         * rather than re-derived, because by the time a late timer runs the
+         * page may already be visible again. */
+        var everHidden = false;
 
         function disarm() {
             if (timer !== null) {
@@ -233,22 +258,27 @@
             if (armed) return;                       // duplicate tap — already running
             armed = true;
 
-            var startedAt = now();
-
             if (!go(plan.href)) {                    // the browser refused the scheme
                 disarm();
                 go(plan.storeUrl);
                 return;
             }
 
-            bind(doc, 'visibilitychange', function () { if (doc.hidden) disarm(); });
-            bind(win, 'pagehide', disarm);
-            bind(win, 'blur', disarm);
+            // DEPARTURE ONLY. `blur` is absent on purpose — see the header.
+            bind(doc, 'visibilitychange', function () {
+                if (doc.hidden) { everHidden = true; disarm(); }
+            });
+            bind(win, 'pagehide', function () { everHidden = true; disarm(); });
 
             timer = win.setTimeout(function () {
                 timer = null;
-                if (doc.hidden) { disarm(); return; }
-                if (now() - startedAt > FALLBACK_MS + SUSPEND_SLACK_MS) { disarm(); return; }
+                // The page left at some point, or is away right now: Orbiventt
+                // has it. Never send a store on top of that.
+                if (everHidden || doc.hidden) { disarm(); return; }
+                // Still here, still in front. However late this is — the run
+                // loop can be blocked for as long as it takes someone to
+                // dismiss a native alert — the scheme found no handler, and the
+                // store is the whole reason this timer exists.
                 disarm();
                 go(plan.storeUrl);
             }, FALLBACK_MS);
