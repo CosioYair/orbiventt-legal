@@ -33,7 +33,7 @@
  * `incomplete` — which is not an error and is only ever reachable by someone
  * holding the unforgeable preview token for that specific invitation.
  */
-import { MODE } from './route.js';
+import { MODE } from './route.js?v=20260818b';
 
 /** Verdicts. `ok` carries a template and a normalized config; the rest do not. */
 export const RESULT = {

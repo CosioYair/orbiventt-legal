@@ -30,7 +30,7 @@
  * never text. Both layers reuse the already-resolved src, so framing can never
  * introduce a URL of its own.
  */
-import { el } from './dom.js';
+import { el } from './dom.js?v=20260818b';
 
 /** Mirror of the mobile MAX_WINDOW_EXTENT / MAX_FRAMING_EXTENT ceiling. */
 export const FRAMING_EXTENT = 32;

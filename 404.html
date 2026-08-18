@@ -12,20 +12,21 @@
     <base href="/">
     <!-- ENV-SPECIFIC. The single environment boundary for the whole site:
          Supabase target + DEV marker. Never promoted between repositories. -->
-    <script src="env.js"></script>
+    <script src="env.js?v=20260818b"></script>
     <!-- SHARED. The single decision point for "Abrir en Orbiventt": the app
          scheme in production, a validated Expo Go return URL on the DEV mirror.
          Loaded synchronously, like env.js, so the inline script below can treat
          it as present-or-definitively-absent (it fails closed either way). -->
-    <script src="app-return.js"></script>
+    <script src="app-return.js?v=20260818b"></script>
     <!-- SHARED. The single declaration of the store listings and of the platform
          decision, so this page and the Digital Invitation's claim card cannot
          drift apart on where "get the app" leads. Loaded synchronously for the
          same reason as the resolver. -->
-    <!-- ?v= is a cache key; bump it whenever app-store-links.js changes
-         behaviour. Same reasoning as the invitation page: the JS is cached for
-         four hours, the document for ten minutes. -->
-    <script src="app-store-links.js?v=20260818"></script>
+    <!-- ?v= is the canonical WEB_BUILD cache key (scripts/web-env.mjs),
+         stamped by `node scripts/set-web-build.mjs <token>` — never edited by
+         hand. Same reasoning as the invitation page: the JS is cached for four
+         hours, the document for ten minutes. -->
+    <script src="app-store-links.js?v=20260818b"></script>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <title>Orbiventt</title>
     <!-- SEO is intentionally deferred (external-invitations.md §10). This page

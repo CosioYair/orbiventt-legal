@@ -12,9 +12,9 @@
  * visible units carry text labels too, so the meaning never depends on layout,
  * color or motion — and there is no animation to reduce.
  */
-import { el, setText } from '../dom.js';
-import { countdownParts, countdownLabel, padUnit, UNITS } from '../countdown.js';
-import { section } from './shell.js';
+import { el, setText } from '../dom.js?v=20260818b';
+import { countdownParts, countdownLabel, padUnit, UNITS } from '../countdown.js?v=20260818b';
+import { section } from './shell.js?v=20260818b';
 
 /** How often the visible counter ticks. */
 const TICK_MS = 1000;

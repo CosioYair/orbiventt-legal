@@ -45,6 +45,10 @@ export const SHARED_FILES = [
   'scripts/web-env.mjs',
   'scripts/parity-check.mjs',
   'scripts/promote.mjs',
+  // The WEB_BUILD stamper/verifier. Shared so both repositories stamp the
+  // same edges the same way, and so a promotion carries the mechanism with
+  // the graph it versions.
+  'scripts/set-web-build.mjs',
 ];
 
 /**
@@ -89,6 +93,40 @@ export const PROD_ONLY_PATHS = [
   'post.txt',
   'scripts/build-press-release.mjs',
 ];
+
+/**
+ * THE WEB BUILD VERSION — the one canonical cache key for the executable
+ * invitation module graph.
+ *
+ * WHY IT EXISTS (2026-08-18 incident, second wave). GitHub Pages serves every
+ * JS file with `Cache-Control: max-age=14400` and the HTML document with 600.
+ * ES import specifiers are resolved without query strings, so versioning ONE
+ * module changed nothing for a browser that still held the PARENT modules: its
+ * cached `main.js` → `passes.js` graph predated the smart CTA, never read
+ * `__ORB_APP_LINKS__` at all, and kept rendering the raw `vyvent://` anchor
+ * for up to four hours — Chrome on a returning guest's phone, in production.
+ *
+ * THE RULE. Every executable edge of the invitation graph — the HTML's script
+ * tags and every static and dynamic relative `.js` import under `invitation/`
+ * — carries `?v=` + this exact value. A new HTML document therefore names a
+ * set of URLs the old cache has never seen and CANNOT answer: the entire new
+ * graph loads together or not at all. Stale HTML keeps naming the old set,
+ * which is equally coherent. There is no mixed state.
+ *
+ * HOW TO BUMP. Never by hand, never per-file:
+ *
+ *     node scripts/set-web-build.mjs 20260819a
+ *
+ * rewrites this constant and re-stamps every edge in one deterministic pass;
+ * `--check` verifies coherence without writing (the test suite runs it). Bump
+ * on ANY behavioural JS change that must reach guests faster than the 4-hour
+ * cache would allow it to.
+ *
+ * NOT the share thumbnail's `&v=`. That value fingerprints an IMAGE for OG
+ * crawlers on the invitation's public URL; this one fingerprints the CODE for
+ * browsers on asset URLs. They share a letter and nothing else.
+ */
+export const WEB_BUILD = '20260818b';
 
 export const DEV_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';
 export const PROD_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';

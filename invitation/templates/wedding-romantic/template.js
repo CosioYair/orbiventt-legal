@@ -16,7 +16,7 @@
  * runtime against the module's own URL, so it is identical under the DEV
  * project path and the production root.
  */
-import { WEDDING_PLACEMENTS, WEDDING_SECTIONS, WEDDING_LABELS } from '../placements.js';
+import { WEDDING_PLACEMENTS, WEDDING_SECTIONS, WEDDING_LABELS } from '../placements.js?v=20260818b';
 
 export default {
     id: 'wedding_romantic_v1',

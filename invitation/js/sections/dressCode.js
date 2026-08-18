@@ -15,8 +15,8 @@
  * description and one with only guidelines both render cleanly — no empty
  * heading, no bullet-less list, no stray margin.
  */
-import { el, paragraphs } from '../dom.js';
-import { section } from './shell.js';
+import { el, paragraphs } from '../dom.js?v=20260818b';
+import { section } from './shell.js?v=20260818b';
 
 export default function renderDressCode(data, ctx) {
     if (!data) return null;

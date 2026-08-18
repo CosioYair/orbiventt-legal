@@ -69,7 +69,7 @@
          Render-blocking on purpose — it is small, and it is what keeps the
          first paint from shifting. The TEMPLATE stylesheet is attached by
          main.js from the registry descriptor. -->
-    <link rel="stylesheet" href="invitation/css/base.css">
+    <link rel="stylesheet" href="invitation/css/base.css?v=20260818b">
 
     <!-- ENV-SPECIFIC. The single environment boundary of the whole site: which
          Supabase project this deployment reads, and whether the DEV badge
@@ -77,7 +77,7 @@
          additionally read the project URL and the publishable anon key. There
          is deliberately no fallback project — a deployment whose env.js did not
          load fails closed rather than querying the wrong environment. -->
-    <script src="env.js"></script>
+    <script src="env.js?v=20260818b"></script>
     <!-- The SHARED app-handoff resolver — the same classic script 404.html
          loads, exposing `window.__ORB_APP_RETURN__`. The pass-claim card's
          "Abrir Orbiventt" destination is resolved exclusively through it, so
@@ -85,7 +85,7 @@
          behavior: production links open `vyvent://`, the DEV mirror only ever
          opens a re-validated Expo Go return address, and never falls back
          across environments. Same-origin, so `script-src 'self'` allows it. -->
-    <script src="app-return.js"></script>
+    <script src="app-return.js?v=20260818b"></script>
     <!-- The SHARED app-distribution module, exposing `window.__ORB_APP_LINKS__`.
          It turns the resolved handoff into the plan THIS device needs, so the
          one "Abrir Orbiventt" button also reaches the right store when Orbiventt
@@ -95,17 +95,20 @@
          present-or-definitively-absent — absent simply means the button keeps
          the behavior it had before. -->
     <!-- ?v= IS A CACHE KEY, NOT A FEATURE FLAG. GitHub Pages serves JS with
-         `Cache-Control: max-age=14400`, so a behavioural fix in this module
-         would otherwise take up to four hours to reach a guest whose browser
-         already holds a copy — and the 2026-08-18 iOS fallback fix could not
-         wait that long. The document itself is only cached for 600 s, so a new
-         value here becomes a new URL, and the new URL cannot be answered from
-         the old entry. BUMP THIS whenever app-store-links.js changes behaviour.
-         It is entirely unrelated to the invitation share thumbnail's `&v=`
-         (a different parameter, on a different URL, read by the OG Worker) and
-         it changes no Open Graph semantics: the same invitation link keeps
-         working, and nothing needs resharing. -->
-    <script src="app-store-links.js?v=20260818"></script>
+         `Cache-Control: max-age=14400` while this document is cached 600 s, so
+         without it a behavioural fix would take up to four hours to reach a
+         guest whose browser holds a copy. The value is the canonical WEB_BUILD
+         (scripts/web-env.mjs), stamped onto EVERY executable edge — these
+         tags and every import inside the invitation module graph — by
+         `node scripts/set-web-build.mjs <token>`. NEVER edit a ?v= by hand:
+         versioning one file while its parents stay cached was exactly the
+         2026-08-18 second-wave failure, because a stale parent graph simply
+         never asks for the fresh module. It is entirely unrelated to the
+         invitation share thumbnail's `&v=` (a different parameter, on the
+         page's public URL, read by the OG Worker) and it changes no Open
+         Graph semantics: the same invitation link keeps working, and nothing
+         needs resharing. -->
+    <script src="app-store-links.js?v=20260818b"></script>
 </head>
 <body>
     <div class="env-badge" id="envBadge" hidden>DEV</div>
@@ -147,6 +150,6 @@
         </div>
     </noscript>
 
-    <script type="module" src="invitation/js/main.js"></script>
+    <script type="module" src="invitation/js/main.js?v=20260818b"></script>
 </body>
 </html>
