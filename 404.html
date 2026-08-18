@@ -22,7 +22,10 @@
          decision, so this page and the Digital Invitation's claim card cannot
          drift apart on where "get the app" leads. Loaded synchronously for the
          same reason as the resolver. -->
-    <script src="app-store-links.js"></script>
+    <!-- ?v= is a cache key; bump it whenever app-store-links.js changes
+         behaviour. Same reasoning as the invitation page: the JS is cached for
+         four hours, the document for ten minutes. -->
+    <script src="app-store-links.js?v=20260818"></script>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <title>Orbiventt</title>
     <!-- SEO is intentionally deferred (external-invitations.md §10). This page

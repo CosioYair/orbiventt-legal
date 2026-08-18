@@ -94,7 +94,18 @@
          and loaded synchronously like the resolver so main.js can treat it as
          present-or-definitively-absent — absent simply means the button keeps
          the behavior it had before. -->
-    <script src="app-store-links.js"></script>
+    <!-- ?v= IS A CACHE KEY, NOT A FEATURE FLAG. GitHub Pages serves JS with
+         `Cache-Control: max-age=14400`, so a behavioural fix in this module
+         would otherwise take up to four hours to reach a guest whose browser
+         already holds a copy — and the 2026-08-18 iOS fallback fix could not
+         wait that long. The document itself is only cached for 600 s, so a new
+         value here becomes a new URL, and the new URL cannot be answered from
+         the old entry. BUMP THIS whenever app-store-links.js changes behaviour.
+         It is entirely unrelated to the invitation share thumbnail's `&v=`
+         (a different parameter, on a different URL, read by the OG Worker) and
+         it changes no Open Graph semantics: the same invitation link keeps
+         working, and nothing needs resharing. -->
+    <script src="app-store-links.js?v=20260818"></script>
 </head>
 <body>
     <div class="env-badge" id="envBadge" hidden>DEV</div>
