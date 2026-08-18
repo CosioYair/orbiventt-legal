@@ -41,9 +41,9 @@
  * the copy path carries the guest, which is the same fail-closed posture the
  * event-preview page has.
  */
-import { el, setText } from '../dom.js';
-import { MODE } from '../route.js';
-import { section } from './shell.js';
+import { el, setText } from '../dom.js?v=20260818b';
+import { MODE } from '../route.js?v=20260818b';
+import { section } from './shell.js?v=20260818b';
 
 /**
  * The code as a guest should read it: XXXX-XXXX-XXXX for the canonical

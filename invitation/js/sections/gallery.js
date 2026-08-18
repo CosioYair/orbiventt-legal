@@ -16,10 +16,10 @@
  * The item cap comes from the configuration contract (LIMITS.GALLERY_ITEMS) and
  * is applied during normalization, so this renderer draws whatever survived.
  */
-import { el } from '../dom.js';
-import { resolveImage } from '../security.js';
-import { framedArt } from '../framing.js';
-import { section } from './shell.js';
+import { el } from '../dom.js?v=20260818b';
+import { resolveImage } from '../security.js?v=20260818b';
+import { framedArt } from '../framing.js?v=20260818b';
+import { section } from './shell.js?v=20260818b';
 
 /** Fallback intrinsic size, used only if a template declares no placement. */
 const TILE_W = 800;

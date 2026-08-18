@@ -9,8 +9,8 @@
  * other scheme — and anything that failed was DROPPED rather than rendered as a
  * dead control. The maximum entry count is the contract's LIMITS.GIFT_LINKS.
  */
-import { el, paragraphs } from '../dom.js';
-import { section, externalButton } from './shell.js';
+import { el, paragraphs } from '../dom.js?v=20260818b';
+import { section, externalButton } from './shell.js?v=20260818b';
 
 export default function renderGifts(data, ctx) {
     if (!data) return null;

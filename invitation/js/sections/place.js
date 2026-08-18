@@ -7,9 +7,9 @@
  * or path. When no usable target exists the button is simply absent — there is
  * no dead control.
  */
-import { el } from '../dom.js';
-import { formatLongDate, formatTime } from '../config.js';
-import { section, timeEl, externalButton } from './shell.js';
+import { el } from '../dom.js?v=20260818b';
+import { formatLongDate, formatTime } from '../config.js?v=20260818b';
+import { section, timeEl, externalButton } from './shell.js?v=20260818b';
 
 export function renderPlace(id, heading, data, ctx) {
     if (!data) return null;

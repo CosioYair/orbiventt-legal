@@ -37,7 +37,7 @@
  * `demo` is NOT a way to reach stored data. It selects a registry key, and the
  * registry is a closed set of literals — see registry.js.
  */
-import { safeCode, safeToken, safeSlug, safeAppReturn } from './security.js';
+import { safeCode, safeToken, safeSlug, safeAppReturn } from './security.js?v=20260818b';
 
 export const MODE = {
     DEMO: 'demo',
