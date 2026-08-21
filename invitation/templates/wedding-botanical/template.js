@@ -17,7 +17,7 @@
  * on every invitation authored with it. A visual change that would alter an
  * already-published invitation ships as version 2 with its own directory.
  */
-import { WEDDING_PLACEMENTS, WEDDING_SECTIONS, WEDDING_LABELS } from '../placements.js?v=20260818b';
+import { WEDDING_PLACEMENTS, WEDDING_SECTIONS, WEDDING_LABELS } from '../placements.js?v=20260821a';
 
 export default {
     id: 'wedding_botanical_v1',

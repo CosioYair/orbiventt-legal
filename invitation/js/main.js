@@ -15,16 +15,16 @@
  * `env.js` is loaded by the page for one reason only: the DEV badge. Its
  * Supabase fields are never read here.
  */
-import { parseRoute, MODE } from './route.js?v=20260818b';
+import { parseRoute, MODE } from './route.js?v=20260821a';
 import {
     resolveStored, RESULT, passSummaryRequest, normalizePassSummary,
-} from './resolve.js?v=20260818b';
-import { resolveTemplate } from './registry.js?v=20260818b';
-import { normalizeConfig } from './config.js?v=20260818b';
-import { renderInvitation } from './renderer.js?v=20260818b';
-import { moduleBases, templateResourceUrl } from './paths.js?v=20260818b';
-import { setText, clear } from './dom.js?v=20260818b';
-import { callRpc, backendConfig, storageUrlResolver } from './backend.js?v=20260818b';
+} from './resolve.js?v=20260821a';
+import { resolveTemplate } from './registry.js?v=20260821a';
+import { normalizeConfig } from './config.js?v=20260821a';
+import { renderInvitation } from './renderer.js?v=20260821a';
+import { moduleBases, templateResourceUrl } from './paths.js?v=20260821a';
+import { setText, clear } from './dom.js?v=20260821a';
+import { callRpc, backendConfig, storageUrlResolver } from './backend.js?v=20260821a';
 
 /* Both roots are derived from this module's own URL, so the same bytes work
  * under /vyvent-legal/invitation/ and under /invitation/. */
@@ -130,7 +130,7 @@ function revealDevBadge() {
  * The specifier is a constant. There is still no import path anywhere in this
  * module tree that is derived from input. */
 async function loadDemoConfig(demoId) {
-    const module = await import('./demo-data.js?v=20260818b');
+    const module = await import('./demo-data.js?v=20260821a');
     return module.demoConfig(demoId);
 }
 

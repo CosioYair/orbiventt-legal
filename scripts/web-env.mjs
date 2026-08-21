@@ -57,6 +57,11 @@ export const SHARED_FILES = [
  */
 export const SHARED_DIRS = [
   'invitation',
+  // The public web scanner. SHARED for the same reason as the invitation
+  // renderer: production must run the same decision code, and the capability
+  // handling (fragment-only, sessionStorage, closed RPC allowlist) must have
+  // exactly one implementation across the two repositories.
+  'check-in',
 ];
 
 /**
@@ -126,7 +131,7 @@ export const PROD_ONLY_PATHS = [
  * crawlers on the invitation's public URL; this one fingerprints the CODE for
  * browsers on asset URLs. They share a letter and nothing else.
  */
-export const WEB_BUILD = '20260818b';
+export const WEB_BUILD = '20260821a';
 
 export const DEV_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';
 export const PROD_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';

@@ -1,0 +1,151 @@
+/* Scanner styling.
+ *
+ * An OPERATIONAL TOOL, not a landing page. Someone is holding a phone one-handed
+ * in a dark venue or in direct sun with a queue in front of them, so: a huge
+ * camera area, results that read from arm's length, unambiguous green/amber/red,
+ * and a Continue button big enough to hit without looking. Minimal Orbiventt
+ * identity is enough — nobody at a door needs marketing.
+ */
+
+:root {
+    --bg: #05030A;
+    --surface: #15101F;
+    --surface-alt: #1E1630;
+    --text: #E8E0F0;
+    --muted: #9B8FB8;
+    --primary: #A855F7;
+    --border: #27272F;
+    --ok: #22C55E;
+    --warn: #F59E0B;
+    --error: #EF4444;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-text-size-adjust: 100%;
+}
+
+body { display: flex; flex-direction: column; overflow: hidden; }
+[hidden] { display: none !important; }
+
+.brand {
+    font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--primary); font-weight: 700;
+}
+
+/* ── Bootstrap / fatal panels ─────────────────────────────────────────────── */
+.panel {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    gap: 0.85rem; padding: 2rem 1.5rem; text-align: center;
+}
+.panel h1 { font-size: 1.45rem; line-height: 1.25; }
+.panel .sub { color: var(--muted); font-size: 1rem; }
+.panel .meta { color: var(--muted); font-size: 0.9rem; }
+
+.btn {
+    display: block; width: 100%; max-width: 420px; margin: 0.4rem auto 0;
+    padding: 1.05rem 1.25rem; border: none; border-radius: 14px;
+    background: var(--primary); color: #fff;
+    font-size: 1.05rem; font-weight: 700; cursor: pointer;
+}
+.btn--ghost { background: var(--surface-alt); color: var(--text); border: 1px solid var(--border); }
+
+.counter {
+    display: inline-block; margin: 0 auto; padding: 0.3rem 0.85rem;
+    background: var(--surface-alt); border: 1px solid var(--border); border-radius: 999px;
+    color: var(--muted); font-size: 0.9rem; font-variant-numeric: tabular-nums;
+}
+
+/* ── Scanner ──────────────────────────────────────────────────────────────── */
+.scanner { flex: 1; position: relative; display: flex; flex-direction: column; }
+
+.scanner__video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; background: #000;
+}
+
+.scanner__bar {
+    position: relative; z-index: 2; display: flex; align-items: center;
+    justify-content: space-between; gap: 0.75rem;
+    padding: 0.7rem 1rem; background: rgba(5, 3, 10, 0.72);
+}
+.scanner__bar .name { font-size: 0.95rem; font-weight: 600; }
+.scanner__close {
+    background: none; border: none; color: var(--muted);
+    font-size: 0.9rem; padding: 0.4rem; cursor: pointer;
+}
+
+/* Reticle — a target, not decoration: it tells the operator where to aim. */
+.reticle {
+    position: relative; z-index: 1; margin: auto;
+    width: min(68vw, 260px); aspect-ratio: 1;
+    border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 20px;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35);
+}
+
+/* ── Result card ──────────────────────────────────────────────────────────── */
+.result {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 0.6rem; padding: 2rem 1.5rem; text-align: center;
+}
+.result--ok      { background: rgba(6, 46, 24, 0.97); border-top: 6px solid var(--ok); }
+.result--warn    { background: rgba(60, 40, 4, 0.97); border-top: 6px solid var(--warn); }
+.result--error   { background: rgba(60, 10, 10, 0.97); border-top: 6px solid var(--error); }
+.result--offline { background: rgba(20, 20, 26, 0.97); border-top: 6px solid var(--muted); }
+
+.result__title { font-size: 1.7rem; font-weight: 800; letter-spacing: 0.02em; line-height: 1.15; }
+.result--ok    .result__title { color: var(--ok); }
+.result--warn  .result__title { color: var(--warn); }
+.result--error .result__title { color: var(--error); }
+
+.result__line   { font-size: 1.15rem; font-weight: 600; }
+.result__detail { color: var(--muted); font-size: 1rem; }
+.result .btn    { margin-top: 1.25rem; }
+
+.error-box {
+    max-width: 420px; margin: 0 auto; padding: 1rem 1.1rem;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+}
+.error-box h2 { font-size: 1.05rem; margin-bottom: 0.35rem; }
+.error-box p  { color: var(--muted); font-size: 0.92rem; }
+
+@media (min-width: 720px) {
+    .panel h1 { font-size: 1.75rem; }
+    .reticle { width: 300px; }
+}
+
+/* ── Ingresos (history) ───────────────────────────────────────────────────── */
+.panel--top { justify-content: flex-start; overflow-y: auto; }
+
+.history-head {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 480px; margin: 0 auto;
+}
+.scanner__bar-actions { display: flex; gap: 0.5rem; align-items: center; }
+
+.history-search {
+    width: 100%; max-width: 480px; margin: 0.25rem auto 0;
+    padding: 0.85rem 1rem; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text); font-size: 1rem;
+}
+.history-search::placeholder { color: var(--muted); }
+
+.history-list {
+    width: 100%; max-width: 480px; margin: 0.25rem auto 0;
+    display: flex; flex-direction: column; gap: 0.5rem; text-align: left;
+}
+.history-row {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 0.7rem 0.9rem;
+}
+.history-row--reverted { opacity: 0.6; }
+.history-row--reverted .history-row__title { text-decoration: line-through; }
+.history-row__title { font-size: 1rem; font-weight: 700; }
+.history-row__line { color: var(--muted); font-size: 0.85rem; margin-top: 1px; }
