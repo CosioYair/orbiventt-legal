@@ -5,7 +5,7 @@
  * section) and one predictable landmark structure, regardless of which
  * template is dressing it. A template changes the CSS, never the semantics.
  */
-import { el } from '../dom.js?v=20260818b';
+import { el } from '../dom.js?v=20260821a';
 
 /**
  * A titled section.

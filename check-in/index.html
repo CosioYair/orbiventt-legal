@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <!-- CONTENT SECURITY POLICY — tighter than the invitation page.
+         Exactly ONE host is named, and it is the Supabase project this
+         deployment belongs to; `connect-src` allows the two scanner RPCs and
+         nothing else. There is NO img-src to Supabase because this page renders
+         no remote image at all, and no CDN, no analytics, no font host, no
+         frame. `blob:` in img-src/media-src is what the camera stream and the
+         decode canvas need.
+         The project ref is the token `devToProd()` rewrites on promotion, so
+         production would allow the production project and nothing else.
+         `script-src 'self'` (no 'unsafe-inline') means this document contains
+         no inline script — every behaviour comes from a module file. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src https://lehwxjbjlehsdkqxlzrb.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+    <!-- A live door capability travels in this page's fragment. `no-referrer`
+         guarantees it cannot leak through a Referer header on any navigation. -->
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+    <meta name="color-scheme" content="dark">
+    <!-- ENV-SPECIFIC: deployment base path. Rewritten to "/" on promotion. -->
+    <base href="/">
+    <!-- PERMANENT, both environments. An operational door tool has no business
+         in a search index. -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <title>Scanner · Orbiventt</title>
+
+    <link rel="stylesheet" href="check-in/css/scanner.css?v=20260821a">
+
+    <!-- ENV-SPECIFIC. The single environment boundary for the whole site. -->
+    <script src="env.js?v=20260821a"></script>
+    <!-- VENDORED DECODER, loaded as a classic script because it is a UMD build
+         that assigns `window.jsQR`. BarcodeDetector is absent from the entire
+         iOS platform (Safari and Chrome there are both WebKit), so this is a
+         first-class decode path, not a fallback. Apache-2.0; see
+         check-in/js/vendor/jsqr-LICENSE.txt. -->
+    <script src="check-in/js/vendor/jsqr.js?v=20260821a"></script>
+</head>
+<body>
+
+    <!-- Bootstrap: minimum door context. No guest list, ever. -->
+    <section id="loading" class="panel" hidden>
+        <p class="sub">Verificando acceso…</p>
+    </section>
+
+    <section id="bootstrap" class="panel" hidden>
+        <p class="brand">Orbiventt</p>
+        <h1 id="eventName"></h1>
+        <p class="sub" id="scannerLabel"></p>
+        <p class="meta" id="validUntil"></p>
+        <p class="counter" id="counter" hidden></p>
+        <p class="meta" id="bootNote"></p>
+        <!-- iOS WebKit grants getUserMedia only from a user gesture, so this
+             button is the mechanism, not decoration. -->
+        <button type="button" class="btn" id="startBtn">Iniciar scanner</button>
+        <button type="button" class="btn btn--ghost" id="historyBtn">Ver ingresos</button>
+
+        <div class="error-box" id="cameraError" hidden>
+            <h2 id="cameraErrorTitle"></h2>
+            <p id="cameraErrorBody"></p>
+            <button type="button" class="btn btn--ghost" id="retryCameraBtn">Reintentar</button>
+        </div>
+    </section>
+
+    <section id="fatal" class="panel" hidden>
+        <p class="brand">Orbiventt</p>
+        <h1 id="fatalTitle"></h1>
+        <p class="sub" id="fatalDetail"></p>
+        <!-- Shown for RECOVERABLE states only (offline, not started). A
+             terminal revoked/expired access hides it — that link is dead. -->
+        <button type="button" class="btn" id="fatalRetryBtn" hidden>Reintentar</button>
+    </section>
+
+    <!-- Scanning: the camera dominates. -->
+    <section id="scanner" class="scanner" hidden>
+        <video id="video" class="scanner__video" playsinline muted></video>
+
+        <div class="scanner__bar">
+            <span class="name" id="scannerBarName">Orbiventt</span>
+            <div class="scanner__bar-actions">
+                <button type="button" class="scanner__close" id="historyFromScanBtn">Ingresos</button>
+                <!-- Cerrar = STOP THE CAMERA. It never forgets the
+                     authorization: the capability survives in sessionStorage
+                     and Reanudar scanner continues without the original URL. -->
+                <button type="button" class="scanner__close" id="closeBtn">Cerrar scanner</button>
+            </div>
+        </div>
+
+        <div class="reticle"></div>
+
+        <div class="result" id="result" hidden>
+            <p class="result__title" id="resultTitle"></p>
+            <div id="resultLines"></div>
+            <p class="result__detail" id="resultDetail"></p>
+            <button type="button" class="btn" id="continueBtn" hidden>Continuar</button>
+            <button type="button" class="btn btn--ghost" id="retryBtn" hidden>Reintentar</button>
+        </div>
+    </section>
+
+    <!-- Ingresos: recorded check-in history for THIS event, searchable by
+         name. History only — an attendee who was never scanned does not exist
+         here, which is what keeps this from becoming a guest-list browser. -->
+    <section id="historyPanel" class="panel panel--top" hidden>
+        <div class="history-head">
+            <p class="brand">Ingresos</p>
+            <button type="button" class="scanner__close" id="backToScanBtn">Escanear</button>
+        </div>
+        <p class="counter" id="historyCounter"></p>
+        <input type="search" id="historySearch" class="history-search"
+               placeholder="Buscar por nombre" autocomplete="off" autocapitalize="none">
+        <p class="meta" id="historyStatus"></p>
+        <div id="historyResults" class="history-list"></div>
+    </section>
+
+    <script type="module" src="check-in/js/main.js?v=20260821a"></script>
+</body>
+</html>

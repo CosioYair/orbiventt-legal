@@ -4,8 +4,8 @@
  * one <p> per paragraph so the organizer's line breaks survive without a single
  * character of markup being generated from their text.
  */
-import { el, paragraphs } from '../dom.js?v=20260818b';
-import { section } from './shell.js?v=20260818b';
+import { el, paragraphs } from '../dom.js?v=20260821a';
+import { section } from './shell.js?v=20260821a';
 
 export default function renderMessage(data, ctx) {
     if (!data) return null;
