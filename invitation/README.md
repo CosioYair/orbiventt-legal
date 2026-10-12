@@ -44,6 +44,34 @@ explainer badged as a demonstration and claims nothing.
 
 ---
 
+## Confirmar asistencia (web RSVP)
+
+`/rsvp/#c=XXXX-XXXX-XXXX` is the reply page for an invitation. **It answers
+the EXISTING Smart Invitation ("Enlace de invitación") by its existing 12-char
+code — there is NO new invitation type.** A web reply and an app claim are two
+consumers of the same entitlement: same code, same seat pool, same organizer
+tools (`guest_resolve_invitation` / `guest_respond`, migration
+`20261011200000`). Copy on that page says "tu invitación" and "Confirmar
+asistencia", never "invitación web".
+
+How a guest reaches it:
+
+- The published pass card here (`js/sections/passes.js`) renders
+  **Confirmar asistencia** as its primary control, linking to `../rsvp/#c=<code>`
+  (computed from the page URL, so it is right under both deployment roots).
+  "Abrir Orbiventt" and "Copiar código" stay as secondary controls.
+- `/e/{id}?code=<code>` (404.html) shows the same primary CTA above the app button.
+- With no code in the link, the page offers a single code field.
+
+Code handling rule: the code is read from the fragment (`#c=`), or once from a
+legacy `?code=` query, then stored in **`sessionStorage`** (`orb.rsvp.code`,
+never `localStorage`) and the address bar is rewritten to the bare pathname.
+`not_found` clears it. The code never appears in `document.title`, OG tags, any
+log, or any outgoing URL other than the app deep link resolved by
+`app-return.js`. Tests: `scripts/__tests__/rsvp.test.mjs`.
+
+---
+
 ## Layout
 
 ```

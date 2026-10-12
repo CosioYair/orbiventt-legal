@@ -1,0 +1,620 @@
+/* CONFIRMAR ASISTENCIA — the reply page for an EXISTING invitation.
+ *
+ * A guest opens this from a chat message, on a phone, often inside the
+ * WhatsApp in-app browser. So: one column, white cards on a soft background,
+ * large tap targets (≥ 52 px), the canonical Orbiventt purple→blue gradient on
+ * at most one primary control per screen (none on the two-path choice), an
+ * amber link warning that is never collapsible, a pass QR drawn as a plain
+ * black-on-white SVG on a ticket-like card, the event's photos as a compact
+ * grid that opens a fullscreen viewer in the app's own idiom (black, centred,
+ * never cropped, swipe to move), and nothing that needs a hover.
+ * No inline styles exist anywhere (CSP `style-src 'self'`): every state is a
+ * class, every layout rule lives here.
+ */
+
+:root {
+    --bg: #F6F4FB;
+    --surface: #FFFFFF;
+    --surface-alt: #F1EDF9;
+    --ink: #1A1526;
+    --muted: #6B6480;
+    --line: rgba(26, 21, 38, 0.12);
+    --accent: #5A18D4;
+    --accent-ink: #4A12B0;
+    --gradient: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%);
+    --ok: #15803D;
+    --ok-bg: #ECFDF3;
+    --warn: #B45309;
+    --warn-bg: #FFF7E6;
+    --error: #B91C1C;
+    --error-bg: #FEF2F2;
+    --radius: 16px;
+    --gutter: 1rem;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { min-width: 320px; background: var(--bg); -webkit-text-size-adjust: 100%; }
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 1rem;
+    line-height: 1.55;
+    overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--accent-ink); }
+[hidden] { display: none !important; }
+
+:focus { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+.rsvp-sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* ── Frame ──────────────────────────────────────────────────────────────── */
+.rsvp-page {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: calc(0.75rem + env(safe-area-inset-top)) var(--gutter) calc(1rem + env(safe-area-inset-bottom));
+}
+
+.rsvp-brand {
+    margin: 0.25rem 0 0.75rem;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent-ink);
+}
+
+.rsvp-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.1rem;
+    margin: 0 0 1rem;
+    box-shadow: 0 1px 2px rgba(26, 21, 38, 0.04);
+}
+
+.rsvp-card h1, .rsvp-card h2, .rsvp-card h3 { margin: 0 0 0.5rem; line-height: 1.25; }
+.rsvp-card h1 { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.01em; }
+.rsvp-card h2 { font-size: 1.2rem; font-weight: 700; }
+.rsvp-card h3 { font-size: 1.05rem; font-weight: 700; }
+.rsvp-card p { margin: 0 0 0.75rem; }
+.rsvp-card p:last-child { margin-bottom: 0; }
+.rsvp-muted { color: var(--muted); font-size: 0.9rem; }
+.rsvp-muted a { color: var(--muted); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.rsvp-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.45rem;
+    width: 100%;
+    min-height: 52px;
+    margin: 0 0 0.6rem;
+    padding: 0.8rem 1.1rem;
+    border: 1px solid var(--accent-ink);
+    border-radius: 14px;
+    background: transparent;
+    color: var(--accent-ink);
+    font-family: var(--font);
+    font-size: 1rem; font-weight: 700; line-height: 1.2;
+    text-align: center; text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.rsvp-btn:last-child { margin-bottom: 0; }
+.rsvp-btn:active { transform: translateY(1px); }
+.rsvp-btn[disabled] { opacity: 0.55; cursor: not-allowed; }
+
+.rsvp-btn--primary {
+    background: var(--gradient);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 8px 24px rgba(84, 60, 232, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.rsvp-btn--primary:hover { filter: brightness(1.06); }
+
+.rsvp-btn--ghost { background: var(--surface); }
+.rsvp-btn--ghost:hover { background: var(--surface-alt); }
+
+.rsvp-btn--quiet {
+    border-color: transparent;
+    color: var(--muted);
+    min-height: 44px;
+    font-weight: 600;
+}
+
+/* A link-styled button: the quiet way into the app path. */
+.rsvp-btn--link {
+    display: inline; width: auto; min-height: 0; margin: 0; padding: 0.25rem 0;
+    border: 0; background: none; color: var(--muted);
+    font-size: 0.9rem; font-weight: 600; text-decoration: underline; text-underline-offset: 0.15em;
+}
+.rsvp-app-link { margin: -0.25rem 0 1rem; text-align: center; }
+
+/* The two equal paths — never a primary among them. Both are real: the web
+ * path answers here; the app path IS the one-tap handoff (an anchor armed by
+ * the shared smart-open plan) and wears the app's own icon so a guest who
+ * already has Orbiventt recognises it at a glance. */
+.rsvp-paths { display: grid; gap: 0.75rem; margin: 0.75rem 0 0; }
+.rsvp-btn--path {
+    flex-direction: row; align-items: center; justify-content: flex-start; gap: 0.8rem;
+    min-height: 72px; margin: 0; padding: 0.85rem 1rem;
+    border: 2px solid var(--line); background: var(--surface);
+    text-align: left; text-decoration: none;
+}
+.rsvp-path__text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.rsvp-path__text strong { font-size: 1.05rem; color: var(--ink); line-height: 1.2; }
+.rsvp-path__text span { font-size: 0.86rem; font-weight: 500; color: var(--muted); line-height: 1.3; }
+.rsvp-btn--path:hover { border-color: var(--accent); background: var(--surface-alt); }
+
+.rsvp-btn--path-app {
+    border-color: rgba(90, 24, 212, 0.45);
+    background: linear-gradient(135deg, rgba(138, 24, 234, 0.08) 0%, rgba(30, 116, 230, 0.08) 100%), var(--surface);
+    box-shadow: 0 6px 18px rgba(84, 60, 232, 0.14);
+}
+.rsvp-btn--path-app:hover { border-color: var(--accent); }
+.rsvp-btn--path-app .rsvp-path__text strong { color: var(--accent-ink); }
+.rsvp-path__icon {
+    flex: none; width: 44px; height: 44px; border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(26, 21, 38, 0.18);
+}
+
+/* Centred under the two paths: the way into the passes. */
+.rsvp-manage { display: grid; justify-items: center; gap: 0.5rem; margin: 0.9rem 0 0; }
+.rsvp-manage .rsvp-btn { margin: 0; max-width: 24rem; }
+.rsvp-manage .rsvp-btn--ghost { border-width: 2px; }
+.rsvp-manage .rsvp-ready { margin: 0; width: 100%; text-align: center; }
+
+/* The code, as the FALLBACK behind the app path. */
+.rsvp-fallback {
+    margin: 1rem 0 0.25rem; padding: 0.9rem 1rem 0.75rem;
+    border: 1px dashed var(--line); border-radius: 12px; background: var(--bg);
+}
+.rsvp-fallback__lead { margin: 0 0 0.25rem !important; text-align: center; }
+.rsvp-fallback .rsvp-btn { min-height: 44px; }
+.rsvp-fallback .rsvp-code { margin: 0.35rem 0 0.6rem; }
+
+/* The two big answers. */
+.rsvp-choice { display: grid; gap: 0.75rem; margin: 0.5rem 0 0.25rem; }
+.rsvp-choice .rsvp-btn { min-height: 64px; font-size: 1.08rem; margin: 0; }
+
+.rsvp-actions { display: grid; gap: 0.6rem; margin-top: 1rem; }
+.rsvp-actions .rsvp-btn { margin: 0; }
+
+/* ── Event card ─────────────────────────────────────────────────────────── */
+.rsvp-event { padding: 0; overflow: hidden; }
+
+.rsvp-event__cover {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--surface-alt);
+}
+/* The invitation's own thumbnail is shown whole: its ratio, never cropped. */
+.rsvp-event__cover--invitation { aspect-ratio: auto; height: auto; object-fit: contain; }
+
+.rsvp-event__body { padding: 1.1rem 1.1rem 1.25rem; }
+
+.rsvp-event__host {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin: 0 0 0.75rem;
+    color: var(--muted); font-size: 0.92rem;
+}
+.rsvp-event__avatar {
+    width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+    background: var(--surface-alt); flex: none;
+}
+
+.rsvp-event__label {
+    display: inline-block;
+    margin: 0 0 0.6rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--accent-ink);
+    font-size: 0.82rem; font-weight: 700;
+}
+
+.rsvp-event__greeting { white-space: pre-line; }
+
+.rsvp-event__when { font-weight: 600; }
+.rsvp-event__when-lead { display: block; font-size: 1.15rem; font-weight: 800; color: var(--accent-ink); }
+.rsvp-event__when-full { display: block; font-weight: 500; color: var(--muted); font-size: 0.92rem; }
+.rsvp-event__address { color: var(--muted); }
+
+.rsvp-event__links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.9rem 0; }
+.rsvp-event__links .rsvp-btn { width: auto; flex: 1 1 10rem; min-height: 46px; margin: 0; font-size: 0.92rem; }
+
+.rsvp-event__desc { color: var(--ink); white-space: pre-line; }
+
+/* ── The event's photos — a compact grid, the viewer behind it ───────────── */
+.rsvp-icon { width: 1.1em; height: 1.1em; flex: none; display: inline-block; vertical-align: -0.15em; }
+
+.rsvp-gallery { margin: 1.1rem 0 0; }
+.rsvp-gallery__title {
+    display: flex; align-items: center; gap: 0.45rem;
+    margin: 0 0 0.6rem; font-weight: 700; font-size: 0.98rem; color: var(--ink);
+}
+.rsvp-gallery__icon { color: var(--accent-ink); width: 1.25em; height: 1.25em; }
+.rsvp-gallery__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.rsvp-gallery__tile {
+    position: relative; display: block; width: 100%; aspect-ratio: 1 / 1;
+    margin: 0; padding: 0; border: 0; border-radius: 12px; overflow: hidden;
+    background: var(--surface-alt); cursor: pointer;
+}
+.rsvp-gallery__tile img { width: 100%; height: 100%; object-fit: cover; }
+.rsvp-gallery__tile:active img { transform: scale(0.98); }
+.rsvp-gallery__more {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(5, 3, 10, 0.55); color: #fff; font-weight: 800; font-size: 1.35rem;
+}
+
+/* ── The itinerary — the app's timeline (rail, dot, connector), read-only ── */
+.rsvp-itin { margin: 1.1rem 0 0; }
+.rsvp-itin__title {
+    display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;
+    margin: 0 0 0.35rem; font-weight: 700; font-size: 0.98rem; color: var(--ink);
+}
+.rsvp-itin__icon { color: var(--accent-ink); width: 1.25em; height: 1.25em; }
+.rsvp-itin__count { font-weight: 500; color: var(--muted); white-space: pre; }
+.rsvp-itin__day {
+    margin: 0.7rem 0 0.45rem !important; font-size: 0.74rem; font-weight: 800;
+    letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.rsvp-itin__list { margin: 0; padding: 0; list-style: none; }
+.rsvp-itin__item { display: flex; gap: 0.6rem; min-width: 0; }
+.rsvp-itin__rail { flex: none; width: 3.1rem; display: flex; flex-direction: column; align-items: center; }
+.rsvp-itin__time {
+    font-weight: 800; font-size: 0.86rem; color: var(--ink);
+    font-variant-numeric: tabular-nums; white-space: nowrap; margin-bottom: 4px;
+}
+.rsvp-itin__dot {
+    flex: none; width: 9px; height: 9px; border-radius: 50%;
+    background: var(--line); box-shadow: 0 0 0 2px var(--surface-alt);
+}
+.rsvp-itin__line { flex: 1; width: 1px; min-height: 12px; margin-top: 3px; background: var(--line); }
+.rsvp-itin__body {
+    flex: 1; min-width: 0; margin: 0 0 0.75rem; padding: 0.7rem 0.85rem 0.75rem;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+}
+.rsvp-itin__name {
+    margin: 0 !important; font-weight: 600; font-size: 1rem; line-height: 1.3; color: var(--ink);
+    overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rsvp-itin__meta {
+    display: flex; align-items: center; gap: 0.5rem;
+    margin: 0.2rem 0 0 !important; font-size: 0.82rem; color: var(--muted);
+}
+.rsvp-itin__range {
+    flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+}
+.rsvp-itin__chip {
+    flex: none; padding: 0 0.55rem; height: 22px; line-height: 22px; border-radius: 999px;
+    background: var(--surface-alt); font-weight: 600; font-size: 0.72rem; color: var(--muted);
+}
+.rsvp-itin__item[data-state="ongoing"] .rsvp-itin__dot { background: var(--accent); box-shadow: 0 0 0 2px rgba(90, 24, 212, 0.33); }
+.rsvp-itin__item[data-state="ongoing"] .rsvp-itin__chip { background: rgba(90, 24, 212, 0.13); color: var(--accent-ink); }
+.rsvp-itin__item[data-state="completed"] .rsvp-itin__body { opacity: 0.55; }
+.rsvp-itin__place {
+    display: flex; align-items: flex-start; gap: 0.3rem;
+    margin: 0.3rem 0 0 !important; font-size: 0.82rem; line-height: 1.4; color: var(--muted);
+}
+.rsvp-itin__place .rsvp-icon { margin-top: 0.15em; }
+.rsvp-itin__place span {
+    flex: 1; min-width: 0; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rsvp-itin__desc {
+    margin: 0.35rem 0 0 !important; font-size: 0.88rem; line-height: 1.45; color: var(--muted);
+    white-space: pre-line; overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.rsvp-itin__maps {
+    display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.45rem; min-height: 32px;
+    font-weight: 600; font-size: 0.86rem; color: var(--accent-ink); text-decoration: none;
+}
+.rsvp-itin__maps:hover { text-decoration: underline; }
+.rsvp-itin__expand { margin-top: 0.1rem; }
+
+body.rsvp-viewer-open { overflow: hidden; }
+
+.rsvp-viewer {
+    position: fixed; inset: 0; z-index: 1000;
+    background: #000; color: #fff;
+    display: flex; flex-direction: column;
+    outline: none;
+}
+.rsvp-viewer__header {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 2;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: calc(0.75rem + env(safe-area-inset-top)) 1rem 0.75rem;
+    background: linear-gradient(rgba(5, 3, 10, 0.6), rgba(5, 3, 10, 0));
+}
+.rsvp-viewer__close, .rsvp-viewer__nav {
+    display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; padding: 0; border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.18); background: rgba(0, 0, 0, 0.45);
+    color: #fff; cursor: pointer;
+}
+.rsvp-viewer__close .rsvp-icon, .rsvp-viewer__nav .rsvp-icon { width: 22px; height: 22px; }
+.rsvp-viewer__close:focus-visible, .rsvp-viewer__nav:focus-visible, .rsvp-gallery__tile:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.rsvp-viewer__counter {
+    flex: 1; margin: 0; text-align: center;
+    font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.rsvp-viewer__spacer { width: 40px; flex: none; }
+
+.rsvp-viewer__track {
+    flex: 1; display: flex; width: 100%; height: 100%;
+    overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory; scrollbar-width: none;
+}
+.rsvp-viewer__track::-webkit-scrollbar { display: none; }
+.rsvp-viewer__slide {
+    flex: none; width: 100%; height: 100%; margin: 0;
+    display: flex; align-items: center; justify-content: center;
+    scroll-snap-align: center; scroll-snap-stop: always;
+}
+.rsvp-viewer__img { width: 100%; height: 100%; max-width: 100%; object-fit: contain; background: transparent; }
+.rsvp-viewer__failed { margin: 0; padding: 1rem; color: rgba(255, 255, 255, 0.75); text-align: center; }
+
+.rsvp-viewer__nav {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+}
+.rsvp-viewer__nav--prev { left: 0.75rem; }
+.rsvp-viewer__nav--next { right: 0.75rem; }
+.rsvp-viewer__nav[disabled] { opacity: 0.25; cursor: default; }
+/* Touch screens swipe; the arrows are for pointers and keyboards. */
+@media (hover: none) and (pointer: coarse) { .rsvp-viewer__nav { display: none; } }
+
+.rsvp-viewer__bar {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+    display: grid; gap: 0.6rem; justify-items: center;
+    padding: 2rem 1.5rem calc(1.25rem + env(safe-area-inset-bottom));
+    background: linear-gradient(transparent, rgba(5, 3, 10, 0.55) 50%, rgba(5, 3, 10, 0.9));
+    pointer-events: none;
+}
+.rsvp-viewer__dots { display: flex; gap: 6px; }
+.rsvp-viewer__dot { width: 6px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.35); transition: width 0.15s ease; }
+.rsvp-viewer__dot--active { width: 18px; background: #fff; }
+.rsvp-viewer__caption { margin: 0; font-size: 0.8rem; color: rgba(255, 255, 255, 0.65); }
+.rsvp-viewer__caption:empty { display: none; }
+
+/* ── Status banners ─────────────────────────────────────────────────────── */
+.rsvp-banner {
+    margin: 0 0 1rem; padding: 0.85rem 1rem;
+    border-radius: 12px; font-weight: 600;
+}
+.rsvp-banner--cancelled { background: var(--error-bg); color: var(--error); }
+.rsvp-banner--finished  { background: var(--surface-alt); color: var(--muted); }
+.rsvp-banner--expired   { background: var(--warn-bg); color: var(--warn); }
+
+/* ── Forms ──────────────────────────────────────────────────────────────── */
+.rsvp-field { margin: 0 0 1rem; }
+.rsvp-field label { display: block; margin: 0 0 0.35rem; font-weight: 600; font-size: 0.95rem; }
+.rsvp-field input, .rsvp-field textarea {
+    width: 100%;
+    min-height: 50px;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit; font-size: 1.02rem;
+}
+.rsvp-field textarea { min-height: 7rem; resize: vertical; }
+.rsvp-field input:focus, .rsvp-field textarea:focus { border-color: var(--accent); }
+.rsvp-hint { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.88rem; }
+.rsvp-counter { text-align: right; }
+
+.rsvp-stepper {
+    display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; gap: 0.5rem;
+}
+.rsvp-stepper button {
+    height: 52px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--surface-alt); color: var(--accent-ink);
+    font: inherit; font-size: 1.5rem; font-weight: 700; cursor: pointer;
+}
+.rsvp-stepper button[disabled] { opacity: 0.4; cursor: not-allowed; }
+.rsvp-stepper output {
+    display: block; text-align: center;
+    font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums;
+}
+
+.rsvp-error {
+    margin: 0 0 0.9rem; padding: 0.7rem 0.9rem;
+    border-radius: 10px; background: var(--error-bg); color: var(--error);
+    font-size: 0.93rem; font-weight: 600;
+}
+.rsvp-error:empty { display: none; }
+
+.rsvp-code-input input {
+    text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* ── Current answer cards ───────────────────────────────────────────────── */
+.rsvp-party { border-left: 4px solid var(--accent); }
+.rsvp-party--declined { border-left-color: var(--line); }
+.rsvp-party__name { font-weight: 700; font-size: 1.05rem; margin: 0 0 0.2rem; }
+.rsvp-party__status { margin: 0 0 0.4rem; }
+.rsvp-party ul { margin: 0 0 0.6rem; padding-left: 1.2rem; color: var(--muted); }
+.rsvp-party__note { color: var(--muted); font-style: italic; }
+.rsvp-ready {
+    margin: 0.5rem 0 0.25rem; padding: 0.6rem 0.8rem;
+    border-radius: 10px; background: var(--ok-bg); color: var(--ok); font-weight: 700;
+}
+
+/* ── "Lo que te toca llevar" — the organizer's checklist assignment ──────── */
+.rsvp-bring {
+    margin: 0.75rem 0 0.5rem; padding: 0.9rem 1rem 1rem;
+    border: 2px solid rgba(90, 24, 212, 0.35); border-radius: 14px;
+    background: var(--surface-alt);
+}
+.rsvp-bring__head { display: flex; align-items: center; gap: 0.75rem; margin: 0 0 0.6rem; }
+.rsvp-bring__plate {
+    flex: none; display: flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 11px;
+    background: rgba(90, 24, 212, 0.14); color: var(--accent-ink);
+}
+.rsvp-bring__plate .rsvp-icon { width: 22px; height: 22px; }
+.rsvp-bring__title { margin: 0 !important; font-weight: 800; font-size: 1.02rem; color: var(--ink); }
+.rsvp-bring__hint { margin: 0 !important; font-size: 0.84rem; color: var(--muted); }
+.rsvp-bring__list { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.4rem; }
+.rsvp-bring__item {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.6rem 0.75rem; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-weight: 600; font-size: 1rem; color: var(--ink); overflow-wrap: anywhere;
+}
+.rsvp-bring__check { color: var(--accent-ink); width: 1.25em; height: 1.25em; }
+
+/* ── The link warning — amber, bordered, never collapsible ──────────────── */
+.rsvp-warning {
+    display: flex; gap: 0.8rem; align-items: flex-start;
+    margin: 0 0 1rem; padding: 1rem 1.1rem;
+    border: 2px solid #F59E0B; border-radius: var(--radius);
+    background: var(--warn-bg); color: #7C3A03;
+}
+.rsvp-warning__icon {
+    flex: none; width: 2rem; height: 2rem; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: #F59E0B; color: #1A1526; font-weight: 900; font-size: 1.2rem; line-height: 1;
+}
+.rsvp-warning__body p { margin: 0; }
+.rsvp-warning__title { font-size: 1.05rem; margin-bottom: 0.2rem !important; }
+.rsvp-warning__text { font-size: 0.95rem; line-height: 1.45; }
+
+/* ── What the app adds ──────────────────────────────────────────────────── */
+.rsvp-benefits { margin: 0 0 0.75rem; padding: 0; list-style: none; }
+.rsvp-benefits li { padding: 0.25rem 0 0.25rem 1.6rem; position: relative; }
+.rsvp-benefits li::before {
+    content: '✓'; position: absolute; left: 0.2rem; top: 0.25rem;
+    color: var(--accent-ink); font-weight: 800;
+}
+.rsvp-benefits-block {
+    margin: 1rem 0 0.25rem; padding: 0.9rem 1rem;
+    border-radius: 12px; background: var(--surface-alt);
+}
+.rsvp-benefits-block__lead { margin: 0 0 0.4rem; font-weight: 700; font-size: 0.95rem; }
+.rsvp-benefits-block .rsvp-benefits li { padding-top: 0.15rem; padding-bottom: 0.15rem; font-size: 0.93rem; }
+
+/* ── Passes ─────────────────────────────────────────────────────────────── */
+.rsvp-passes__heading { margin-top: 1.25rem; }
+.rsvp-passes__list { display: grid; gap: 0.75rem; margin: 0 0 1rem; }
+.rsvp-passes__notice {
+    margin: 0; padding: 0.75rem 0.9rem;
+    border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 0.92rem;
+}
+.rsvp-pass {
+    position: relative; overflow: hidden;
+    padding: 0 0 1rem;
+    border: 1px solid var(--line); border-radius: 16px; background: var(--surface);
+    box-shadow: 0 6px 20px rgba(26, 21, 38, 0.08);
+}
+.rsvp-pass::before {
+    content: ''; display: block; height: 6px;
+    background: var(--line);
+}
+.rsvp-pass[data-state="active"] { border-color: rgba(90, 24, 212, 0.3); }
+.rsvp-pass[data-state="active"]::before { background: var(--gradient); }
+.rsvp-pass__head {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;
+    padding: 0.8rem 1rem 0;
+}
+.rsvp-pass__num {
+    font-size: 0.76rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent-ink);
+}
+.rsvp-pass__badge {
+    padding: 0.2rem 0.6rem; border-radius: 999px;
+    font-size: 0.76rem; font-weight: 700; white-space: nowrap;
+    background: var(--surface-alt); color: var(--muted);
+}
+.rsvp-pass__badge--active { background: var(--ok-bg); color: var(--ok); }
+.rsvp-pass__badge--checked { background: var(--ok); color: #fff; }
+.rsvp-pass__title { display: flex; flex-direction: column; gap: 0.1rem; margin: 0.35rem 0 0; padding: 0 1rem; }
+.rsvp-pass__kind { font-size: 0.82rem; color: var(--muted); }
+.rsvp-pass__who { font-size: 1.15rem; font-weight: 800; line-height: 1.2; overflow-wrap: anywhere; }
+.rsvp-pass__qr {
+    display: flex; justify-content: center;
+    margin: 0.85rem 1rem 0; padding: 0.75rem;
+    border-radius: 14px; background: #FFFFFF;
+    border: 1px solid var(--line);
+    box-shadow: inset 0 0 0 4px #FFFFFF, 0 1px 3px rgba(26, 21, 38, 0.08);
+}
+/* The ticket's perforation, between the name and the QR. */
+.rsvp-pass__qr::before {
+    content: ''; position: absolute; left: 0; right: 0; margin-top: -0.85rem;
+    border-top: 2px dashed var(--line);
+}
+.rsvp-qr { display: block; width: min(240px, 68vw); height: auto; }
+.rsvp-pass__state { margin: 0.75rem 1rem 0; padding: 0.6rem 0.8rem; border-radius: 10px; background: var(--surface-alt); color: var(--muted); font-size: 0.92rem; font-weight: 600; }
+.rsvp-pass__checkin { margin: 0.6rem 1rem 0; color: var(--ok); font-weight: 700; font-size: 0.92rem; text-align: center; }
+
+/* ── Results ────────────────────────────────────────────────────────────── */
+.rsvp-result--ok { background: var(--ok-bg); border-color: rgba(21, 128, 61, 0.25); }
+.rsvp-result--ok h2 { color: var(--ok); }
+.rsvp-result--declined { background: var(--surface-alt); }
+
+.rsvp-promo .rsvp-btn--link { display: block; width: 100%; text-align: center; }
+
+.rsvp-code {
+    margin: 0.75rem 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 1.35rem; font-weight: 800; letter-spacing: 0.12em; text-align: center;
+    user-select: all; -webkit-user-select: all;
+}
+.rsvp-status { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.9rem; text-align: center; }
+.rsvp-status:empty { display: none; }
+
+/* ── Loading, states, noscript, footer ──────────────────────────────────── */
+.rsvp-loading, .rsvp-state, .rsvp-noscript { padding: 4rem var(--gutter); text-align: center; }
+.rsvp-loading__mark {
+    display: block; width: 2.25rem; height: 2.25rem; margin: 0 auto 1.25rem;
+    border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--accent);
+    animation: rsvp-spin 1s linear infinite;
+}
+@keyframes rsvp-spin { to { transform: rotate(360deg); } }
+.rsvp-loading__text { color: var(--muted); margin: 0; }
+.rsvp-state h1 { font-size: 1.4rem; margin: 0 0 0.5rem; }
+.rsvp-state p { color: var(--muted); margin: 0 0 1.25rem; }
+
+.rsvp-footer { padding: 1.5rem 0 0.5rem; text-align: center; color: var(--muted); font-size: 0.8rem; }
+.rsvp-footer p { margin: 0; }
+
+.env-badge {
+    position: fixed; top: 0; right: 0; z-index: 999;
+    padding: 0.2rem 0.6rem; border-bottom-left-radius: 8px;
+    background: #F59E0B; color: #1A1526; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rsvp-loading__mark { animation: none; }
+    .rsvp-btn { transition: none; }
+}
+
+@media (min-width: 600px) {
+    .rsvp-page { padding-top: 2rem; }
+    .rsvp-card { padding: 1.5rem 1.4rem; }
+    .rsvp-event__body { padding: 1.4rem; }
+    .rsvp-choice { grid-template-columns: 1fr 1fr; }
+    .rsvp-paths { grid-template-columns: 1fr 1fr; }
+    .rsvp-gallery__grid { gap: 8px; }
+}
+
+/* Large text: the paths stack rather than squeeze. */
+@media (max-width: 380px) {
+    .rsvp-btn--path { padding: 0.75rem 0.8rem; gap: 0.6rem; }
+    .rsvp-path__icon { width: 36px; height: 36px; }
+    .rsvp-itin__rail { width: 2.8rem; }
+    .rsvp-itin__body { padding: 0.6rem 0.7rem 0.65rem; }
+}

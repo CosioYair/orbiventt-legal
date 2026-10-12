@@ -12,12 +12,12 @@
     <base href="/">
     <!-- ENV-SPECIFIC. The single environment boundary for the whole site:
          Supabase target + DEV marker. Never promoted between repositories. -->
-    <script src="env.js?v=20260821a"></script>
+    <script src="env.js?v=20261012c"></script>
     <!-- SHARED. The single decision point for "Abrir en Orbiventt": the app
          scheme in production, a validated Expo Go return URL on the DEV mirror.
          Loaded synchronously, like env.js, so the inline script below can treat
          it as present-or-definitively-absent (it fails closed either way). -->
-    <script src="app-return.js?v=20260821a"></script>
+    <script src="app-return.js?v=20261012c"></script>
     <!-- SHARED. The single declaration of the store listings and of the platform
          decision, so this page and the Digital Invitation's claim card cannot
          drift apart on where "get the app" leads. Loaded synchronously for the
@@ -26,7 +26,7 @@
          stamped by `node scripts/set-web-build.mjs <token>` — never edited by
          hand. Same reasoning as the invitation page: the JS is cached for four
          hours, the document for ten minutes. -->
-    <script src="app-store-links.js?v=20260821a"></script>
+    <script src="app-store-links.js?v=20261012c"></script>
     <link rel="icon" type="image/png" href="assets/favicon.png">
     <title>Orbiventt</title>
     <!-- SEO is intentionally deferred (external-invitations.md §10). This page
@@ -60,7 +60,7 @@
            left unchanged. Scoped to #openApp so the secondary and the generic
            "Ir al inicio" .btn are not affected. box-sizing:border-box keeps the
            1px border from altering the button's size. */
-        #openApp.btn {
+        #openApp.btn, #rsvpCta.btn {
             background: linear-gradient(100deg, #8A18EA 0%, #5A18D4 27%, #3826CE 50%, #2348D6 74%, #1E74E6 100%);
             border: 1px solid rgba(255, 255, 255, 0.16);
             box-shadow:
@@ -70,7 +70,7 @@
                 inset 0 0 20px rgba(140, 165, 255, 0.20);
             transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.2s ease;
         }
-        #openApp.btn:hover {
+        #openApp.btn:hover, #rsvpCta.btn:hover {
             filter: brightness(1.08);
             transform: translateY(-2px);
             box-shadow:
@@ -79,7 +79,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.30),
                 inset 0 0 24px rgba(150, 175, 255, 0.26);
         }
-        #openApp.btn:active {
+        #openApp.btn:active, #rsvpCta.btn:active {
             transform: translateY(0);
             filter: brightness(1.02);
         }
@@ -222,6 +222,11 @@
         </div>
 
         <div id="actions" class="hidden">
+            <!-- Confirmar asistencia: answers the EXISTING invitation code on
+                 the web reply page (rsvp/), no account needed. Revealed only
+                 when the link carries `?code=`; the code travels on in the
+                 FRAGMENT. There is no new invitation type behind it. -->
+            <a id="rsvpCta" class="btn hidden" href="#">Confirmar asistencia</a>
             <a id="openApp" class="btn" href="#">Abrir en Orbiventt</a>
             <!-- Store CTA(s) are injected by renderStoreButtons() based on the
                  visitor's platform: Google Play on Android, App Store/TestFlight
@@ -685,6 +690,24 @@
             // validated Expo Go return URL. The code rides on top of whichever
             // target was resolved, so it survives both.
             var eventHandoff = handoffFor('e', eventId, false, code);
+
+            // Web reply ("Confirmar asistencia"): the PRIMARY action when the
+            // link carries a code. It answers the EXISTING smart invitation —
+            // no new invitation type — on the reply page, with the code in the
+            // FRAGMENT so it is never sent to the page's host. The relative
+            // href resolves through <base>, so it is right in both deployments.
+            if (code) {
+                // The DEV mirror's Expo Go return address rides along in the
+                // same fragment (`&r=`), so the reply page's "Prefiero usar
+                // Orbiventt" opens the DEV app with one tap as this page's
+                // own button does. Untrusted; app-return.js re-validates it
+                // there. Production links never carry one.
+                var ret = appReturn && /^exps?:\/\//i.test(appReturn) && !/[\x00-\x20"'`<>\\]/.test(appReturn)
+                    ? '&r=' + encodeURIComponent(appReturn)
+                    : '';
+                el('rsvpCta').setAttribute('href', 'rsvp/#c=' + encodeURIComponent(code) + ret);
+                show('rsvpCta');
+            }
 
             // Invitation-flavored CTA copy when the link carries a code — the
             // visitor isn't a curious passerby, they hold a pase.

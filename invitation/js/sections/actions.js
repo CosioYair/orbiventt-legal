@@ -16,9 +16,9 @@
  * whole section is, so no empty block ever reaches the page. There is never a
  * button that looks live and does nothing.
  */
-import { el } from '../dom.js?v=20260821a';
-import { buildIcs, icsDataUrl, icsFileName } from '../calendar.js?v=20260821a';
-import { section } from './shell.js?v=20260821a';
+import { el } from '../dom.js?v=20261012c';
+import { buildIcs, icsDataUrl, icsFileName } from '../calendar.js?v=20261012c';
+import { section } from './shell.js?v=20261012c';
 
 /** A reception that runs late is the real end of the day; otherwise assume 5 h. */
 const DEFAULT_DURATION_MS = 5 * 60 * 60 * 1000;

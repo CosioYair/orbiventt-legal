@@ -62,6 +62,11 @@ export const SHARED_DIRS = [
   // handling (fragment-only, sessionStorage, closed RPC allowlist) must have
   // exactly one implementation across the two repositories.
   'check-in',
+  // The web reply page ("Confirmar asistencia"). It answers an EXISTING smart
+  // invitation code — there is no new invitation type — and SHARED for the
+  // same reason as the scanner: fragment-first code capture, sessionStorage
+  // only, and a closed two-RPC allowlist must exist exactly once.
+  'rsvp',
 ];
 
 /**
@@ -131,7 +136,7 @@ export const PROD_ONLY_PATHS = [
  * crawlers on the invitation's public URL; this one fingerprints the CODE for
  * browsers on asset URLs. They share a letter and nothing else.
  */
-export const WEB_BUILD = '20260821a';
+export const WEB_BUILD = '20261012c';
 
 export const DEV_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';
 export const PROD_SUPABASE_REF = 'lehwxjbjlehsdkqxlzrb';

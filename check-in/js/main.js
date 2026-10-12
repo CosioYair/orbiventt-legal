@@ -26,15 +26,15 @@
  * shape checks, cooldown, single-flight, debounce — exists for battery and for
  * the operator's eyes. The one-time guarantee is a unique index in Postgres.
  */
-import { captureCapability, clearCapability, newNonce } from './session.js?v=20260821a';
-import { checkIn, resolveAccess, searchCheckins } from './backend.js?v=20260821a';
-import { describeCameraError, startCamera, stopCamera } from './camera.js?v=20260821a';
-import { createDecoder, createScanGate, isPassShape } from './decode.js?v=20260821a';
+import { captureCapability, clearCapability, newNonce } from './session.js?v=20261012c';
+import { checkIn, resolveAccess, searchCheckins } from './backend.js?v=20261012c';
+import { describeCameraError, startCamera, stopCamera } from './camera.js?v=20261012c';
+import { createDecoder, createScanGate, isPassShape } from './decode.js?v=20261012c';
 import {
     describeCounter, describeResult, describeHistoryRow, historyEmptyText,
     shouldStopCamera, isTerminalStatus,
-} from './ui.js?v=20260821a';
-import { createStaleGuard, debounce, normalizeQuery } from './history.js?v=20260821a';
+} from './ui.js?v=20261012c';
+import { createStaleGuard, debounce, normalizeQuery } from './history.js?v=20261012c';
 
 var DECODE_INTERVAL_MS = 125; // ~8 decode attempts/second.
 var SEARCH_DEBOUNCE_MS = 300;

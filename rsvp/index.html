@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <!-- CONTENT SECURITY POLICY — the check-in posture. Exactly ONE host is
+         named, and it is the Supabase project this deployment belongs to:
+         `connect-src` allows the three guest RPCs, `img-src` allows the
+         invitation thumbnail, event cover, the event's photo gallery and the
+         organizer avatar that live in that project's Storage ('self' covers
+         the site's own app icon on the "Prefiero usar Orbiventt" path). The pass QR is an inline SVG built
+         from numbers, so it needs no `data:` or `blob:` source. No CDN, no analytics, no font host, no frame, no inline
+         script and no inline style — every behaviour comes from a module file
+         and every rule from the stylesheet. `form-action 'none'` is real: the
+         page has no <form>; inputs are read by script and sent by fetch.
+         The project ref is the token `devToProd()` rewrites on promotion. -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://lehwxjbjlehsdkqxlzrb.supabase.co; font-src 'self'; connect-src https://lehwxjbjlehsdkqxlzrb.supabase.co; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+    <!-- The invitation code travels in this page's FRAGMENT. `no-referrer`
+         guarantees it cannot leak through a Referer header on any navigation
+         this page starts (the map link, the store link, the app handoff). -->
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <!-- ENV-SPECIFIC: deployment base path. Rewritten to "/" on promotion. -->
+    <base href="/">
+    <!-- PERMANENT, both environments. A reply page for one household's
+         invitation has no business in a search index. -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+    <!-- GENERIC METADATA. The document is static and shared by every
+         invitation, so the title and the preview describe the PRODUCT, never
+         the event and never the code. main.js never rewrites the title. -->
+    <title>Confirmar asistencia · Orbiventt</title>
+    <meta name="description" content="Confirma tu asistencia a un evento al que te invitaron en Orbiventt.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="es_MX">
+    <meta property="og:site_name" content="Orbiventt">
+    <meta property="og:title" content="Confirmar asistencia · Orbiventt">
+    <meta property="og:description" content="Confirma tu asistencia a un evento al que te invitaron en Orbiventt.">
+    <meta property="og:image" content="https://orbiventt.com/invitation/assets/og-invitation.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Confirmar asistencia · Orbiventt">
+    <meta name="twitter:description" content="Confirma tu asistencia a un evento al que te invitaron en Orbiventt.">
+
+    <link rel="stylesheet" href="rsvp/css/rsvp.css?v=20261012c">
+
+    <!-- ENV-SPECIFIC. The single environment boundary for the whole site. -->
+    <script src="env.js?v=20261012c"></script>
+    <!-- SHARED app handoff + app distribution, the same classic scripts the
+         invitation page and 404.html load. The post-confirmation "Abrir
+         Orbiventt" control is resolved exclusively through them, so this page
+         inherits the exact DEV/production behaviour: production opens
+         `vyvent://`, the DEV mirror never falls back across environments and
+         simply shows the copy-the-code path instead. -->
+    <script src="app-return.js?v=20261012c"></script>
+    <script src="app-store-links.js?v=20261012c"></script>
+    <!-- VENDORED QR ENCODER, loaded as a classic script because it is a UMD
+         build that assigns `window.qrcode`. The same library, at the same
+         pinned version, the mobile app uses to draw the same pass payload.
+         MIT; see rsvp/vendor/qrcode-generator-LICENSE.txt. -->
+    <script src="rsvp/vendor/qrcode-generator.js?v=20261012c"></script>
+</head>
+<body>
+    <div class="env-badge" id="envBadge" hidden>DEV</div>
+
+    <main class="rsvp-page">
+        <!-- First paint. Replaced by the page or by a controlled state. -->
+        <div class="rsvp-loading" id="rsvp-loading" role="status">
+            <span class="rsvp-loading__mark" aria-hidden="true"></span>
+            <p class="rsvp-loading__text">Buscando tu invitación…</p>
+        </div>
+
+        <!-- Everything else is rendered here by main.js through the
+             allowlisted element builder. No markup is ever built from text. -->
+        <div id="rsvp-root" hidden></div>
+
+        <!-- The fullscreen photo viewer mounts here, outside the page tree, so
+             opening it never re-renders or scrolls the page. Photos are the
+             ones the invitation resolved; nothing is fetched to open it. -->
+        <div id="rsvp-viewer-root" hidden></div>
+
+        <noscript>
+            <div class="rsvp-noscript">
+                <p class="rsvp-brand">Orbiventt</p>
+                <h1>Confirmar asistencia</h1>
+                <p>Esta página necesita JavaScript para mostrar tu invitación y enviar tu respuesta.</p>
+            </div>
+        </noscript>
+
+        <footer class="rsvp-footer">
+            <p>Orbiventt</p>
+        </footer>
+    </main>
+
+    <script type="module" src="rsvp/js/main.js?v=20261012c"></script>
+</body>
+</html>
