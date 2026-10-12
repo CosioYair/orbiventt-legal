@@ -47,8 +47,8 @@ const WEB_ENV = join(ROOT, 'scripts', 'web-env.mjs');
 const TOKEN_SHAPE = /^[a-z0-9][a-z0-9.-]{0,31}$/;
 
 /* The entry-document references that participate in the build version. */
-const HTML_ENTRIES = ['invitation/index.html', '404.html', 'check-in/index.html'];
-const HTML_ASSETS = /(src|href)="(env\.js|app-return\.js|app-store-links\.js|invitation\/js\/main\.js|invitation\/css\/base\.css|check-in\/js\/main\.js|check-in\/js\/vendor\/jsqr\.js|check-in\/css\/scanner\.css)(\?v=[^"]*)?"/g;
+const HTML_ENTRIES = ['invitation/index.html', '404.html', 'check-in/index.html', 'rsvp/index.html'];
+const HTML_ASSETS = /(src|href)="(env\.js|app-return\.js|app-store-links\.js|invitation\/js\/main\.js|invitation\/css\/base\.css|check-in\/js\/main\.js|check-in\/js\/vendor\/jsqr\.js|check-in\/css\/scanner\.css|rsvp\/js\/main\.js|rsvp\/vendor\/qrcode-generator\.js|rsvp\/css\/rsvp\.css)(\?v=[^"]*)?"/g;
 
 /* A relative .js specifier inside a static `from '…'` or dynamic `import('…')`. */
 const IMPORT_EDGE = /((?:from\s*|import\()\s*')(\.\.?\/[^']+?\.js)(\?v=[^']*)?(')/g;
@@ -90,12 +90,15 @@ function walk(dir) {
   return out;
 }
 
-// BOTH executable trees. The scanner joined the build version on the day it
-// was written, not later: a page that ships unversioned into a two-layer cache
-// (browser 4h + Cloudflare) is the 2026-08-18 incident repeating itself.
-// The vendored decoder is a classic script, so it is stamped through
-// HTML_ASSETS above rather than as an import edge.
-const moduleFiles = walk('invitation').concat(walk('check-in'));
+// ALL executable trees. The scanner and the reply page joined the build
+// version on the day they were written, not later: a page that ships
+// unversioned into a two-layer cache (browser 4h + Cloudflare) is the
+// 2026-08-18 incident repeating itself. The vendored decoder is a classic
+// script, so it is stamped through HTML_ASSETS above rather than as an import
+// edge — and so is the reply page's vendored QR encoder (`rsvp/vendor/`).
+// `walk()` skips every `vendor/` directory, so neither file's own source is
+// ever rewritten.
+const moduleFiles = walk('invitation').concat(walk('check-in'), walk('rsvp'));
 const drift = [];
 let stamped = 0;
 let filesChanged = 0;

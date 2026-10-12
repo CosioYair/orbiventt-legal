@@ -13,18 +13,18 @@
  * `passes` and `actions` are SHELL sections: they take no configuration section
  * of their own and read the route and the action flags from the context.
  */
-import renderHero from './hero.js?v=20260821a';
-import renderMessage from './message.js?v=20260821a';
-import renderCountdown from './countdown.js?v=20260821a';
-import { renderCeremony, renderReception } from './place.js?v=20260821a';
-import renderDressCode from './dressCode.js?v=20260821a';
-import renderGallery from './gallery.js?v=20260821a';
-import renderGifts from './gifts.js?v=20260821a';
-import renderPasses from './passes.js?v=20260821a';
-import renderActions from './actions.js?v=20260821a';
-import renderClosing from './closing.js?v=20260821a';
-import renderDesign from './design.js?v=20260821a';
-import { INTERLUDE_RENDERERS, interludeSectionId } from './interlude.js?v=20260821a';
+import renderHero from './hero.js?v=20261012c';
+import renderMessage from './message.js?v=20261012c';
+import renderCountdown from './countdown.js?v=20261012c';
+import { renderCeremony, renderReception } from './place.js?v=20261012c';
+import renderDressCode from './dressCode.js?v=20261012c';
+import renderGallery from './gallery.js?v=20261012c';
+import renderGifts from './gifts.js?v=20261012c';
+import renderPasses from './passes.js?v=20261012c';
+import renderActions from './actions.js?v=20261012c';
+import renderClosing from './closing.js?v=20261012c';
+import renderDesign from './design.js?v=20261012c';
+import { INTERLUDE_RENDERERS, interludeSectionId } from './interlude.js?v=20261012c';
 
 const RENDERERS = Object.create(null);
 RENDERERS.hero = { render: renderHero, shell: false };
